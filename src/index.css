@@ -1,0 +1,95 @@
+@import 'tailwindcss';
+
+@theme {
+  --color-crypt-950: #05050a;
+  --color-crypt-900: #0b0b14;
+  --color-crypt-800: #14141f;
+  --color-crypt-700: #181824;
+  --color-crypt-600: #242436;
+  --color-crypt-500: #37374f;
+
+  --color-blood-500: #c2213a;
+  --color-blood-400: #e23c55;
+  --color-ember-400: #f2a33c;
+  --color-rune-400: #3ce2c0;
+  --color-wraith-400: #a06ce8;
+
+  --font-gothic: 'Cinzel Decorative', 'Cinzel', 'Palatino Linotype', 'Book Antiqua', serif;
+  --font-serif-lore: 'Cormorant Garamond', 'Palatino Linotype', Georgia, serif;
+}
+
+@layer base {
+  :root {
+    color-scheme: dark;
+  }
+
+  html,
+  body,
+  #root {
+    min-height: 100%;
+  }
+
+  body {
+    margin: 0;
+    background-color: var(--color-crypt-950);
+    color: #d9d5e4;
+    font-family: var(--font-serif-lore);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  ::selection {
+    background: var(--color-blood-500);
+    color: #fff;
+  }
+}
+
+@utility text-gothic {
+  font-family: var(--font-gothic);
+  letter-spacing: 0.06em;
+}
+
+@utility fog-backdrop {
+  background-image:
+    radial-gradient(ellipse 80% 55% at 50% -10%, rgba(194, 33, 58, 0.22), transparent 70%),
+    radial-gradient(ellipse 60% 50% at 10% 110%, rgba(160, 108, 232, 0.16), transparent 70%),
+    radial-gradient(ellipse 60% 50% at 95% 90%, rgba(60, 226, 192, 0.08), transparent 70%);
+}
+
+@keyframes flicker {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  42% {
+    opacity: 0.86;
+  }
+  45% {
+    opacity: 0.55;
+  }
+  48% {
+    opacity: 0.92;
+  }
+  70% {
+    opacity: 0.7;
+  }
+}
+
+@keyframes drift {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(0, -8px, 0);
+  }
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@utility animate-flicker {
+  animation: flicker 4.5s infinite ease-in-out;
+}
+
+@utility animate-drift {
+  animation: drift 6s infinite ease-in-out;
+}
