@@ -94,12 +94,8 @@ export default function ClockModal({
       onClose={onClose}
       footer={
         solved ? undefined : (
-          <button
-            type="button"
-            onClick={submit}
-            className="flex w-full items-center justify-center gap-2.5 rounded-lg border border-ember-400/60 bg-ember-400/12 px-4 py-3 font-semibold text-ember-400 transition hover:bg-ember-400/22"
-          >
-            <Bell size={17} />
+          <button type="button" onClick={submit} className="btn w-full">
+            <Bell size={16} />
             Strike the Chime (Submit)
           </button>
         )
@@ -114,29 +110,22 @@ export default function ClockModal({
           onClaim={onSolve}
         />
       ) : (
-        <div className="space-y-5">
-          <p className="rounded-lg border border-crypt-600/70 bg-crypt-950/60 px-4 py-3 text-sm text-[#cfc9dd] italic">
+        <div className="space-y-3">
+          <p className="etch etch-flat border-l-[3px] border-l-brass-dim px-3 py-2 text-sm text-bone-dim italic">
             {data.prompt}
           </p>
 
-          <div className="space-y-2.5">
+          <div className="space-y-2">
             {order.map((stepIndex, position) => (
               <div
                 key={stepIndex}
-                className="flex items-stretch gap-3 rounded-lg border border-crypt-600 bg-crypt-950/60 p-3 transition hover:border-crypt-500"
+                className="etch etch-flat flex items-stretch gap-2.5 p-2 transition hover:border-iron-2"
               >
-                <div
-                  className="flex w-10 shrink-0 flex-col items-center justify-center rounded-md border text-sm font-bold"
-                  style={{
-                    borderColor: 'rgba(201,154,63,0.5)',
-                    background: 'rgba(201,154,63,0.08)',
-                    color: '#e0b85c',
-                  }}
-                >
+                <div className="font-display flex w-9 shrink-0 items-center justify-center border border-brass-dim bg-brass/8 text-sm text-brass-lit">
                   {ROMAN[position]}
                 </div>
 
-                <p className="flex-1 self-center text-sm leading-relaxed text-[#cfc9dd]">
+                <p className="flex-1 self-center text-[13px] leading-snug text-bone sm:text-sm">
                   {steps[stepIndex]}
                 </p>
 
@@ -146,18 +135,18 @@ export default function ClockModal({
                     onClick={() => move(position, -1)}
                     disabled={position === 0}
                     aria-label="Move this step earlier"
-                    className="rounded border border-crypt-600 p-1 text-[#9d96b0] transition hover:border-ember-400/60 hover:text-ember-400 disabled:cursor-not-allowed disabled:opacity-25"
+                    className="btn btn-sm btn-icon btn-iron"
                   >
-                    <ChevronUp size={15} />
+                    <ChevronUp size={14} />
                   </button>
                   <button
                     type="button"
                     onClick={() => move(position, 1)}
                     disabled={position === order.length - 1}
                     aria-label="Move this step later"
-                    className="rounded border border-crypt-600 p-1 text-[#9d96b0] transition hover:border-ember-400/60 hover:text-ember-400 disabled:cursor-not-allowed disabled:opacity-25"
+                    className="btn btn-sm btn-icon btn-iron"
                   >
-                    <ChevronDown size={15} />
+                    <ChevronDown size={14} />
                   </button>
                 </div>
               </div>

@@ -21,8 +21,9 @@ import {
   rectCenter,
 } from '../data/roomLayout';
 
-const SOLVED_AURA = '#3ce2c0';
-const UNSOLVED_BEACON = '#f2a33c';
+const SOLVED_AURA = '#4fbf9e'; // Alchemical Verdigris
+const UNSOLVED_BEACON = '#b89655'; // Tarnished Brass
+const LOCKED_BEACON = '#a82323'; // Dried Blood
 
 const CANDLES = [
   { x: 262, y: 44 },
@@ -908,54 +909,78 @@ function drawRipples(ctx: CanvasRenderingContext2D, ripples: Ripple[]): void {
   ctx.restore();
 }
 
-function drawLabelBadge(
+/**
+ * Carved brass nameplate above each prop. Always drawn — touch devices have no
+ * hover, so every relic must announce itself.
+ */
+function drawNameplate(
   ctx: CanvasRenderingContext2D,
   prop: PropDefinition,
   solved: boolean,
-  alpha: number,
+  locked: boolean,
+  emphasis: number,
 ): void {
   const center = rectCenter(prop.rect);
-  const status = solved ? 'RUNE CLAIMED' : 'UNSOLVED';
+  const accent = solved ? SOLVED_AURA : locked ? LOCKED_BEACON : UNSOLVED_BEACON;
+  const title = prop.label.replace(/^The /, '');
+
   ctx.save();
-  ctx.globalAlpha = alpha;
-  ctx.font = 'bold 11px ui-sans-serif, system-ui, sans-serif';
-  const titleWidth = ctx.measureText(prop.label).width;
-  ctx.font = '9px ui-sans-serif, system-ui, sans-serif';
-  const statusWidth = ctx.measureText(status).width;
-  const boxWidth = Math.max(titleWidth, statusWidth) + 20;
-  const boxHeight = 32;
+  ctx.globalAlpha = 0.5 + emphasis * 0.5;
+
+  ctx.font = "11px 'IM Fell English SC', Georgia, serif";
+  const titleWidth = ctx.measureText(title).width;
+  const boxWidth = Math.max(titleWidth + 26, 74);
+  const boxHeight = solved ? 17 : 16;
 
   let boxX = center.x - boxWidth / 2;
   boxX = Math.max(6, Math.min(ROOM_WIDTH - boxWidth - 6, boxX));
-  const above = prop.rect.y > 110;
-  const boxY = above ? prop.rect.y - boxHeight - 12 : prop.rect.y + prop.rect.height + 12;
+  const above = prop.rect.y > 104;
+  const boxY = above ? prop.rect.y - boxHeight - 11 : prop.rect.y + prop.rect.height + 11;
 
-  ctx.fillStyle = 'rgba(8,8,14,0.92)';
-  roundRect(ctx, { x: boxX, y: boxY, width: boxWidth, height: boxHeight }, 6);
+  // Plate body with a chamfered left and right edge.
+  const chamfer = 5;
+  ctx.beginPath();
+  ctx.moveTo(boxX + chamfer, boxY);
+  ctx.lineTo(boxX + boxWidth - chamfer, boxY);
+  ctx.lineTo(boxX + boxWidth, boxY + boxHeight / 2);
+  ctx.lineTo(boxX + boxWidth - chamfer, boxY + boxHeight);
+  ctx.lineTo(boxX + chamfer, boxY + boxHeight);
+  ctx.lineTo(boxX, boxY + boxHeight / 2);
+  ctx.closePath();
+
+  ctx.fillStyle = 'rgba(8,6,10,0.93)';
   ctx.fill();
-  ctx.strokeStyle = solved ? 'rgba(60,226,192,0.65)' : 'rgba(242,163,60,0.55)';
+  ctx.strokeStyle = accent;
+  ctx.globalAlpha = (0.5 + emphasis * 0.5) * 0.75;
   ctx.lineWidth = 1;
   ctx.stroke();
+  ctx.globalAlpha = 0.5 + emphasis * 0.5;
 
-  // Pointer toward the prop.
+  // Rivets at each end.
+  ctx.fillStyle = accent;
+  ctx.globalAlpha = (0.5 + emphasis * 0.5) * 0.7;
   ctx.beginPath();
-  const tipY = above ? boxY + boxHeight : boxY;
-  const dir = above ? 1 : -1;
-  ctx.moveTo(center.x - 5, tipY);
-  ctx.lineTo(center.x + 5, tipY);
-  ctx.lineTo(center.x, tipY + dir * 6);
-  ctx.closePath();
-  ctx.fillStyle = 'rgba(8,8,14,0.92)';
+  ctx.arc(boxX + 6, boxY + boxHeight / 2, 1.1, 0, Math.PI * 2);
+  ctx.arc(boxX + boxWidth - 6, boxY + boxHeight / 2, 1.1, 0, Math.PI * 2);
   ctx.fill();
+  ctx.globalAlpha = 0.5 + emphasis * 0.5;
 
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
-  ctx.font = 'bold 11px ui-sans-serif, system-ui, sans-serif';
-  ctx.fillStyle = '#ece7f5';
-  ctx.fillText(prop.label, boxX + boxWidth / 2, boxY + 11);
-  ctx.font = '9px ui-sans-serif, system-ui, sans-serif';
-  ctx.fillStyle = solved ? SOLVED_AURA : UNSOLVED_BEACON;
-  ctx.fillText(status, boxX + boxWidth / 2, boxY + 23);
+  ctx.font = "11px 'IM Fell English SC', Georgia, serif";
+  ctx.fillStyle = solved ? SOLVED_AURA : '#dcd3c2';
+  ctx.fillText(title, boxX + boxWidth / 2, boxY + boxHeight / 2 + 0.5);
+
+  // A claimed relic gets a small rune diamond instead of status text.
+  if (solved) {
+    ctx.fillStyle = SOLVED_AURA;
+    ctx.save();
+    ctx.translate(boxX + boxWidth / 2, boxY + boxHeight + 6);
+    ctx.rotate(Math.PI / 4);
+    ctx.fillRect(-3, -3, 6, 6);
+    ctx.restore();
+  }
+
   ctx.restore();
 }
 
@@ -973,6 +998,7 @@ export default function EscapeRoomCanvas({
   onBlockedInteraction,
 }: EscapeRoomCanvasProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const hostRef = useRef<HTMLDivElement>(null);
   const staticLayerRef = useRef<HTMLCanvasElement | null>(null);
   const runtimeRef = useRef<Runtime>({
     player: { ...PLAYER_SPAWN },
@@ -1025,19 +1051,24 @@ export default function EscapeRoomCanvas({
     [],
   );
 
-  const toRoomCoords = useCallback((event: React.MouseEvent<HTMLCanvasElement>) => {
-    const canvas = event.currentTarget;
-    const bounds = canvas.getBoundingClientRect();
+  /** Maps a pointer/touch position onto the fixed 800x600 logical room. */
+  const toRoomCoords = useCallback((event: React.PointerEvent<HTMLCanvasElement>) => {
+    const rect = event.currentTarget.getBoundingClientRect();
+    if (rect.width < 1 || rect.height < 1) return null;
+    const scaleX = ROOM_WIDTH / rect.width;
+    const scaleY = ROOM_HEIGHT / rect.height;
     return {
-      x: ((event.clientX - bounds.left) / bounds.width) * ROOM_WIDTH,
-      y: ((event.clientY - bounds.top) / bounds.height) * ROOM_HEIGHT,
+      x: (event.clientX - rect.left) * scaleX,
+      y: (event.clientY - rect.top) * scaleY,
     };
   }, []);
 
-  const handleClick = useCallback(
-    (event: React.MouseEvent<HTMLCanvasElement>) => {
+  const handlePointerDown = useCallback(
+    (event: React.PointerEvent<HTMLCanvasElement>) => {
       if (lockedRef.current) return;
-      const { x, y } = toRoomCoords(event);
+      const point = toRoomCoords(event);
+      if (!point) return;
+      const { x, y } = point;
       const runtime = runtimeRef.current;
       const prop = hitTestProp(x, y);
       const solved = solvedRef.current;
@@ -1079,10 +1110,13 @@ export default function EscapeRoomCanvas({
     [raiseWarning, toRoomCoords],
   );
 
-  const handleMouseMove = useCallback(
-    (event: React.MouseEvent<HTMLCanvasElement>) => {
-      const { x, y } = toRoomCoords(event);
-      const prop = hitTestProp(x, y);
+  const handlePointerMove = useCallback(
+    (event: React.PointerEvent<HTMLCanvasElement>) => {
+      // Touch devices have no hover state; nameplates are always drawn instead.
+      if (event.pointerType === 'touch') return;
+      const point = toRoomCoords(event);
+      if (!point) return;
+      const prop = hitTestProp(point.x, point.y);
       setHoveredProp((current) => {
         const next = prop?.id ?? null;
         return current === next ? current : next;
@@ -1090,6 +1124,37 @@ export default function EscapeRoomCanvas({
     },
     [toRoomCoords],
   );
+
+  /**
+   * Fit the 4:3 room into whatever space the flex row offers, letterboxing by
+   * hand so the element box always equals the painted area. That keeps pointer
+   * mapping exact on every screen and DPR.
+   */
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    const host = hostRef.current;
+    if (!canvas || !host) return;
+
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+
+    const fit = () => {
+      const { width, height } = host.getBoundingClientRect();
+      if (width < 1 || height < 1) return;
+      const scale = Math.min(width / ROOM_WIDTH, height / ROOM_HEIGHT, 2);
+      const displayWidth = Math.max(1, Math.floor(ROOM_WIDTH * scale));
+      const displayHeight = Math.max(1, Math.floor(ROOM_HEIGHT * scale));
+
+      canvas.style.width = `${displayWidth}px`;
+      canvas.style.height = `${displayHeight}px`;
+      canvas.width = Math.round(displayWidth * dpr);
+      canvas.height = Math.round(displayHeight * dpr);
+    };
+
+    const observer = new ResizeObserver(fit);
+    observer.observe(host);
+    fit();
+    return () => observer.disconnect();
+  }, []);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -1099,10 +1164,6 @@ export default function EscapeRoomCanvas({
 
     staticLayerRef.current ??= buildStaticLayer();
     const staticLayer = staticLayerRef.current;
-
-    const dpr = Math.min(window.devicePixelRatio || 1, 2);
-    canvas.width = ROOM_WIDTH * dpr;
-    canvas.height = ROOM_HEIGHT * dpr;
 
     let frame = 0;
     const runtime = runtimeRef.current;
@@ -1145,6 +1206,14 @@ export default function EscapeRoomCanvas({
       }
       if (!moving) runtime.walkPhase += dt * 1.6;
 
+      // A zero-sized canvas during layout can poison the position; never let
+      // non-finite coordinates reach the gradient calls below.
+      if (!Number.isFinite(runtime.player.x) || !Number.isFinite(runtime.player.y)) {
+        runtime.player = { ...PLAYER_SPAWN };
+        runtime.target = null;
+        runtime.pendingProp = null;
+      }
+
       // Footfalls on cold flagstone, roughly in time with the stride.
       if (moving) {
         runtime.stepTimer += dt;
@@ -1173,7 +1242,10 @@ export default function EscapeRoomCanvas({
       });
 
       /* ---- Draw ---- */
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      // One transform maps the fixed 800x600 logical room onto the live
+      // backing store, whatever size the viewport forced it to.
+      const renderScale = canvas.width / ROOM_WIDTH;
+      ctx.setTransform(renderScale, 0, 0, renderScale, 0, 0);
       ctx.clearRect(0, 0, ROOM_WIDTH, ROOM_HEIGHT);
       ctx.drawImage(staticLayer, 0, 0);
 
@@ -1255,7 +1327,7 @@ export default function EscapeRoomCanvas({
         const isSolved = solved.has(prop.id);
         const locked = prop.id === 'gargoyle' && !gargoyleUnlocked;
         const pulse = 0.5 + Math.sin(runtime.time * 2 + center.x * 0.03) * 0.3;
-        const tint = isSolved ? '60,226,192' : locked ? '226,60,85' : '242,163,60';
+        const tint = isSolved ? '79,191,158' : locked ? '168,35,35' : '184,150,85';
         const reach = Math.max(prop.rect.width, prop.rect.height) * 0.75 + 26;
         const beacon = ctx.createRadialGradient(center.x, center.y, 1, center.x, center.y, reach);
         beacon.addColorStop(0, `rgba(${tint},${(isSolved ? 0.42 : 0.3) * pulse})`);
@@ -1275,13 +1347,13 @@ export default function EscapeRoomCanvas({
       ctx.fillStyle = vignette;
       ctx.fillRect(0, 0, ROOM_WIDTH, ROOM_HEIGHT);
 
-      /* ---- Labels sit above the darkness so they stay legible ---- */
+      /* ---- Nameplates sit above the darkness so they stay legible ---- */
       for (const prop of PROPS) {
         const center = rectCenter(prop.rect);
-        const near = Math.hypot(center.x - runtime.player.x, center.y - runtime.player.y) < 150;
+        const near = Math.hypot(center.x - runtime.player.x, center.y - runtime.player.y) < 165;
         const hovered = hoveredRef.current === prop.id;
-        if (!near && !hovered) continue;
-        drawLabelBadge(ctx, prop, solved.has(prop.id), hovered ? 1 : 0.8);
+        const locked = prop.id === 'gargoyle' && !gargoyleUnlocked;
+        drawNameplate(ctx, prop, solved.has(prop.id), locked, hovered || near ? 1 : 0.28);
       }
 
       if (debugRef.current) {
@@ -1316,31 +1388,31 @@ export default function EscapeRoomCanvas({
   }, []);
 
   return (
-    <div className="relative mx-auto w-full max-w-[900px]">
-      <div
-        className="relative overflow-hidden rounded-xl border-2 border-crypt-600/80 shadow-[0_0_80px_rgba(0,0,0,0.85)]"
-        style={{ aspectRatio: '4 / 3' }}
-      >
-        <canvas
-          ref={canvasRef}
-          onClick={handleClick}
-          onMouseMove={handleMouseMove}
-          onMouseLeave={() => setHoveredProp(null)}
-          className="block h-full w-full touch-none"
-          style={{ cursor: interactionLocked ? 'default' : hoveredProp ? 'pointer' : 'crosshair' }}
-        />
+    // The canvas is a direct flex child so its intrinsic 4:3 ratio plus
+    // max-width/max-height scales it to fit any landscape viewport undistorted.
+    <div
+      ref={hostRef}
+      className="relative flex min-h-0 w-full flex-1 items-center justify-center overflow-hidden"
+    >
+      <canvas
+        ref={canvasRef}
+        onPointerDown={handlePointerDown}
+        onPointerMove={handlePointerMove}
+        onPointerLeave={() => setHoveredProp(null)}
+        className="etch etch-brass etch-flat block touch-none select-none"
+        style={{ cursor: interactionLocked ? 'default' : hoveredProp ? 'pointer' : 'crosshair' }}
+      />
 
-        {warning && (
-          <div className="pointer-events-none absolute inset-x-0 top-6 flex justify-center px-4">
-            <div
-              className="animate-flicker max-w-md rounded-lg border bg-crypt-950/95 px-5 py-3 text-center text-sm text-[#f0e6ea] shadow-[0_0_40px_rgba(0,0,0,0.9)] backdrop-blur-sm"
-              style={{ borderColor: `${accentColor}99` }}
-            >
-              {warning}
-            </div>
+      {warning && (
+        <div className="pointer-events-none absolute inset-x-0 top-3 flex justify-center px-3">
+          <div
+            className="animate-flicker etch max-w-md border-2 bg-ink/95 px-4 py-2 text-center text-[13px] leading-snug text-bone"
+            style={{ borderColor: accentColor, outlineColor: `${accentColor}66` }}
+          >
+            {warning}
           </div>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 }

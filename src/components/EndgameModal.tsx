@@ -182,17 +182,17 @@ function GrimoireSection({
 }) {
   const Icon = SECTION_ICONS[propId];
   return (
-    <section className="rounded-xl border border-crypt-600/80 bg-crypt-950/50 p-4">
-      <header className="mb-3 flex items-center gap-2.5">
-        <Icon size={15} className="shrink-0 text-ember-400" />
-        <h4 className="text-gothic text-base text-[#ead9b9]">{PROP_LORE[propId].name}</h4>
+    <section className="etch etch-flat p-3">
+      <header className="mb-2.5 flex items-center gap-2.5 border-b border-iron pb-2">
+        <Icon size={14} className="shrink-0 text-brass" />
+        <h4 className="font-display text-base text-bone">{PROP_LORE[propId].name}</h4>
         {missedCount > 0 && (
-          <span className="ml-auto rounded-full bg-blood-500/18 px-2.5 py-0.5 text-[10px] tracking-wider text-blood-400 uppercase">
+          <span className="ml-auto border border-blood px-2 py-0.5 text-[10px] tracking-wider text-blood-glow uppercase">
             {missedCount} missed
           </span>
         )}
       </header>
-      <div className="space-y-2">{children}</div>
+      <div className="space-y-1.5">{children}</div>
     </section>
   );
 }
@@ -208,15 +208,15 @@ function GrimoireRow({
 }) {
   return (
     <div
-      className={`rounded-lg border px-3.5 py-2.5 ${
-        missed ? 'border-blood-500/55 bg-blood-500/10' : 'border-crypt-700/70 bg-crypt-900/40'
+      className={`border-l-[3px] px-3 py-2 ${
+        missed ? 'border-l-blood-lit bg-blood/12' : 'border-l-iron-2 bg-ink/50'
       }`}
     >
-      <p className="flex items-start gap-2 text-sm font-semibold text-[#d9d5e4]">
-        {missed && <AlertTriangle size={13} className="mt-1 shrink-0 text-blood-400" />}
+      <p className="flex items-start gap-2 text-sm font-semibold text-bone">
+        {missed && <AlertTriangle size={13} className="mt-1 shrink-0 text-blood-glow" />}
         {heading}
       </p>
-      <p className="mt-1 text-sm leading-relaxed text-[#9d96b0]">{body}</p>
+      <p className="mt-0.5 text-sm leading-relaxed text-bone-dim">{body}</p>
     </div>
   );
 }
@@ -276,91 +276,92 @@ export default function EndgameModal({
   ];
 
   return (
-    <div className="fixed inset-0 z-[70] flex items-start justify-center overflow-y-auto bg-black/90 p-4 py-8 backdrop-blur-md">
+    <div className="fixed inset-0 z-[70] flex items-center justify-center bg-black/92 p-2 sm:p-4">
       <div
-        className="w-full max-w-3xl overflow-hidden rounded-2xl border-2 shadow-[0_0_110px_rgba(0,0,0,0.95)]"
+        className="etch etch-heavy flex max-h-[94dvh] w-[96vw] max-w-3xl flex-col overflow-hidden"
         style={{
-          borderColor: won ? 'rgba(60,226,192,0.6)' : `${villain.accentColor}aa`,
-          background: 'linear-gradient(170deg, #15151f 0%, #0c0c15 55%, #110f18 100%)',
+          borderColor: won ? '#1d4b3f' : villain.accentColor,
+          outlineColor: won ? 'rgba(79,191,158,0.45)' : `${villain.accentColor}70`,
         }}
       >
-        <EndgameArt won={won} accent={villain.accentColor} />
+        <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain">
+          <EndgameArt won={won} accent={villain.accentColor} />
 
-        <div className="px-6 pb-6 sm:px-8">
+          <div className="px-4 pb-5 sm:px-7">
           <header className="mt-3 text-center">
             <p
-              className="text-[11px] tracking-[0.4em] uppercase"
-              style={{ color: won ? '#3ce2c0' : villain.accentColor }}
+              className="text-[10px] tracking-[0.4em] uppercase"
+              style={{ color: won ? '#4fbf9e' : villain.accentColor }}
             >
               {won ? 'Escape achieved' : 'The study keeps you'}
             </p>
             <h2
-              className="text-gothic mt-2 text-3xl sm:text-4xl"
-              style={{ color: won ? '#3ce2c0' : villain.accentColor }}
+              className="font-display mt-1.5 text-2xl sm:text-4xl"
+              style={{
+                color: won ? '#4fbf9e' : villain.accentColor,
+                textShadow: '3px 3px 0 #040306',
+              }}
             >
               {won ? 'You walked out alive.' : `${villain.name} caught you.`}
             </h2>
-            <p className="mx-auto mt-3 max-w-xl text-[#9d96b0] italic">
+            <p className="mx-auto mt-2.5 max-w-xl text-sm text-bone-dim italic sm:text-base">
               {won
                 ? `Six Elder Runes, one sealed door, and a head full of "${gameData.documentTitle}" that you actually understand now.`
                 : `The threat meter filled before the sixth rune did. ${villain.title} drags you back into the dark — but the Grimoire below is yours to keep.`}
             </p>
           </header>
 
-          <dl className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
+          <dl className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-4">
             {stats.map((stat) => (
-              <div
-                key={stat.label}
-                className="rounded-lg border border-crypt-600 bg-crypt-950/60 px-3.5 py-3"
-              >
-                <dt className="text-[10px] tracking-[0.18em] text-[#6f6880] uppercase">
-                  {stat.label}
-                </dt>
-                <dd className="mt-1 truncate text-sm font-semibold text-[#e6e2ef]">{stat.value}</dd>
+              <div key={stat.label} className="etch etch-flat px-3 py-2">
+                <dt className="label-etched text-[9px]">{stat.label}</dt>
+                <dd className="num mt-1 truncate text-sm font-bold text-bone">{stat.value}</dd>
               </div>
             ))}
           </dl>
 
-          <div className="mt-3 flex items-center justify-center gap-2 text-center text-xs text-[#7b7490]">
-            <Gem size={13} className="shrink-0 text-rune-400" />
+          <div className="mt-2.5 flex items-center justify-center gap-2 text-center text-xs text-bone-faint">
+            <Gem size={12} className="shrink-0 text-verdigris-lit" />
             {runesCollected}/{totalRunes} Elder Runes · {uniqueMistakes.length} distinct concept
             {uniqueMistakes.length === 1 ? '' : 's'} missed across {wrongSubmissions} wrong attempt
             {wrongSubmissions === 1 ? '' : 's'}
           </div>
 
           {/* ---------------- The Grimoire ---------------- */}
-          <div className="mt-8">
-            <div className="text-center">
-              <h3 className="text-gothic text-2xl text-[#ead9b9]">The Grimoire of Knowledge</h3>
-              <p className="mt-1 text-sm text-[#7b7490] italic">
-                Post-game study review · everything the room tested you on
-              </p>
+          <div className="mt-6">
+            <div className="rule-orn">
+              <h3 className="font-display shrink-0 text-xl text-bone sm:text-2xl">
+                The Grimoire of Knowledge
+              </h3>
             </div>
+            <p className="mt-1 text-center text-sm text-bone-faint italic">
+              Post-game study review · everything the room tested you on
+            </p>
 
             {uniqueMistakes.length > 0 && (
-              <div className="mt-5 rounded-xl border border-blood-500/45 bg-blood-500/8 p-4">
-                <h4 className="flex items-center gap-2 text-sm font-bold tracking-[0.15em] text-blood-400 uppercase">
-                  <AlertTriangle size={15} />
+              <div className="etch etch-blood etch-flat mt-4 p-3">
+                <h4 className="flex items-center gap-2 text-sm tracking-[0.15em] text-blood-glow uppercase">
+                  <AlertTriangle size={14} />
                   Revise these first
                 </h4>
-                <ol className="mt-3 space-y-2.5">
+                <ol className="mt-2.5 space-y-2">
                   {uniqueMistakes.map(({ log, count }, index) => (
                     <li
                       key={`${log.propId}-${index}`}
-                      className="rounded-lg border border-blood-500/30 bg-crypt-950/50 px-3.5 py-2.5"
+                      className="border-l-[3px] border-l-blood-lit bg-ink/60 px-3 py-2"
                     >
                       <div className="flex items-start justify-between gap-3">
-                        <p className="text-[10px] tracking-[0.18em] text-blood-400/80 uppercase">
+                        <p className="text-[10px] tracking-[0.18em] text-blood-glow/85 uppercase">
                           {log.puzzleName}
                         </p>
                         {count > 1 && (
-                          <span className="shrink-0 rounded-full bg-blood-500/20 px-2 py-0.5 text-[10px] text-blood-400">
-                            missed ×{count}
+                          <span className="num shrink-0 border border-blood px-1.5 text-[10px] text-blood-glow">
+                            ×{count}
                           </span>
                         )}
                       </div>
-                      <p className="mt-1 text-sm text-[#d9d5e4]">{log.questionContext}</p>
-                      <p className="mt-1.5 text-sm leading-relaxed whitespace-pre-line text-rune-400">
+                      <p className="mt-1 text-sm text-bone">{log.questionContext}</p>
+                      <p className="mt-1 text-sm leading-relaxed whitespace-pre-line text-verdigris-lit">
                         {log.correctTakeaway}
                       </p>
                     </li>
@@ -369,7 +370,7 @@ export default function EndgameModal({
               </div>
             )}
 
-            <div className="mt-5 grid gap-3">
+            <div className="mt-4 grid gap-2.5">
               <GrimoireSection propId="bookshelf" missedCount={missedPerProp.bookshelf ?? 0}>
                 {puzzles.bookshelf.pairs.map((pair) => (
                   <GrimoireRow
@@ -382,7 +383,7 @@ export default function EndgameModal({
               </GrimoireSection>
 
               <GrimoireSection propId="clock" missedCount={missedPerProp.clock ?? 0}>
-                <p className="text-sm text-[#8a83a0] italic">{puzzles.clock.prompt}</p>
+                <p className="text-sm text-bone-faint italic">{puzzles.clock.prompt}</p>
                 {puzzles.clock.orderedSteps.map((step, index) => (
                   <GrimoireRow
                     key={step}
@@ -433,24 +434,18 @@ export default function EndgameModal({
             </div>
           </div>
 
-          <div className="mt-7 flex flex-col gap-2.5 sm:flex-row">
-            <button
-              type="button"
-              onClick={onReplay}
-              className="flex flex-1 items-center justify-center gap-2 rounded-lg border border-ember-400/60 bg-ember-400/12 px-4 py-3 font-semibold text-ember-400 transition hover:bg-ember-400/22"
-            >
-              <RotateCcw size={16} />
-              Replay Same Study Material
-            </button>
-            <button
-              type="button"
-              onClick={onNewDocument}
-              className="flex flex-1 items-center justify-center gap-2 rounded-lg border border-crypt-500 px-4 py-3 font-semibold text-[#b7b1c6] transition hover:border-crypt-400 hover:text-white"
-            >
-              <Upload size={16} />
-              Upload New PDF
-            </button>
           </div>
+        </div>
+
+        <div className="flex shrink-0 flex-col gap-2 border-t-2 border-iron-2 p-3 sm:flex-row">
+          <button type="button" onClick={onReplay} className="btn flex-1">
+            <RotateCcw size={15} />
+            Replay Same Study Material
+          </button>
+          <button type="button" onClick={onNewDocument} className="btn btn-iron flex-1">
+            <Upload size={15} />
+            Upload New PDF
+          </button>
         </div>
       </div>
     </div>

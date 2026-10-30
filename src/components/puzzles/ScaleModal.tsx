@@ -76,12 +76,8 @@ export default function ScaleModal({
       onClose={onClose}
       footer={
         solved ? undefined : (
-          <button
-            type="button"
-            onClick={submit}
-            className="flex w-full items-center justify-center gap-2.5 rounded-lg border border-ember-400/60 bg-ember-400/12 px-4 py-3 font-semibold text-ember-400 transition hover:bg-ember-400/22"
-          >
-            <ScaleIcon size={17} />
+          <button type="button" onClick={submit} className="btn w-full">
+            <ScaleIcon size={16} />
             Weigh Souls (Submit)
           </button>
         )
@@ -96,34 +92,32 @@ export default function ScaleModal({
           onClaim={onSolve}
         />
       ) : (
-        <div className="space-y-5">
-          <p className="text-sm text-[#9d96b0]">
+        <div className="space-y-3">
+          <p className="hidden text-sm text-bone-dim compact:hidden sm:block">
             Lay each claim on a pan. The scale judges all four at once — partial honesty earns
             nothing.
           </p>
 
-          <div className="space-y-3">
+          <div className="grid gap-2 landscape:grid-cols-2 md:grid-cols-2">
             {statements.map((statement, index) => {
               const verdict = verdicts[index];
               const isWrong = wrongIndices.has(index);
               return (
                 <div
                   key={statement.text}
-                  className={`rounded-lg border p-4 transition ${
-                    isWrong
-                      ? 'border-blood-500/70 bg-blood-500/10'
-                      : 'border-crypt-600 bg-crypt-950/60'
+                  className={`etch etch-flat flex flex-col p-2.5 transition ${
+                    isWrong ? 'etch-blood' : ''
                   }`}
                 >
-                  <p className="text-sm leading-relaxed text-[#cfc9dd]">{statement.text}</p>
-                  <div className="mt-3 flex gap-2">
+                  <p className="flex-1 text-[13px] leading-snug text-bone sm:text-sm">
+                    {statement.text}
+                  </p>
+                  <div className="mt-2.5 flex gap-2">
                     <button
                       type="button"
                       onClick={() => setVerdict(index, true)}
-                      className={`flex-1 rounded-md border px-3 py-2 text-xs font-bold tracking-[0.18em] transition ${
-                        verdict === true
-                          ? 'border-rune-400/70 bg-rune-400/15 text-rune-400'
-                          : 'border-crypt-600 text-[#8a83a0] hover:border-rune-400/40 hover:text-rune-400'
+                      className={`btn btn-sm flex-1 ${
+                        verdict === true ? 'btn-verd' : 'btn-iron'
                       }`}
                     >
                       [TRUTH]
@@ -131,10 +125,8 @@ export default function ScaleModal({
                     <button
                       type="button"
                       onClick={() => setVerdict(index, false)}
-                      className={`flex-1 rounded-md border px-3 py-2 text-xs font-bold tracking-[0.18em] transition ${
-                        verdict === false
-                          ? 'border-blood-400/70 bg-blood-500/15 text-blood-400'
-                          : 'border-crypt-600 text-[#8a83a0] hover:border-blood-400/40 hover:text-blood-400'
+                      className={`btn btn-sm flex-1 ${
+                        verdict === false ? 'btn-blood' : 'btn-iron'
                       }`}
                     >
                       [FALLACY]

@@ -1,4 +1,5 @@
 const STORAGE_KEY = 'dracuplot.muted';
+const MASTER_LEVEL = 0.9;
 
 interface ToneOptions {
   freq: number;
@@ -17,6 +18,11 @@ interface ToneOptions {
 /**
  * Every sound in Dracuplot is synthesised at runtime with the Web Audio API.
  * No audio files ship with the game.
+ *
+ * Browsers refuse to start an AudioContext outside a trusted user gesture, and
+ * silently suspend it again when the tab is backgrounded. The engine therefore
+ * arms a one-shot global gesture listener and re-checks the context state
+ * before every single sound rather than trusting a single unlock call.
  */
 class SoundEngine {
   private ctx: AudioContext | null = null;
@@ -26,6 +32,7 @@ class SoundEngine {
   private heartbeatTimer: number | null = null;
   private heartbeatPeriod = 0;
   private heartbeatLevel = 0;
+  private listenersArmed = false;
 
   constructor() {
     let stored = false;
@@ -37,25 +44,65 @@ class SoundEngine {
     this.muted = stored;
   }
 
-  /** Must run inside a user gesture or the browser will keep the context suspended. */
+  /**
+   * Arms global listeners so the very first tap, click or keypress anywhere in
+   * the document brings audio to life, whatever the player touches first.
+   */
+  armAutoUnlock(): void {
+    if (this.listenersArmed || typeof window === 'undefined') return;
+    this.listenersArmed = true;
+
+    const kick = () => this.unlock();
+    for (const event of ['pointerdown', 'touchend', 'keydown', 'mousedown'] as const) {
+      window.addEventListener(event, kick, { capture: true, passive: true });
+    }
+    document.addEventListener('visibilitychange', () => {
+      if (!document.hidden) this.unlock();
+    });
+  }
+
+  /** Safe to call as often as you like; only the first call builds the graph. */
   unlock(): void {
     if (!this.ctx) {
       const Ctor =
         window.AudioContext ??
         (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
       if (!Ctor) return;
-      this.ctx = new Ctor();
+
+      try {
+        this.ctx = new Ctor();
+      } catch {
+        return;
+      }
+
       this.master = this.ctx.createGain();
-      this.master.gain.value = this.muted ? 0 : 0.85;
-      this.master.connect(this.ctx.destination);
+      this.master.gain.value = this.muted ? 0 : MASTER_LEVEL;
+
+      // Keeps the louder stacked chords from clipping the output hard.
+      const compressor = this.ctx.createDynamicsCompressor();
+      compressor.threshold.value = -10;
+      compressor.knee.value = 14;
+      compressor.ratio.value = 8;
+      compressor.attack.value = 0.004;
+      compressor.release.value = 0.2;
+
+      this.master.connect(compressor);
+      compressor.connect(this.ctx.destination);
 
       // One second of white noise, reused for footsteps and rumbles.
       const length = Math.floor(this.ctx.sampleRate);
       this.noise = this.ctx.createBuffer(1, length, this.ctx.sampleRate);
       const data = this.noise.getChannelData(0);
       for (let i = 0; i < length; i += 1) data[i] = Math.random() * 2 - 1;
+
+      // iOS will not truly start the clock until something has been played.
+      const primer = this.ctx.createBufferSource();
+      primer.buffer = this.ctx.createBuffer(1, 1, this.ctx.sampleRate);
+      primer.connect(this.ctx.destination);
+      primer.start(0);
     }
-    if (this.ctx.state === 'suspended') void this.ctx.resume();
+
+    if (this.ctx.state !== 'running') void this.ctx.resume().catch(() => undefined);
   }
 
   isMuted(): boolean {
@@ -69,9 +116,10 @@ class SoundEngine {
     } catch {
       /* Preference simply will not persist. */
     }
+    if (!muted) this.unlock();
     if (this.master && this.ctx) {
       this.master.gain.cancelScheduledValues(this.ctx.currentTime);
-      this.master.gain.setTargetAtTime(muted ? 0 : 0.85, this.ctx.currentTime, 0.04);
+      this.master.gain.setTargetAtTime(muted ? 0 : MASTER_LEVEL, this.ctx.currentTime, 0.04);
     }
   }
 
@@ -80,8 +128,17 @@ class SoundEngine {
     return this.muted;
   }
 
+  /** Returns a live, running context or null. Retries a suspended context. */
   private active(): AudioContext | null {
-    if (!this.ctx || !this.master || this.muted) return null;
+    if (this.muted) return null;
+    if (!this.ctx || !this.master) {
+      this.unlock();
+      if (!this.ctx || !this.master) return null;
+    }
+    if (this.ctx.state !== 'running') {
+      void this.ctx.resume().catch(() => undefined);
+      return null;
+    }
     return this.ctx;
   }
 
@@ -189,8 +246,8 @@ class SoundEngine {
   /** Soft scuff of a boot on cold flagstone. */
   footstep(): void {
     const scuff = 300 + Math.random() * 180;
-    this.noiseBurst({ duration: 0.11, gain: 0.07, filterFreq: scuff, filterSweepTo: scuff * 0.45 });
-    this.tone({ freq: 74 + Math.random() * 16, type: 'sine', attack: 0.005, decay: 0.07, gain: 0.05 });
+    this.noiseBurst({ duration: 0.12, gain: 0.26, filterFreq: scuff, filterSweepTo: scuff * 0.45 });
+    this.tone({ freq: 74 + Math.random() * 16, type: 'sine', attack: 0.005, decay: 0.08, gain: 0.2 });
   }
 
   /** Mystical suspended chord when an Elder Rune is claimed. */
@@ -202,8 +259,8 @@ class SoundEngine {
         type: 'sine',
         delay: index * 0.075,
         attack: 0.02,
-        decay: 1.5 - index * 0.14,
-        gain: 0.16 - index * 0.025,
+        decay: 1.6 - index * 0.14,
+        gain: 0.5 - index * 0.08,
       });
       this.tone({
         freq: freq * 2,
@@ -211,11 +268,18 @@ class SoundEngine {
         delay: index * 0.075,
         attack: 0.015,
         decay: 0.7,
-        gain: 0.035,
+        gain: 0.12,
         detune: 6,
       });
     });
-    this.noiseBurst({ duration: 0.9, gain: 0.03, filterFreq: 5200, filterSweepTo: 1200, type: 'bandpass', q: 2 });
+    this.noiseBurst({
+      duration: 0.9,
+      gain: 0.12,
+      filterFreq: 5200,
+      filterSweepTo: 1200,
+      type: 'bandpass',
+      q: 2,
+    });
   }
 
   /** Dissonant tritone stack plus a low rumble on a wrong answer. */
@@ -226,39 +290,46 @@ class SoundEngine {
         freq,
         type: 'sawtooth',
         attack: 0.012,
-        decay: 0.85,
-        gain: 0.09,
+        decay: 0.9,
+        gain: 0.32,
         detune: index * 9,
         filter: { type: 'lowpass', freq: 1400, sweepTo: 260, q: 3 },
       });
     });
-    this.tone({ freq: 48, type: 'sine', attack: 0.02, decay: 1.3, gain: 0.26, sweepTo: 26 });
-    this.noiseBurst({ duration: 1.1, gain: 0.12, filterFreq: 220, filterSweepTo: 60 });
+    this.tone({ freq: 48, type: 'sine', attack: 0.02, decay: 1.4, gain: 0.8, sweepTo: 26 });
+    this.noiseBurst({ duration: 1.2, gain: 0.4, filterFreq: 220, filterSweepTo: 60 });
   }
 
   /** Tactile brass keypad blip. */
   keypad(): void {
-    this.tone({ freq: 880, type: 'square', attack: 0.002, decay: 0.045, gain: 0.055 });
-    this.noiseBurst({ duration: 0.035, gain: 0.05, filterFreq: 2600, type: 'highpass' });
+    this.tone({ freq: 880, type: 'square', attack: 0.002, decay: 0.05, gain: 0.22 });
+    this.noiseBurst({ duration: 0.04, gain: 0.2, filterFreq: 2600, type: 'highpass' });
   }
 
   /** Dry clack for Clear / Unlock. */
   clack(): void {
-    this.tone({ freq: 420, type: 'square', attack: 0.002, decay: 0.08, gain: 0.07, sweepTo: 180 });
-    this.noiseBurst({ duration: 0.07, gain: 0.07, filterFreq: 1500 });
+    this.tone({ freq: 420, type: 'square', attack: 0.002, decay: 0.09, gain: 0.26, sweepTo: 180 });
+    this.noiseBurst({ duration: 0.08, gain: 0.26, filterFreq: 1500 });
   }
 
   /** Whispering vapour when the cauldron hint is bought. */
   whisper(): void {
-    this.noiseBurst({ duration: 1.1, gain: 0.08, filterFreq: 900, filterSweepTo: 2600, type: 'bandpass', q: 4 });
-    this.tone({ freq: 196, type: 'sine', attack: 0.15, decay: 0.9, gain: 0.05, sweepTo: 262 });
+    this.noiseBurst({
+      duration: 1.1,
+      gain: 0.26,
+      filterFreq: 900,
+      filterSweepTo: 2600,
+      type: 'bandpass',
+      q: 4,
+    });
+    this.tone({ freq: 196, type: 'sine', attack: 0.15, decay: 0.9, gain: 0.18, sweepTo: 262 });
   }
 
   victory(): void {
     this.stopHeartbeat();
     [261.63, 329.63, 392.0, 523.25, 659.25].forEach((freq, index) => {
-      this.tone({ freq, type: 'triangle', delay: index * 0.11, attack: 0.02, decay: 1.4, gain: 0.15 });
-      this.tone({ freq: freq / 2, type: 'sine', delay: index * 0.11, attack: 0.03, decay: 1.2, gain: 0.08 });
+      this.tone({ freq, type: 'triangle', delay: index * 0.11, attack: 0.02, decay: 1.5, gain: 0.44 });
+      this.tone({ freq: freq / 2, type: 'sine', delay: index * 0.11, attack: 0.03, decay: 1.3, gain: 0.26 });
     });
   }
 
@@ -270,27 +341,27 @@ class SoundEngine {
         type: 'sawtooth',
         delay: index * 0.17,
         attack: 0.03,
-        decay: 1.6,
-        gain: 0.12,
+        decay: 1.7,
+        gain: 0.36,
         filter: { type: 'lowpass', freq: 900, sweepTo: 180, q: 2 },
       });
     });
-    this.tone({ freq: 55, type: 'sine', attack: 0.05, decay: 2.6, gain: 0.3, sweepTo: 20 });
-    this.noiseBurst({ duration: 2.4, gain: 0.14, filterFreq: 180, filterSweepTo: 45 });
+    this.tone({ freq: 55, type: 'sine', attack: 0.05, decay: 2.6, gain: 0.85, sweepTo: 20 });
+    this.noiseBurst({ duration: 2.4, gain: 0.42, filterFreq: 180, filterSweepTo: 45 });
   }
 
   /* ----------------------------- Heartbeat ----------------------------- */
 
   private thump(): void {
-    const intensity = 0.55 + this.heartbeatLevel * 0.22;
-    this.tone({ freq: 62, type: 'sine', attack: 0.012, decay: 0.2, gain: 0.3 * intensity, sweepTo: 34 });
+    const intensity = 0.55 + this.heartbeatLevel * 0.2;
+    this.tone({ freq: 62, type: 'sine', attack: 0.012, decay: 0.22, gain: 0.85 * intensity, sweepTo: 34 });
     this.tone({
       freq: 54,
       type: 'sine',
       delay: 0.19,
       attack: 0.012,
-      decay: 0.26,
-      gain: 0.22 * intensity,
+      decay: 0.28,
+      gain: 0.62 * intensity,
       sweepTo: 28,
     });
   }

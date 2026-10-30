@@ -6,12 +6,12 @@ import type { FeedbackTone, PuzzleFeedback } from './puzzleHelpers';
 
 interface PuzzleModalWrapperProps {
   propId: PropId;
-  /** Short description of the mechanic, shown under the lore title. */
+  /** Short description of the mechanic, shown above the lore title. */
   mechanic: string;
   accentColor: string;
   shakeSignal: number;
   feedback?: PuzzleFeedback | null;
-  /** Shown as a progress chip in the header, e.g. "2 / 4 bound". */
+  /** Shown as a stamped chip in the header, e.g. "2 / 4 bound". */
   progress?: string;
   solved?: boolean;
   onClose: () => void;
@@ -19,10 +19,10 @@ interface PuzzleModalWrapperProps {
   footer?: React.ReactNode;
 }
 
-const TONE_STYLES: Record<FeedbackTone, { border: string; bg: string; text: string }> = {
-  error: { border: 'border-blood-500/60', bg: 'bg-blood-500/12', text: 'text-[#f4c6cd]' },
-  info: { border: 'border-ember-400/50', bg: 'bg-ember-400/10', text: 'text-[#f0dcb4]' },
-  success: { border: 'border-rune-400/50', bg: 'bg-rune-400/10', text: 'text-[#bdf3e6]' },
+const TONE_STYLES: Record<FeedbackTone, string> = {
+  error: 'etch-blood text-[#f0c8c4]',
+  info: 'etch-brass text-[#ecd6a8]',
+  success: 'etch-verd text-[#a9e8d2]',
 };
 
 export default function PuzzleModalWrapper({
@@ -59,51 +59,43 @@ export default function PuzzleModalWrapper({
     return () => window.removeEventListener('keydown', onKeyDown);
   }, [onClose]);
 
-  const tone = feedback ? TONE_STYLES[feedback.tone] : null;
-
   return (
-    <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-black/85 p-4 py-8 backdrop-blur-sm sm:items-center">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/88 p-2 sm:p-4">
       <div
         role="dialog"
         aria-modal="true"
         aria-label={lore.name}
-        className={`relative w-full max-w-3xl rounded-2xl border-2 shadow-[0_0_90px_rgba(0,0,0,0.95)] ${
+        className={`etch etch-heavy flex max-h-[94dvh] w-[96vw] max-w-3xl flex-col ${
           shaking ? 'animate-shake' : ''
         }`}
         style={{
-          borderColor: shaking ? '#e23c55' : solved ? 'rgba(60,226,192,0.55)' : 'rgba(55,55,79,0.9)',
-          background:
-            'linear-gradient(160deg, #15151f 0%, #0d0d16 45%, #121019 100%)',
+          borderColor: shaking ? '#a82323' : solved ? '#1d4b3f' : undefined,
+          outlineColor: shaking
+            ? 'rgba(168,35,35,0.6)'
+            : solved
+              ? 'rgba(79,191,158,0.45)'
+              : undefined,
         }}
       >
-        {/* Carved stone edge highlight */}
-        <div
-          className="pointer-events-none absolute inset-0 rounded-2xl"
-          style={{
-            boxShadow: shaking
-              ? 'inset 0 0 70px rgba(226,60,85,0.25)'
-              : 'inset 0 1px 0 rgba(255,255,255,0.05), inset 0 0 60px rgba(0,0,0,0.6)',
-          }}
-        />
-
-        <header
-          className="relative flex items-start justify-between gap-4 border-b px-6 py-5"
-          style={{ borderColor: 'rgba(55,55,79,0.75)' }}
-        >
+        <header className="flex shrink-0 items-start justify-between gap-3 border-b-2 border-iron-2 px-3 py-2.5 compact:px-3 compact:py-1.5 sm:px-5 sm:py-3.5">
           <div className="min-w-0">
             <p
-              className="text-[10px] tracking-[0.35em] uppercase"
+              className="text-[9px] tracking-[0.3em] uppercase sm:text-[10px]"
               style={{ color: accentColor }}
             >
               {mechanic}
             </p>
-            <h2 className="text-gothic mt-1.5 text-2xl text-[#ead9b9]">{lore.name}</h2>
-            <p className="mt-1 text-sm text-[#8a83a0] italic">{lore.lore}</p>
+            <h2 className="font-display mt-1 truncate text-lg text-bone compact:mt-0 compact:text-base sm:text-2xl">
+              {lore.name}
+            </h2>
+            <p className="mt-0.5 hidden text-sm text-bone-dim italic compact:hidden sm:block">
+              {lore.lore}
+            </p>
           </div>
 
-          <div className="flex shrink-0 items-center gap-3">
+          <div className="flex shrink-0 items-center gap-2">
             {progress && (
-              <span className="hidden rounded-full border border-crypt-600 bg-crypt-950/70 px-3 py-1 text-xs text-[#9d96b0] sm:inline">
+              <span className="num hidden border border-brass-dim bg-ink px-2.5 py-1 text-[11px] text-brass sm:inline-block">
                 {progress}
               </span>
             )}
@@ -111,33 +103,36 @@ export default function PuzzleModalWrapper({
               type="button"
               onClick={onClose}
               aria-label="Step away from this relic"
-              className="rounded-md p-1.5 text-[#7b7490] transition hover:bg-crypt-700 hover:text-white"
+              className="btn btn-sm btn-icon btn-iron"
             >
-              <X size={18} />
+              <X size={16} />
             </button>
           </div>
         </header>
 
-        {feedback && tone && (
-          <div className={`relative mx-6 mt-5 flex items-start gap-2.5 rounded-lg border px-4 py-3 text-sm ${tone.border} ${tone.bg} ${tone.text}`}>
-            {feedback.tone === 'error' ? (
-              <AlertTriangle size={16} className="mt-0.5 shrink-0" />
-            ) : feedback.tone === 'success' ? (
-              <Gem size={16} className="mt-0.5 shrink-0" />
-            ) : (
-              <Info size={16} className="mt-0.5 shrink-0" />
-            )}
-            <span>{feedback.message}</span>
+        {feedback && (
+          <div className="shrink-0 px-3 pt-3 sm:px-5 sm:pt-4">
+            <div
+              className={`etch etch-flat flex items-start gap-2.5 px-3 py-2 text-[13px] leading-snug sm:text-sm ${TONE_STYLES[feedback.tone]}`}
+            >
+              {feedback.tone === 'error' ? (
+                <AlertTriangle size={15} className="mt-0.5 shrink-0" />
+              ) : feedback.tone === 'success' ? (
+                <Gem size={15} className="mt-0.5 shrink-0" />
+              ) : (
+                <Info size={15} className="mt-0.5 shrink-0" />
+              )}
+              <span>{feedback.message}</span>
+            </div>
           </div>
         )}
 
-        <div className="relative px-6 py-6">{children}</div>
+        <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain p-3 compact:p-2 sm:p-5">
+          {children}
+        </div>
 
         {footer && (
-          <footer
-            className="relative border-t px-6 py-4"
-            style={{ borderColor: 'rgba(55,55,79,0.75)' }}
-          >
+          <footer className="shrink-0 border-t-2 border-iron-2 p-3 compact:p-2 sm:p-4">
             {footer}
           </footer>
         )}
@@ -157,29 +152,26 @@ export function RuneAwardPanel({
   onClaim: () => void;
 }) {
   return (
-    <div className="space-y-5">
-      <div className="flex flex-col items-center gap-2 text-center">
-        <Gem size={34} className="animate-rune-pop text-rune-400" />
-        <p className="text-gothic text-xl text-rune-400">The relic yields.</p>
+    <div className="space-y-4">
+      <div className="flex flex-col items-center gap-1.5 text-center">
+        <Gem size={30} className="animate-rune-pop text-verdigris-lit" />
+        <p className="font-display text-lg text-verdigris-lit sm:text-xl">The relic yields.</p>
       </div>
 
-      <div className="space-y-2.5">
+      <div className="space-y-2">
         {takeaways.map((takeaway) => (
           <div
             key={takeaway.heading}
-            className="rounded-lg border border-crypt-600/80 bg-crypt-950/60 px-4 py-3"
+            className="etch etch-flat border-l-[3px] border-l-verdigris px-3 py-2.5"
           >
-            <p className="text-sm font-semibold text-[#d9d5e4]">{takeaway.heading}</p>
-            <p className="mt-1 text-sm leading-relaxed text-[#9d96b0]">{takeaway.body}</p>
+            <p className="text-sm font-semibold text-bone">{takeaway.heading}</p>
+            <p className="mt-0.5 text-sm leading-relaxed text-bone-dim">{takeaway.body}</p>
           </div>
         ))}
       </div>
 
-      <button
-        type="button"
-        onClick={onClaim}
-        className="w-full rounded-lg border border-rune-400/60 bg-rune-400/12 px-4 py-3 font-semibold text-rune-400 transition hover:bg-rune-400/22"
-      >
+      <button type="button" onClick={onClaim} className="btn btn-verd w-full">
+        <Gem size={16} />
         {buttonLabel}
       </button>
     </div>

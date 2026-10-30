@@ -35,6 +35,7 @@ import {
   loadLLMConfig,
   saveLLMConfig,
 } from '../services/llmService';
+import FullscreenButton from './FullscreenButton';
 
 const VILLAIN_ICONS: Record<VillainId, typeof Skull> = {
   dracula: Skull,
@@ -93,7 +94,9 @@ export default function SetupScreen({
     if (!doc) return null;
     const used = Math.min(doc.characterCount, MAX_STUDY_TEXT_LENGTH);
     const trimmed = doc.characterCount > MAX_STUDY_TEXT_LENGTH;
-    return `${used.toLocaleString()} characters${trimmed ? ' (trimmed from ' + doc.characterCount.toLocaleString() + ')' : ''}`;
+    return `${used.toLocaleString()} characters${
+      trimmed ? ` (trimmed from ${doc.characterCount.toLocaleString()})` : ''
+    }`;
   }, [doc]);
 
   const ingestFile = useCallback(async (file: File) => {
@@ -176,50 +179,65 @@ export default function SetupScreen({
   }, []);
 
   return (
-    <div className="fog-backdrop relative min-h-screen overflow-x-hidden px-5 py-10 sm:px-8">
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(226,60,85,0.08),transparent_55%)]" />
-
-      <div className="relative mx-auto flex w-full max-w-5xl flex-col gap-10">
+    <div className="fog-backdrop relative min-h-[100dvh] overflow-x-hidden px-4 py-6 sm:px-7 sm:py-10">
+      <div className="relative mx-auto flex w-full max-w-5xl flex-col gap-7">
+        {/* ---------------- Masthead ---------------- */}
         <header className="text-center">
-          <p className="text-xs tracking-[0.5em] text-blood-400/70 uppercase">
-            An anti-brainrot ritual
-          </p>
-          <h1 className="text-gothic mt-3 text-5xl font-black text-transparent sm:text-7xl bg-gradient-to-b from-[#ffe9ec] via-[#e23c55] to-[#6d0d1c] bg-clip-text drop-shadow-[0_0_35px_rgba(194,33,58,0.35)]">
+          <div className="rule-orn mx-auto max-w-sm">
+            <span className="label-etched whitespace-nowrap">An Anti-Brainrot Ritual</span>
+          </div>
+
+          <h1
+            className="font-display mt-4 text-[clamp(2.6rem,10vw,5.5rem)] leading-[0.92] text-bone"
+            style={{
+              textShadow:
+                '0 2px 0 #3a0d0d, 5px 5px 0 #040306, 0 0 44px rgba(168,35,35,0.42)',
+              letterSpacing: '0.04em',
+            }}
+          >
             DRACUPLOT
           </h1>
-          <p className="mx-auto mt-4 max-w-2xl text-lg text-[#b9b2c9] italic">
+
+          <p className="mx-auto mt-3 max-w-2xl text-bone-dim italic">
             Feed it the PDF you have been avoiding. It becomes a gothic escape room where the only
             way out is actually knowing the material.
           </p>
-          <button
-            type="button"
-            onClick={() => setSettingsOpen(true)}
-            className="mt-5 inline-flex items-center gap-2 rounded-full border border-crypt-500/70 bg-crypt-800/70 px-4 py-2 text-sm text-[#c9c3d6] transition hover:border-blood-400/70 hover:text-white"
-          >
-            <Settings2 size={15} />
-            Conjuration Settings
-            <span
-              className={`ml-1 rounded-full px-2 py-0.5 text-[10px] tracking-wider uppercase ${
-                hasKey ? 'bg-rune-400/15 text-rune-400' : 'bg-blood-500/20 text-blood-400'
-              }`}
+
+          <div className="mt-5 flex flex-wrap items-center justify-center gap-2.5">
+            <button
+              type="button"
+              onClick={() => setSettingsOpen(true)}
+              className="btn btn-sm btn-iron"
             >
-              {hasKey ? preset.label.split(' ')[0] + ' ready' : 'no key'}
-            </span>
-          </button>
+              <Settings2 size={14} />
+              Conjuration Settings
+              <span
+                className={`ml-1 border px-1.5 py-0.5 text-[9px] tracking-widest uppercase ${
+                  hasKey
+                    ? 'border-verdigris text-verdigris-lit'
+                    : 'border-blood text-blood-glow'
+                }`}
+              >
+                {hasKey ? 'key set' : 'no key'}
+              </span>
+            </button>
+            <FullscreenButton />
+          </div>
         </header>
 
-        <section className="rounded-2xl border border-crypt-600/80 bg-crypt-900/70 p-6 shadow-[0_0_60px_rgba(0,0,0,0.6)] backdrop-blur-sm">
-          <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
-            <h2 className="text-gothic flex items-center gap-2 text-xl text-[#ead9b9]">
-              <BookOpenText size={18} className="text-ember-400" />
+        {/* ---------------- I. Study material ---------------- */}
+        <section className="etch etch-brass bracket p-4 sm:p-5">
+          <div className="mb-3.5 flex flex-wrap items-center justify-between gap-3">
+            <h2 className="font-display flex items-center gap-2 text-xl text-bone">
+              <BookOpenText size={17} className="text-brass" />
               I. Offer Your Study Material
             </h2>
             <button
               type="button"
               onClick={() => setPasteMode((value) => !value)}
-              className="inline-flex items-center gap-2 text-sm text-[#9b93ad] transition hover:text-ember-400"
+              className="flex items-center gap-2 text-sm text-bone-faint transition hover:text-brass"
             >
-              <ClipboardType size={15} />
+              <ClipboardType size={14} />
               {pasteMode ? 'Use a file instead' : 'Paste raw text instead'}
             </button>
           </div>
@@ -230,14 +248,14 @@ export default function SetupScreen({
                 value={pastedText}
                 onChange={(event) => setPastedText(event.target.value)}
                 placeholder="Paste lecture notes, a chapter, or an article here (200+ characters)…"
-                rows={8}
-                className="w-full resize-y rounded-xl border border-crypt-600 bg-crypt-950/80 p-4 font-mono text-sm text-[#d9d5e4] outline-none transition focus:border-ember-400/70"
+                rows={7}
+                className="field resize-y text-sm"
               />
               <button
                 type="button"
                 onClick={applyPastedText}
                 disabled={pastedText.trim().length < 200}
-                className="rounded-lg border border-ember-400/50 bg-ember-400/10 px-4 py-2 text-sm text-ember-400 transition hover:bg-ember-400/20 disabled:cursor-not-allowed disabled:opacity-40"
+                className="btn btn-sm"
               >
                 Seal this text into the grimoire
               </button>
@@ -256,18 +274,17 @@ export default function SetupScreen({
               onDragOver={(event) => event.preventDefault()}
               onDrop={handleDrop}
               onClick={() => fileInputRef.current?.click()}
-              className={`flex cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed px-6 py-12 text-center transition ${
+              className={`bracket flex cursor-pointer flex-col items-center justify-center border-2 border-dashed px-5 py-9 text-center transition ${
                 isDragging
-                  ? 'border-ember-400 bg-ember-400/10'
-                  : 'border-crypt-500/80 bg-crypt-950/50 hover:border-blood-400/60 hover:bg-crypt-800/40'
+                  ? 'border-brass bg-brass/8'
+                  : 'border-iron-2 bg-ink/60 hover:border-brass-dim'
               }`}
             >
-              <Upload size={30} className={isDragging ? 'text-ember-400' : 'text-[#6f6880]'} />
-              <p className="mt-3 text-[#d9d5e4]">
-                Drag a <span className="text-ember-400">PDF</span> into the crypt, or click to
-                choose
+              <Upload size={26} className={isDragging ? 'text-brass-lit' : 'text-bone-faint'} />
+              <p className="mt-2.5 text-bone">
+                Drag a <span className="text-brass">PDF</span> into the crypt, or tap to choose
               </p>
-              <p className="mt-1 text-sm text-[#7b7490]">
+              <p className="mt-1 text-sm text-bone-faint">
                 .pdf, .txt and .md are accepted — parsed entirely in your browser
               </p>
               <input
@@ -284,11 +301,11 @@ export default function SetupScreen({
           )}
 
           {doc && (
-            <div className="mt-4 flex items-start gap-3 rounded-xl border border-rune-400/30 bg-rune-400/5 p-4">
-              <FileText size={18} className="mt-0.5 shrink-0 text-rune-400" />
+            <div className="etch etch-verd etch-flat mt-3.5 flex items-start gap-3 p-3">
+              <FileText size={17} className="mt-0.5 shrink-0 text-verdigris-lit" />
               <div className="min-w-0 flex-1">
-                <p className="truncate font-semibold text-[#e6e2ef]">{doc.title}</p>
-                <p className="text-sm text-[#8d86a1]">
+                <p className="truncate font-semibold text-bone">{doc.title}</p>
+                <p className="num text-xs text-bone-faint">
                   {doc.pageCount} page{doc.pageCount === 1 ? '' : 's'} · {charCountLabel}
                 </p>
               </div>
@@ -296,27 +313,29 @@ export default function SetupScreen({
                 type="button"
                 onClick={clearDocument}
                 aria-label="Discard this document"
-                className="shrink-0 rounded-md p-1.5 text-[#7b7490] transition hover:bg-blood-500/15 hover:text-blood-400"
+                className="btn btn-sm btn-icon btn-iron"
               >
-                <Trash2 size={16} />
+                <Trash2 size={14} />
               </button>
             </div>
           )}
 
           {error && (
-            <div className="mt-4 flex items-start gap-3 rounded-xl border border-blood-500/40 bg-blood-500/10 p-4 text-sm text-[#f2c3ca]">
-              <AlertTriangle size={17} className="mt-0.5 shrink-0 text-blood-400" />
+            <div className="etch etch-blood etch-flat mt-3.5 flex items-start gap-2.5 p-3 text-sm text-[#f0c8c4]">
+              <AlertTriangle size={16} className="mt-0.5 shrink-0 text-blood-glow" />
               <span>{error}</span>
             </div>
           )}
         </section>
 
+        {/* ---------------- II. Villain ---------------- */}
         <section>
-          <h2 className="text-gothic mb-4 flex items-center gap-2 text-xl text-[#ead9b9]">
-            <Skull size={18} className="text-blood-400" />
+          <h2 className="font-display mb-3.5 flex items-center gap-2 text-xl text-bone">
+            <Skull size={17} className="text-blood-glow" />
             II. Choose What Hunts You
           </h2>
-          <div className="grid gap-4 sm:grid-cols-3">
+
+          <div className="grid gap-3.5 sm:grid-cols-3">
             {VILLAIN_LIST.map((villain) => {
               const Icon = VILLAIN_ICONS[villain.id];
               const selected = villain.id === villainId;
@@ -326,56 +345,53 @@ export default function SetupScreen({
                   key={villain.id}
                   type="button"
                   onClick={() => setVillainId(villain.id)}
-                  style={
-                    selected
-                      ? {
-                          borderColor: villain.accentColor,
-                          boxShadow: `0 0 35px -8px ${villain.accentColor}`,
-                        }
-                      : undefined
-                  }
-                  className={`group relative flex flex-col rounded-2xl border p-5 text-left transition ${
-                    selected
-                      ? 'bg-crypt-800/90'
-                      : 'border-crypt-600/70 bg-crypt-900/60 hover:border-crypt-500 hover:bg-crypt-800/60'
+                  style={{
+                    borderColor: selected ? villain.accentColor : undefined,
+                    outlineColor: selected ? `${villain.accentColor}80` : undefined,
+                  }}
+                  className={`etch bracket chamfer woodcut relative flex flex-col p-4 text-left transition ${
+                    selected ? '' : 'hover:border-iron-2'
                   }`}
                 >
                   {selected && (
                     <span
-                      className="absolute top-4 right-4 rounded-full p-1"
-                      style={{ background: `${villain.accentColor}26`, color: villain.accentColor }}
+                      className="absolute top-3 right-3 border p-1"
+                      style={{ borderColor: villain.accentColor, color: villain.accentColor }}
                     >
-                      <Check size={14} />
+                      <Check size={11} />
                     </span>
                   )}
+
                   <Icon
-                    size={30}
+                    size={27}
                     className={selected ? 'animate-flicker' : 'opacity-70'}
                     style={{ color: villain.accentColor }}
                   />
-                  <h3 className="text-gothic mt-3 text-lg text-[#f0ebf7]">{villain.name}</h3>
+
+                  <h3 className="font-display mt-2.5 text-lg text-bone">{villain.name}</h3>
                   <p
-                    className="text-xs tracking-[0.2em] uppercase"
+                    className="text-[10px] tracking-[0.22em] uppercase"
                     style={{ color: villain.accentColor }}
                   >
                     {villain.title}
                   </p>
-                  <p className="mt-3 text-sm leading-relaxed text-[#9d96b0]">
-                    {villain.description}
-                  </p>
-                  <dl className="mt-4 space-y-1 border-t border-crypt-600/60 pt-3 text-xs">
-                    <div className="flex justify-between text-[#8a83a0]">
-                      <dt>Passive tick</dt>
-                      <dd className="text-[#d9d5e4]">
-                        +{villain.passiveThreatPerSecond}%/s (~{maxMinutes} min)
+
+                  <p className="mt-2.5 text-sm leading-snug text-bone-dim">{villain.description}</p>
+
+                  <dl className="mt-3 space-y-1 border-t border-iron pt-2.5 text-xs">
+                    <div className="flex justify-between gap-2">
+                      <dt className="text-bone-faint">Passive tick</dt>
+                      <dd className="num text-bone">
+                        +{villain.passiveThreatPerSecond}%/s · ~{maxMinutes}m
                       </dd>
                     </div>
-                    <div className="flex justify-between text-[#8a83a0]">
-                      <dt>Mistake penalty</dt>
-                      <dd className="text-[#d9d5e4]">+{villain.wrongAnswerPenalty}%</dd>
+                    <div className="flex justify-between gap-2">
+                      <dt className="text-bone-faint">Mistake</dt>
+                      <dd className="num text-bone">+{villain.wrongAnswerPenalty}%</dd>
                     </div>
                   </dl>
-                  <p className="mt-3 text-xs leading-relaxed text-[#7b7490] italic">
+
+                  <p className="mt-2.5 text-xs leading-snug text-bone-faint italic">
                     {villain.specialEffect}
                   </p>
                 </button>
@@ -384,106 +400,93 @@ export default function SetupScreen({
           </div>
         </section>
 
-        <section className="flex flex-col items-center gap-4 pb-6">
+        {/* ---------------- Actions ---------------- */}
+        <section className="flex flex-col items-center gap-3.5 pb-4">
           <button
             type="button"
             onClick={() => void summon()}
             disabled={!canSummon}
-            className="group relative w-full max-w-xl overflow-hidden rounded-xl border border-blood-400/60 bg-gradient-to-r from-[#6d0d1c] via-[#c2213a] to-[#6d0d1c] px-8 py-4 text-lg font-bold tracking-wide text-white shadow-[0_0_40px_-10px_rgba(226,60,85,0.8)] transition hover:brightness-115 disabled:cursor-not-allowed disabled:border-crypt-600 disabled:from-crypt-800 disabled:via-crypt-700 disabled:to-crypt-800 disabled:text-[#6f6880] disabled:shadow-none"
+            className="btn btn-blood w-full max-w-xl py-4 text-base"
           >
-            <span className="flex items-center justify-center gap-3">
-              <Wand2 size={20} />
-              Summon the Escape Room (Generate from PDF)
-            </span>
+            <Wand2 size={18} />
+            Summon the Escape Room (Generate from PDF)
           </button>
 
           {!canSummon && (
-            <p className="text-center text-sm text-[#7b7490]">
+            <p className="text-center text-sm text-bone-faint">
               {studyText.length === 0
                 ? 'Offer a document above to unlock the summoning.'
                 : 'Add an API key in Conjuration Settings to summon from your own material.'}
             </p>
           )}
 
-          <div className="flex w-full max-w-xl items-center gap-4 text-xs tracking-[0.3em] text-[#5d5770] uppercase">
-            <span className="h-px flex-1 bg-crypt-600" />
-            or
-            <span className="h-px flex-1 bg-crypt-600" />
+          <div className="rule-orn w-full max-w-xl">
+            <span className="label-etched">or</span>
           </div>
 
-          <button
-            type="button"
-            onClick={playDemo}
-            className="inline-flex items-center gap-3 rounded-xl border border-rune-400/50 bg-rune-400/10 px-7 py-3.5 font-semibold text-rune-400 transition hover:bg-rune-400/20"
-          >
-            <Sparkles size={18} />
+          <button type="button" onClick={playDemo} className="btn btn-verd">
+            <Sparkles size={17} />
             Play Haunted Demo (No API Key Needed)
           </button>
-          <p className="max-w-md text-center text-xs text-[#6f6880]">
+
+          <p className="max-w-md text-center text-xs text-bone-faint">
             The demo runs a pre-built room on neural network architecture and AI cognitive atrophy.
           </p>
         </section>
       </div>
 
+      {/* ---------------- Settings ---------------- */}
       {settingsOpen && (
         <div
-          className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-black/80 p-4 py-10 backdrop-blur-sm"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/88 p-3"
           onClick={() => setSettingsOpen(false)}
         >
           <div
-            className="w-full max-w-lg rounded-2xl border border-crypt-500/80 bg-crypt-900 p-6 shadow-[0_0_80px_rgba(0,0,0,0.9)]"
+            className="etch etch-brass etch-heavy bracket flex max-h-[92dvh] w-full max-w-lg flex-col"
             onClick={(event) => event.stopPropagation()}
           >
-            <div className="mb-5 flex items-start justify-between gap-4">
+            <div className="flex shrink-0 items-start justify-between gap-4 border-b-2 border-iron-2 px-4 py-3">
               <div>
-                <h3 className="text-gothic flex items-center gap-2 text-xl text-[#ead9b9]">
-                  <KeyRound size={18} className="text-ember-400" />
+                <h3 className="font-display flex items-center gap-2 text-xl text-bone">
+                  <KeyRound size={17} className="text-brass" />
                   Conjuration Settings
                 </h3>
-                <p className="mt-1 text-sm text-[#8a83a0]">
-                  Keys are stored only in this browser's localStorage and sent straight to your
-                  provider.
+                <p className="mt-0.5 text-sm text-bone-faint">
+                  Keys live only in this browser and are sent straight to your provider.
                 </p>
               </div>
               <button
                 type="button"
                 onClick={() => setSettingsOpen(false)}
                 aria-label="Close settings"
-                className="rounded-md p-1.5 text-[#7b7490] transition hover:bg-crypt-700 hover:text-white"
+                className="btn btn-sm btn-icon btn-iron"
               >
-                <X size={18} />
+                <X size={16} />
               </button>
             </div>
 
-            <div className="space-y-5">
+            <div className="min-h-0 flex-1 space-y-4 overflow-y-auto p-4">
               <div>
-                <label className="mb-2 block text-xs tracking-[0.2em] text-[#8a83a0] uppercase">
-                  Provider
-                </label>
-                <div className="grid gap-2">
+                <span className="label-etched mb-2 block">Provider</span>
+                <div className="grid gap-1.5">
                   {PROVIDER_ORDER.map((provider) => (
                     <button
                       key={provider}
                       type="button"
                       onClick={() => updateProvider(provider)}
-                      className={`rounded-lg border px-4 py-2.5 text-left text-sm transition ${
-                        config.provider === provider
-                          ? 'border-ember-400/70 bg-ember-400/10 text-[#f3e3c6]'
-                          : 'border-crypt-600 bg-crypt-950/60 text-[#9d96b0] hover:border-crypt-500'
+                      className={`btn btn-sm justify-start ${
+                        config.provider === provider ? '' : 'btn-iron'
                       }`}
                     >
                       {PROVIDER_PRESETS[provider].label}
                     </button>
                   ))}
                 </div>
-                <p className="mt-2 text-xs text-[#6f6880]">{preset.keyHint}</p>
+                <p className="mt-2 text-xs text-bone-faint">{preset.keyHint}</p>
               </div>
 
               <div>
-                <label
-                  htmlFor="dracuplot-api-key"
-                  className="mb-2 block text-xs tracking-[0.2em] text-[#8a83a0] uppercase"
-                >
+                <label htmlFor="dracuplot-api-key" className="label-etched mb-2 block">
                   API Key
                 </label>
                 <div className="relative">
@@ -497,24 +500,21 @@ export default function SetupScreen({
                     placeholder="sk-… / AIza…"
                     autoComplete="off"
                     spellCheck={false}
-                    className="w-full rounded-lg border border-crypt-600 bg-crypt-950/80 px-4 py-2.5 pr-11 font-mono text-sm text-[#d9d5e4] outline-none transition focus:border-ember-400/70"
+                    className="field num pr-11 text-sm"
                   />
                   <button
                     type="button"
                     onClick={() => setShowKey((value) => !value)}
                     aria-label={showKey ? 'Hide API key' : 'Show API key'}
-                    className="absolute top-1/2 right-2 -translate-y-1/2 rounded p-1.5 text-[#7b7490] transition hover:text-[#d9d5e4]"
+                    className="absolute top-1/2 right-2 -translate-y-1/2 p-1.5 text-bone-faint transition hover:text-bone"
                   >
-                    {showKey ? <EyeOff size={16} /> : <Eye size={16} />}
+                    {showKey ? <EyeOff size={15} /> : <Eye size={15} />}
                   </button>
                 </div>
               </div>
 
               <div>
-                <label
-                  htmlFor="dracuplot-model"
-                  className="mb-2 block text-xs tracking-[0.2em] text-[#8a83a0] uppercase"
-                >
+                <label htmlFor="dracuplot-model" className="label-etched mb-2 block">
                   Model
                 </label>
                 <input
@@ -525,16 +525,13 @@ export default function SetupScreen({
                     setConfig((previous) => ({ ...previous, model: event.target.value }))
                   }
                   spellCheck={false}
-                  className="w-full rounded-lg border border-crypt-600 bg-crypt-950/80 px-4 py-2.5 font-mono text-sm text-[#d9d5e4] outline-none transition focus:border-ember-400/70"
+                  className="field num text-sm"
                 />
               </div>
 
               {config.provider === 'openai_compatible' && (
                 <div>
-                  <label
-                    htmlFor="dracuplot-base-url"
-                    className="mb-2 block text-xs tracking-[0.2em] text-[#8a83a0] uppercase"
-                  >
+                  <label htmlFor="dracuplot-base-url" className="label-etched mb-2 block">
                     Base URL
                   </label>
                   <input
@@ -545,15 +542,15 @@ export default function SetupScreen({
                       setConfig((previous) => ({ ...previous, baseUrl: event.target.value }))
                     }
                     spellCheck={false}
-                    className="w-full rounded-lg border border-crypt-600 bg-crypt-950/80 px-4 py-2.5 font-mono text-sm text-[#d9d5e4] outline-none transition focus:border-ember-400/70"
+                    className="field num text-sm"
                   />
-                  <div className="mt-2 flex flex-wrap gap-2">
+                  <div className="mt-2 flex flex-wrap gap-1.5">
                     {BASE_URL_SUGGESTIONS.map((url) => (
                       <button
                         key={url}
                         type="button"
                         onClick={() => setConfig((previous) => ({ ...previous, baseUrl: url }))}
-                        className="rounded-full border border-crypt-600 px-3 py-1 font-mono text-[11px] text-[#8a83a0] transition hover:border-ember-400/60 hover:text-ember-400"
+                        className="num border border-iron-2 px-2 py-1 text-[10px] text-bone-faint transition hover:border-brass-dim hover:text-brass"
                       >
                         {url.replace(/^https?:\/\//, '')}
                       </button>
@@ -563,13 +560,15 @@ export default function SetupScreen({
               )}
             </div>
 
-            <button
-              type="button"
-              onClick={() => setSettingsOpen(false)}
-              className="mt-6 w-full rounded-lg border border-ember-400/50 bg-ember-400/10 px-4 py-2.5 font-semibold text-ember-400 transition hover:bg-ember-400/20"
-            >
-              Seal the Pact
-            </button>
+            <div className="shrink-0 border-t-2 border-iron-2 p-3">
+              <button
+                type="button"
+                onClick={() => setSettingsOpen(false)}
+                className="btn w-full"
+              >
+                Seal the Pact
+              </button>
+            </div>
           </div>
         </div>
       )}

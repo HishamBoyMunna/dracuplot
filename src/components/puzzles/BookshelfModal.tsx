@@ -91,16 +91,16 @@ export default function BookshelfModal({
           onClaim={onSolve}
         />
       ) : (
-        <div className="space-y-5">
-          <p className="text-sm text-[#9d96b0]">
+        <div className="space-y-3.5">
+          <p className="hidden text-sm text-bone-dim compact:hidden sm:block">
             Pick a scattered term, then the passage that defines it. Bind all four and the shelf
             surrenders its rune.
           </p>
 
-          <div className="grid gap-4 md:grid-cols-2">
-            <div className="space-y-2.5">
-              <h3 className="flex items-center gap-2 text-xs tracking-[0.25em] text-[#7b7490] uppercase">
-                <BookMarked size={13} />
+          <div className="grid gap-3 md:grid-cols-2 landscape:grid-cols-2">
+            <div className="space-y-2">
+              <h3 className="label-etched flex items-center gap-2">
+                <BookMarked size={12} />
                 Scattered tomes
               </h3>
               {terms.map((term, position) => {
@@ -113,33 +113,33 @@ export default function BookshelfModal({
                     type="button"
                     disabled={isBound}
                     onClick={() => selectTerm(term.index)}
-                    className={`flex w-full items-center gap-3 rounded-lg border px-4 py-3 text-left text-sm transition ${
+                    className={`etch etch-flat flex w-full items-center gap-2.5 px-3 py-2.5 text-left text-sm transition ${
                       isBound
-                        ? 'cursor-default border-rune-400/50 bg-rune-400/10 text-rune-400'
+                        ? 'etch-verd cursor-default text-verdigris-lit'
                         : isWrong
-                          ? 'border-blood-500/70 bg-blood-500/12 text-[#f4c6cd]'
+                          ? 'etch-blood text-[#f0c8c4]'
                           : isSelected
-                            ? 'border-ember-400/80 bg-ember-400/12 text-[#f3e3c6]'
-                            : 'border-crypt-600 bg-crypt-950/60 text-[#cfc9dd] hover:border-crypt-500 hover:bg-crypt-800/60'
+                            ? 'etch-brass text-brass-lit'
+                            : 'text-bone hover:border-iron-2'
                     }`}
                   >
                     <span
-                      className="h-7 w-2 shrink-0 rounded-sm"
+                      className="h-6 w-[7px] shrink-0 border border-black/60"
                       style={{
-                        background: isBound ? '#3ce2c0' : SPINE_COLORS[position % SPINE_COLORS.length],
+                        background: isBound
+                          ? '#4fbf9e'
+                          : SPINE_COLORS[position % SPINE_COLORS.length],
                       }}
                     />
                     <span className="font-semibold">{term.text}</span>
-                    {isBound && <Link2 size={14} className="ml-auto shrink-0" />}
+                    {isBound && <Link2 size={13} className="ml-auto shrink-0" />}
                   </button>
                 );
               })}
             </div>
 
-            <div className="space-y-2.5">
-              <h3 className="text-xs tracking-[0.25em] text-[#7b7490] uppercase">
-                Unbound passages
-              </h3>
+            <div className="space-y-2">
+              <h3 className="label-etched">Unbound passages</h3>
               {definitions.map((definition) => {
                 const isBound = bound.has(definition.index);
                 const isWrong = wrongPair?.definition === definition.index;
@@ -149,12 +149,12 @@ export default function BookshelfModal({
                     type="button"
                     disabled={isBound}
                     onClick={() => selectDefinition(definition.index)}
-                    className={`w-full rounded-lg border px-4 py-3 text-left text-sm leading-relaxed transition ${
+                    className={`etch etch-flat w-full px-3 py-2.5 text-left text-sm leading-snug transition ${
                       isBound
-                        ? 'cursor-default border-rune-400/50 bg-rune-400/10 text-rune-400'
+                        ? 'etch-verd cursor-default text-verdigris-lit'
                         : isWrong
-                          ? 'border-blood-500/70 bg-blood-500/12 text-[#f4c6cd]'
-                          : 'border-crypt-600 bg-crypt-950/60 text-[#b7b1c6] hover:border-crypt-500 hover:bg-crypt-800/60'
+                          ? 'etch-blood text-[#f0c8c4]'
+                          : 'text-bone-dim hover:border-iron-2 hover:text-bone'
                     }`}
                   >
                     {isBound ? `${pairs[definition.index].term} — ${definition.text}` : definition.text}

@@ -82,29 +82,26 @@ export default function SafeModal({
           onClaim={onSolve}
         />
       ) : (
-        <div className="grid gap-6 lg:grid-cols-[1fr_230px]">
-          <div className="space-y-3">
-            <p className="text-sm text-[#9d96b0]">
+        <div className="grid gap-4 landscape:grid-cols-[1fr_200px] md:grid-cols-[1fr_210px]">
+          <div className="space-y-2">
+            <p className="hidden text-sm text-bone-dim compact:hidden sm:block">
               Answer each question, then punch its option number into the dial. Four questions, four
               digits, in order.
             </p>
 
             {questions.map((question, index) => (
-              <div
-                key={question.q}
-                className="rounded-lg border border-crypt-600 bg-crypt-950/60 p-4"
-              >
-                <p className="text-sm font-semibold text-[#d9d5e4]">
-                  <span className="mr-2 text-ember-400">Q{index + 1}.</span>
+              <div key={question.q} className="etch etch-flat p-2.5">
+                <p className="text-[13px] font-semibold text-bone sm:text-sm">
+                  <span className="font-display mr-1.5 text-brass">Q{index + 1}.</span>
                   {question.q}
                 </p>
-                <ul className="mt-2.5 space-y-1.5">
+                <ul className="mt-2 space-y-1">
                   {question.options.map((option, optionIndex) => (
                     <li
                       key={option}
-                      className="flex items-start gap-2.5 text-sm leading-relaxed text-[#b7b1c6]"
+                      className="flex items-start gap-2 text-[13px] leading-snug text-bone-dim"
                     >
-                      <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded border border-crypt-500 text-[11px] font-bold text-[#8a83a0]">
+                      <span className="num mt-px flex h-[18px] w-[18px] shrink-0 items-center justify-center border border-iron-2 text-[10px] text-brass-dim">
                         {optionIndex + 1}
                       </span>
                       {option}
@@ -115,28 +112,26 @@ export default function SafeModal({
             ))}
           </div>
 
-          {/* Brass keypad */}
+          {/* Brass keypad bolted to the vault door */}
           <div
-            className="h-fit rounded-xl border-2 p-4 lg:sticky lg:top-4"
-            style={{
-              borderColor: 'rgba(201,154,63,0.45)',
-              background: 'linear-gradient(165deg, #241f16 0%, #15120d 100%)',
-              boxShadow: 'inset 0 1px 0 rgba(255,220,150,0.12)',
-            }}
+            className="etch etch-brass bracket h-fit p-2.5 compact:p-1.5 landscape:sticky landscape:top-0"
+            style={{ background: 'linear-gradient(168deg, #2a2117 0%, #130f0a 100%)' }}
           >
-            {/* Rune indicator lights */}
-            <div className="mb-4 flex justify-center gap-2.5">
+            {/* Rune indicator lamps */}
+            <div className="mb-3 flex justify-center gap-1.5 compact:mb-1.5">
               {questions.map((question, index) => {
                 const filled = index < entry.length;
                 return (
                   <div
                     key={question.q}
-                    className="flex h-11 w-11 items-center justify-center rounded-md border font-mono text-lg font-bold transition"
+                    className="num chamfer-sm flex h-9 w-9 items-center justify-center border-2 text-base font-bold transition compact:h-7 compact:w-7 compact:text-sm"
                     style={{
-                      borderColor: filled ? 'rgba(60,226,192,0.7)' : 'rgba(201,154,63,0.3)',
-                      background: filled ? 'rgba(60,226,192,0.12)' : 'rgba(0,0,0,0.5)',
-                      color: filled ? '#3ce2c0' : '#4a4234',
-                      boxShadow: filled ? '0 0 14px rgba(60,226,192,0.35)' : 'none',
+                      borderColor: filled ? '#1d4b3f' : '#4a3b22',
+                      background: filled ? 'rgba(79,191,158,0.12)' : '#070509',
+                      color: filled ? '#4fbf9e' : '#3f382c',
+                      boxShadow: filled
+                        ? '0 0 12px rgba(79,191,158,0.45), inset 0 0 8px rgba(79,191,158,0.18)'
+                        : 'inset 2px 2px 5px rgba(0,0,0,0.9)',
                     }}
                   >
                     {filled ? entry[index] : '·'}
@@ -145,13 +140,13 @@ export default function SafeModal({
               })}
             </div>
 
-            <div className="grid grid-cols-3 gap-2">
+            <div className="grid grid-cols-3 gap-1.5 compact:gap-1">
               {KEYS.map((key) => (
                 <button
                   key={key}
                   type="button"
                   onClick={() => press(key)}
-                  className="rounded-md border border-[#6b5a32] bg-gradient-to-b from-[#4a3d22] to-[#2c2415] py-2.5 font-mono text-lg font-bold text-[#f0d79a] transition hover:from-[#5c4b29] hover:to-[#372d19] active:translate-y-px"
+                  className="btn num chamfer-sm px-0 py-2 text-base compact:py-1 compact:text-sm"
                 >
                   {key}
                 </button>
@@ -165,15 +160,15 @@ export default function SafeModal({
                   setEntry('');
                 }}
                 aria-label="Clear the dial"
-                className="flex items-center justify-center rounded-md border border-blood-500/50 bg-blood-500/10 py-2.5 text-blood-400 transition hover:bg-blood-500/20 active:translate-y-px"
+                className="btn btn-blood chamfer-sm px-0 py-2 compact:py-1"
               >
-                <Delete size={17} />
+                <Delete size={16} />
               </button>
 
               <button
                 type="button"
                 onClick={() => press('0')}
-                className="rounded-md border border-[#6b5a32] bg-gradient-to-b from-[#4a3d22] to-[#2c2415] py-2.5 font-mono text-lg font-bold text-[#f0d79a] transition hover:from-[#5c4b29] hover:to-[#372d19] active:translate-y-px"
+                className="btn num chamfer-sm px-0 py-2 text-base compact:py-1 compact:text-sm"
               >
                 0
               </button>
@@ -182,15 +177,13 @@ export default function SafeModal({
                 type="button"
                 onClick={unlock}
                 aria-label="Unlock the safe"
-                className="flex items-center justify-center rounded-md border border-rune-400/60 bg-rune-400/12 py-2.5 text-rune-400 transition hover:bg-rune-400/22 active:translate-y-px"
+                className="btn btn-verd chamfer-sm px-0 py-2 compact:py-1"
               >
-                <LockKeyhole size={17} />
+                <LockKeyhole size={16} />
               </button>
             </div>
 
-            <p className="mt-3 text-center text-[10px] tracking-[0.2em] text-[#6b5f45] uppercase">
-              Clear · 0 · Unlock
-            </p>
+            <p className="label-etched mt-2.5 text-center text-[9px] compact:hidden">Clear · 0 · Unlock</p>
           </div>
         </div>
       )}

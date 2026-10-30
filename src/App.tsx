@@ -4,6 +4,8 @@ import SetupScreen from './components/SetupScreen';
 import EscapeRoomCanvas from './components/EscapeRoomCanvas';
 import TopHud from './components/TopHud';
 import EndgameModal from './components/EndgameModal';
+import OrientationGate from './components/OrientationGate';
+import { useIsPortraitPhone } from './hooks/useOrientation';
 import BookshelfModal from './components/puzzles/BookshelfModal';
 import ClockModal from './components/puzzles/ClockModal';
 import ScaleModal from './components/puzzles/ScaleModal';
@@ -49,6 +51,7 @@ export default function App() {
   const quakeTimer = useRef<number | null>(null);
   const threatRef = useRef(0);
   const villain = VILLAINS[villainId];
+  const portraitPhone = useIsPortraitPhone();
 
   /** Single funnel for threat so the catch condition is checked exactly once. */
   const addThreat = useCallback((amount: number) => {
@@ -196,24 +199,28 @@ export default function App() {
     }
   };
 
+  if (portraitPhone) return <OrientationGate />;
+
   if ((phase === 'PLAYING' || phase === 'WON' || phase === 'LOST') && gameData) {
     const over = phase === 'WON' || phase === 'LOST';
 
     return (
       <div
-        className={`fog-backdrop min-h-screen px-4 py-5 sm:px-6 ${quaking ? 'animate-quake' : ''}`}
+        className={`fog-backdrop flex h-[100dvh] w-screen flex-col overflow-hidden bg-ink p-2 compact:p-1 sm:p-3 ${
+          quaking ? 'animate-quake' : ''
+        }`}
       >
-        <div className="mx-auto flex w-full max-w-[900px] flex-col gap-4">
-          <div className="flex items-center justify-between gap-3">
+        <div className="mx-auto flex min-h-0 w-full max-w-[1000px] flex-1 flex-col gap-2 compact:gap-1">
+          <div className="flex shrink-0 items-center justify-between gap-3 compact:hidden">
             <button
               type="button"
               onClick={handleExit}
-              className="inline-flex items-center gap-2 text-sm text-[#8a83a0] transition hover:text-ember-400"
+              className="flex items-center gap-2 text-sm text-bone-faint transition hover:text-brass"
             >
-              <ArrowLeft size={15} />
+              <ArrowLeft size={14} />
               Abandon the study
             </button>
-            <p className="truncate text-xs text-[#5d5770] italic">{gameData.documentTitle}</p>
+            <p className="truncate text-xs text-bone-faint italic">{gameData.documentTitle}</p>
           </div>
 
           <TopHud
@@ -235,7 +242,7 @@ export default function App() {
             onInteractProp={setActiveProp}
           />
 
-          <footer className="rounded-xl border border-crypt-600/70 bg-crypt-900/60 px-4 py-3 text-xs text-[#7b7490]">
+          <footer className="shrink-0 truncate text-center text-[11px] text-bone-faint italic compact:hidden">
             {villain.specialEffect}
           </footer>
         </div>
@@ -274,15 +281,15 @@ export default function App() {
       />
 
       {phase === 'LOADING' && (
-        <div className="fog-backdrop fixed inset-0 z-[60] flex flex-col items-center justify-center gap-6 bg-crypt-950/95 px-6 text-center backdrop-blur-sm">
-          <Loader2 size={44} className="animate-spin text-blood-400" />
-          <h2 className="text-gothic animate-flicker text-2xl text-[#ead9b9] sm:text-3xl">
+        <div className="fog-backdrop fixed inset-0 z-[60] flex h-[100dvh] flex-col items-center justify-center gap-5 bg-ink/97 px-6 text-center">
+          <Loader2 size={40} className="animate-spin text-blood-glow" />
+          <h2 className="font-display animate-flicker text-2xl text-bone sm:text-3xl">
             The Game Master is reading…
           </h2>
-          <p className="max-w-md text-[#9d96b0] italic">{loadingMessage}</p>
-          <p className="text-xs tracking-[0.3em] text-[#5d5770] uppercase">
-            Six trials · Six Elder Runes · One way out
-          </p>
+          <p className="max-w-md text-bone-dim italic">{loadingMessage}</p>
+          <div className="rule-orn w-72">
+            <span className="label-etched whitespace-nowrap">Six Trials · Six Runes</span>
+          </div>
         </div>
       )}
     </>

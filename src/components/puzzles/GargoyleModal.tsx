@@ -61,62 +61,58 @@ export default function GargoyleModal({
       onClose={onClose}
       footer={
         solved ? undefined : (
-          <button
-            type="button"
-            onClick={answer}
-            className="flex w-full items-center justify-center gap-2.5 rounded-lg border border-blood-400/60 bg-gradient-to-r from-[#6d0d1c] via-[#a81c31] to-[#6d0d1c] px-4 py-3 font-bold tracking-wide text-white transition hover:brightness-115"
-          >
-            <DoorOpen size={18} />
+          <button type="button" onClick={answer} className="btn btn-blood w-full">
+            <DoorOpen size={17} />
             Answer the Warden
           </button>
         )
       }
     >
       {solved ? (
-        <div className="space-y-5">
-          <div className="flex flex-col items-center gap-2 text-center">
-            <DoorOpen size={38} className="animate-rune-pop text-rune-400" />
-            <p className="text-gothic text-2xl text-rune-400">The jaws fall open.</p>
-            <p className="text-sm text-[#9d96b0] italic">
+        <div className="space-y-3.5">
+          <div className="flex flex-col items-center gap-1.5 text-center">
+            <DoorOpen size={34} className="animate-rune-pop text-verdigris-lit" />
+            <p className="font-display text-xl text-verdigris-lit sm:text-2xl">
+              The jaws fall open.
+            </p>
+            <p className="text-sm text-bone-dim italic">
               The sixth Elder Rune burns itself into your palm. Cold air pours in from the corridor
               beyond.
             </p>
           </div>
 
-          <div className="rounded-lg border border-rune-400/40 bg-rune-400/8 px-4 py-3">
-            <p className="text-sm font-semibold text-rune-400">
+          <div className="etch etch-flat border-l-[3px] border-l-verdigris px-3 py-2.5">
+            <p className="text-sm font-semibold text-verdigris-lit">
               {data.options[data.correctIndex]}
             </p>
-            <p className="mt-1.5 text-sm leading-relaxed text-[#bdc9c6]">{data.explanation}</p>
+            <p className="mt-1 text-sm leading-relaxed text-bone-dim">{data.explanation}</p>
           </div>
 
-          <button
-            type="button"
-            onClick={onSolve}
-            className="flex w-full items-center justify-center gap-2.5 rounded-lg border border-rune-400/60 bg-rune-400/12 px-4 py-3 font-semibold text-rune-400 transition hover:bg-rune-400/22"
-          >
-            <Gem size={17} />
-            Claim the Sixth Rune & Escape
+          <button type="button" onClick={onSolve} className="btn btn-verd w-full">
+            <Gem size={16} />
+            Claim the Sixth Rune &amp; Escape
           </button>
         </div>
       ) : (
-        <div className="space-y-5">
-          <div className="flex flex-wrap items-center justify-center gap-2">
+        <div className="space-y-3">
+          <div className="flex flex-wrap items-center justify-center gap-1.5">
             {Array.from({ length: runesRequired }, (_, index) => (
               <span
                 key={index}
-                className={`h-3 w-3 rotate-45 rounded-[2px] ${
-                  index < runesCollected ? 'bg-rune-400 shadow-[0_0_10px_#3ce2c0]' : 'bg-crypt-600'
+                className={`h-3 w-3 rotate-45 border ${
+                  index < runesCollected
+                    ? 'border-verdigris-lit bg-verdigris-lit shadow-[0_0_9px_#4fbf9e]'
+                    : 'border-iron-2'
                 }`}
               />
             ))}
           </div>
 
-          <p className="rounded-lg border border-crypt-600/70 bg-crypt-950/60 px-4 py-4 text-sm leading-relaxed text-[#cfc9dd]">
+          <p className="etch etch-flat border-l-[3px] border-l-blood px-3 py-2.5 text-[13px] leading-snug text-bone sm:text-sm">
             {data.scenario}
           </p>
 
-          <div className="space-y-2.5">
+          <div className="grid gap-2 landscape:grid-cols-2 md:grid-cols-2">
             {data.options.map((option, index) => {
               const isSelected = selected === index;
               const isEliminated = eliminated.has(index);
@@ -129,17 +125,17 @@ export default function GargoyleModal({
                     clear();
                     setSelected(index);
                   }}
-                  className={`flex w-full items-start gap-3 rounded-lg border px-4 py-3 text-left text-sm leading-relaxed transition ${
+                  className={`etch etch-flat flex w-full items-start gap-2.5 px-3 py-2.5 text-left text-[13px] leading-snug transition ${
                     isEliminated
-                      ? 'cursor-not-allowed border-crypt-700 bg-crypt-950/40 text-[#4f4a5e] line-through'
+                      ? 'cursor-not-allowed text-bone-faint line-through opacity-50'
                       : isSelected
-                        ? 'border-blood-400/70 bg-blood-500/12 text-[#f4dde1]'
-                        : 'border-crypt-600 bg-crypt-950/60 text-[#cfc9dd] hover:border-crypt-500 hover:bg-crypt-800/60'
+                        ? 'etch-blood text-[#f3d9d6]'
+                        : 'text-bone hover:border-iron-2'
                   }`}
                 >
                   <span
-                    className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full border text-[11px] font-bold ${
-                      isSelected ? 'border-blood-400 text-blood-400' : 'border-crypt-500 text-[#8a83a0]'
+                    className={`num mt-px flex h-[18px] w-[18px] shrink-0 items-center justify-center border text-[10px] ${
+                      isSelected ? 'border-blood-lit text-blood-glow' : 'border-iron-2 text-bone-faint'
                     }`}
                   >
                     {index + 1}
