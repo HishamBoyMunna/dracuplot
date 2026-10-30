@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { soundEngine } from '../services/soundEngine';
 import type { PropId } from '../types/game';
 import {
   DEFAULT_TORCH_RADIUS,
@@ -50,6 +51,7 @@ interface Runtime {
   facing: number;
   time: number;
   lastFrame: number;
+  stepTimer: number;
 }
 
 export interface EscapeRoomCanvasProps {
@@ -981,6 +983,7 @@ export default function EscapeRoomCanvas({
     facing: -Math.PI / 2,
     time: 0,
     lastFrame: 0,
+    stepTimer: 0,
   });
 
   const [hoveredProp, setHoveredProp] = useState<PropId | null>(null);
@@ -1141,6 +1144,17 @@ export default function EscapeRoomCanvas({
         }
       }
       if (!moving) runtime.walkPhase += dt * 1.6;
+
+      // Footfalls on cold flagstone, roughly in time with the stride.
+      if (moving) {
+        runtime.stepTimer += dt;
+        if (runtime.stepTimer >= 0.34) {
+          runtime.stepTimer = 0;
+          soundEngine.footstep();
+        }
+      } else {
+        runtime.stepTimer = 0.34;
+      }
 
       if (runtime.pendingProp) {
         const prop = PROP_MAP[runtime.pendingProp];

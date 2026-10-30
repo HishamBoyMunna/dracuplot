@@ -28,11 +28,17 @@ endpoint (OpenAI, Groq, OpenRouter, Ollama) or Anthropic. Keys live only in your
 src/
 ├── types/game.ts            # Shared interfaces, villain profiles, prop lore
 ├── data/fallbackData.ts     # Built-in demo room (neural networks / cognitive atrophy)
+├── data/roomLayout.ts       # Room geometry, prop boxes, movement constants
 ├── services/
 │   ├── pdfParser.ts         # Browser PDF/TXT/MD text extraction via pdfjs-dist
-│   └── llmService.ts        # Multi-provider LLM adapter + strict schema validation
+│   ├── llmService.ts        # Multi-provider LLM adapter + strict schema validation
+│   └── soundEngine.ts       # Procedural Web Audio synth (no audio files)
 ├── components/
-│   └── SetupScreen.tsx      # Dropzone, villain picker, API settings, demo launcher
+│   ├── SetupScreen.tsx      # Dropzone, villain picker, API settings, demo launcher
+│   ├── TopHud.tsx           # Threat meter, Elder Runes, torch, mute, Banshee vignette
+│   ├── EscapeRoomCanvas.tsx # 800x600 procedural room, click-to-move, torchlight
+│   ├── EndgameModal.tsx     # Victory / game over + the Grimoire study review
+│   └── puzzles/             # The six puzzle modals and their shared frame
 └── App.tsx                  # SETUP -> LOADING -> PLAYING -> WON/LOST state machine
 ```
 
@@ -41,9 +47,9 @@ See `AGENTS.md` for the full specification and the phased build plan.
 ## Build phases
 
 - [x] **Phase 1** — Scaffold, PDF parser, multi-LLM pipeline, setup screen
-- [ ] **Phase 2** — 800x600 top-down canvas, click-to-move, torchlight
-- [ ] **Phase 3** — The six interactive puzzle modals
-- [ ] **Phase 4** — Villain HUD, Web Audio synth, endgame grimoire
+- [x] **Phase 2** — 800x600 top-down canvas, click-to-move, torchlight
+- [x] **Phase 3** — The six interactive puzzle modals
+- [x] **Phase 4** — Villain HUD, Web Audio synth, endgame grimoire
 
 ## Tech stack
 

@@ -70,9 +70,9 @@ export default function ClockModal({
       [
         {
           questionContext: data.prompt,
-          correctTakeaway: `The true order is: ${steps
+          correctTakeaway: `The true order is:\n${steps
             .map((step, index) => `${index + 1}. ${step}`)
-            .join('  ')}`,
+            .join('\n')}`,
         },
         ...misplaced.slice(0, 1).map((entry) => ({
           questionContext: `Which step comes at position ${entry.index + 1}?`,

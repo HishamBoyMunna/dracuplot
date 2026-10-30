@@ -1,13 +1,16 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { ArrowLeft, Flame, Gem, Loader2, RotateCcw, Skull, Upload } from 'lucide-react';
+import { ArrowLeft, Loader2 } from 'lucide-react';
 import SetupScreen from './components/SetupScreen';
 import EscapeRoomCanvas from './components/EscapeRoomCanvas';
+import TopHud from './components/TopHud';
+import EndgameModal from './components/EndgameModal';
 import BookshelfModal from './components/puzzles/BookshelfModal';
 import ClockModal from './components/puzzles/ClockModal';
 import ScaleModal from './components/puzzles/ScaleModal';
 import SafeModal from './components/puzzles/SafeModal';
 import CauldronModal from './components/puzzles/CauldronModal';
 import GargoyleModal from './components/puzzles/GargoyleModal';
+import { soundEngine } from './services/soundEngine';
 import type {
   GameData,
   GamePhase,
@@ -38,8 +41,10 @@ export default function App() {
   const [activeProp, setActiveProp] = useState<PropId | null>(null);
   const [threat, setThreat] = useState(0);
   const [mistakeLogs, setMistakeLogs] = useState<MistakeLog[]>([]);
+  const [wrongSubmissions, setWrongSubmissions] = useState(0);
   const [quaking, setQuaking] = useState(false);
   const [elapsed, setElapsed] = useState(0);
+  const [muted, setMuted] = useState(() => soundEngine.isMuted());
 
   const quakeTimer = useRef<number | null>(null);
   const threatRef = useRef(0);
@@ -50,18 +55,13 @@ export default function App() {
     const next = Math.min(100, threatRef.current + amount);
     threatRef.current = next;
     setThreat(next);
+    soundEngine.setThreat(next);
     if (next >= 100) {
       setActiveProp(null);
       setPhase('LOST');
+      soundEngine.defeat();
     }
   }, []);
-
-  const runesCollected = useMemo(
-    () =>
-      RUNE_PROP_IDS.filter((id) => solvedProps.has(id)).length +
-      (solvedProps.has('gargoyle') ? 1 : 0),
-    [solvedProps],
-  );
 
   /* ---- The villain never stops creeping while the game is live ---- */
   useEffect(() => {
@@ -73,14 +73,26 @@ export default function App() {
     return () => window.clearInterval(interval);
   }, [addThreat, phase, villain]);
 
+  useEffect(() => {
+    if (phase === 'SETUP' || phase === 'LOADING') soundEngine.stopHeartbeat();
+  }, [phase]);
+
   useEffect(
     () => () => {
       if (quakeTimer.current) window.clearTimeout(quakeTimer.current);
+      soundEngine.stopHeartbeat();
     },
     [],
   );
 
+  const toggleMute = useCallback(() => {
+    soundEngine.unlock();
+    setMuted(soundEngine.toggleMuted());
+  }, []);
+
   const startRun = useCallback((data: GameData, chosenVillain: VillainId) => {
+    soundEngine.unlock();
+    soundEngine.stopHeartbeat();
     setGameData(data);
     setVillainId(chosenVillain);
     setSolvedProps(new Set<PropId>());
@@ -89,11 +101,13 @@ export default function App() {
     threatRef.current = 0;
     setThreat(0);
     setMistakeLogs([]);
+    setWrongSubmissions(0);
     setElapsed(0);
     setPhase('PLAYING');
   }, []);
 
   const handleExit = useCallback(() => {
+    soundEngine.stopHeartbeat();
     setGameData(null);
     setActiveProp(null);
     setPhase('SETUP');
@@ -110,7 +124,9 @@ export default function App() {
           ...mistake,
         })),
       ]);
+      setWrongSubmissions((count) => count + 1);
 
+      soundEngine.wrong();
       addThreat(villain.wrongAnswerPenalty);
 
       if (villain.id === 'dracula') {
@@ -128,8 +144,20 @@ export default function App() {
   const solveProp = useCallback((propId: PropId) => {
     setSolvedProps((current) => new Set(current).add(propId));
     setActiveProp(null);
-    if (propId === 'gargoyle') setPhase('WON');
+    if (propId === 'gargoyle') {
+      setPhase('WON');
+      soundEngine.victory();
+    } else {
+      soundEngine.rune();
+    }
   }, []);
+
+  const runesCollected = useMemo(
+    () =>
+      RUNE_PROP_IDS.filter((id) => solvedProps.has(id)).length +
+      (solvedProps.has('gargoyle') ? 1 : 0),
+    [solvedProps],
+  );
 
   const renderPuzzle = () => {
     if (!activeProp || !gameData) return null;
@@ -137,7 +165,10 @@ export default function App() {
       accentColor: villain.accentColor,
       onSolve: () => solveProp(activeProp),
       onMistake: (mistakes: PuzzleMistake[]) => registerMistakes(activeProp, mistakes),
-      onThreatCost: (amount: number) => addThreat(amount),
+      onThreatCost: (amount: number) => {
+        soundEngine.whisper();
+        addThreat(amount);
+      },
       onClose: () => setActiveProp(null),
     };
     const { puzzles } = gameData;
@@ -166,61 +197,35 @@ export default function App() {
   };
 
   if ((phase === 'PLAYING' || phase === 'WON' || phase === 'LOST') && gameData) {
-    const won = phase === 'WON';
-    const over = won || phase === 'LOST';
-    const minutes = Math.floor(elapsed / 60);
-    const seconds = Math.floor(elapsed % 60);
+    const over = phase === 'WON' || phase === 'LOST';
 
     return (
-      <div className={`fog-backdrop min-h-screen px-4 py-6 sm:px-6 ${quaking ? 'animate-quake' : ''}`}>
+      <div
+        className={`fog-backdrop min-h-screen px-4 py-5 sm:px-6 ${quaking ? 'animate-quake' : ''}`}
+      >
         <div className="mx-auto flex w-full max-w-[900px] flex-col gap-4">
-          <header className="flex flex-col gap-3">
-            <div className="flex flex-wrap items-center justify-between gap-3">
-              <button
-                type="button"
-                onClick={handleExit}
-                className="inline-flex items-center gap-2 text-sm text-[#8a83a0] transition hover:text-ember-400"
-              >
-                <ArrowLeft size={15} />
-                Abandon the study
-              </button>
+          <div className="flex items-center justify-between gap-3">
+            <button
+              type="button"
+              onClick={handleExit}
+              className="inline-flex items-center gap-2 text-sm text-[#8a83a0] transition hover:text-ember-400"
+            >
+              <ArrowLeft size={15} />
+              Abandon the study
+            </button>
+            <p className="truncate text-xs text-[#5d5770] italic">{gameData.documentTitle}</p>
+          </div>
 
-              <div className="flex items-center gap-4 text-sm">
-                <span className="inline-flex items-center gap-1.5 text-rune-400">
-                  <Gem size={15} />
-                  {runesCollected}/{TOTAL_RUNES} runes
-                </span>
-                <span className="inline-flex items-center gap-1.5 text-ember-400">
-                  <Flame size={15} />
-                  {Math.round((torchRadius / DEFAULT_TORCH_RADIUS) * 100)}% torch
-                </span>
-                <span className="text-[#7b7490] tabular-nums">
-                  {minutes}:{String(seconds).padStart(2, '0')}
-                </span>
-              </div>
-            </div>
-
-            {/* Provisional threat meter — replaced by TopHud in Phase 4. */}
-            <div className="flex items-center gap-3">
-              <Skull size={16} style={{ color: villain.accentColor }} className="shrink-0" />
-              <div className="h-2.5 flex-1 overflow-hidden rounded-full border border-crypt-600 bg-crypt-950">
-                <div
-                  className="h-full rounded-full transition-[width] duration-150 ease-linear"
-                  style={{
-                    width: `${threat}%`,
-                    background: `linear-gradient(90deg, ${villain.accentColor}55, ${villain.accentColor})`,
-                    boxShadow: `0 0 14px ${villain.accentColor}`,
-                  }}
-                />
-              </div>
-              <span
-                className="w-24 shrink-0 text-right text-xs tabular-nums"
-                style={{ color: villain.accentColor }}
-              >
-                {threat.toFixed(0)}% threat
-              </span>
-            </div>
-          </header>
+          <TopHud
+            villain={villain}
+            threat={threat}
+            runesCollected={runesCollected}
+            totalRunes={TOTAL_RUNES}
+            torchRadius={torchRadius}
+            elapsed={elapsed}
+            muted={muted}
+            onToggleMute={toggleMute}
+          />
 
           <EscapeRoomCanvas
             solvedProps={solvedProps}
@@ -230,83 +235,27 @@ export default function App() {
             onInteractProp={setActiveProp}
           />
 
-          <footer className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-crypt-600/70 bg-crypt-900/60 px-4 py-3 text-xs text-[#7b7490]">
-            <span>
-              {villain.name} · {villain.specialEffect}
-            </span>
-            <span>
-              {mistakeLogs.length} concept{mistakeLogs.length === 1 ? '' : 's'} missed so far
-            </span>
+          <footer className="rounded-xl border border-crypt-600/70 bg-crypt-900/60 px-4 py-3 text-xs text-[#7b7490]">
+            {villain.specialEffect}
           </footer>
         </div>
 
         {phase === 'PLAYING' && renderPuzzle()}
 
         {over && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/88 p-4 backdrop-blur-sm">
-            <div
-              className="w-full max-w-lg rounded-2xl border-2 bg-crypt-900 p-7 text-center shadow-[0_0_90px_rgba(0,0,0,0.95)]"
-              style={{ borderColor: won ? 'rgba(60,226,192,0.6)' : `${villain.accentColor}99` }}
-            >
-              <h2
-                className="text-gothic text-3xl"
-                style={{ color: won ? '#3ce2c0' : villain.accentColor }}
-              >
-                {won ? 'You escaped the study.' : `${villain.name} caught you.`}
-              </h2>
-              <p className="mt-3 text-[#9d96b0] italic">
-                {won
-                  ? 'Six Elder Runes, one locked door, and a head full of material you actually know now.'
-                  : 'The threat meter filled. The study keeps another scholar.'}
-              </p>
-
-              <dl className="mt-6 grid grid-cols-2 gap-3 text-left text-sm">
-                <div className="rounded-lg border border-crypt-600 bg-crypt-950/60 px-4 py-3">
-                  <dt className="text-xs text-[#7b7490] uppercase">Time</dt>
-                  <dd className="mt-1 text-[#d9d5e4] tabular-nums">
-                    {minutes}:{String(seconds).padStart(2, '0')}
-                  </dd>
-                </div>
-                <div className="rounded-lg border border-crypt-600 bg-crypt-950/60 px-4 py-3">
-                  <dt className="text-xs text-[#7b7490] uppercase">Final threat</dt>
-                  <dd className="mt-1 text-[#d9d5e4] tabular-nums">{threat.toFixed(0)}%</dd>
-                </div>
-                <div className="rounded-lg border border-crypt-600 bg-crypt-950/60 px-4 py-3">
-                  <dt className="text-xs text-[#7b7490] uppercase">Runes</dt>
-                  <dd className="mt-1 text-[#d9d5e4] tabular-nums">
-                    {runesCollected}/{TOTAL_RUNES}
-                  </dd>
-                </div>
-                <div className="rounded-lg border border-crypt-600 bg-crypt-950/60 px-4 py-3">
-                  <dt className="text-xs text-[#7b7490] uppercase">Concepts missed</dt>
-                  <dd className="mt-1 text-[#d9d5e4] tabular-nums">{mistakeLogs.length}</dd>
-                </div>
-              </dl>
-
-              <p className="mt-5 text-xs text-[#5d5770]">
-                The Grimoire of Knowledge study review arrives in Phase 4.
-              </p>
-
-              <div className="mt-6 flex flex-col gap-2.5 sm:flex-row">
-                <button
-                  type="button"
-                  onClick={() => startRun(gameData, villainId)}
-                  className="flex flex-1 items-center justify-center gap-2 rounded-lg border border-ember-400/60 bg-ember-400/12 px-4 py-3 font-semibold text-ember-400 transition hover:bg-ember-400/22"
-                >
-                  <RotateCcw size={16} />
-                  Replay Same Study Material
-                </button>
-                <button
-                  type="button"
-                  onClick={handleExit}
-                  className="flex flex-1 items-center justify-center gap-2 rounded-lg border border-crypt-500 px-4 py-3 font-semibold text-[#b7b1c6] transition hover:border-crypt-400 hover:text-white"
-                >
-                  <Upload size={16} />
-                  Upload New PDF
-                </button>
-              </div>
-            </div>
-          </div>
+          <EndgameModal
+            won={phase === 'WON'}
+            gameData={gameData}
+            villain={villain}
+            elapsed={elapsed}
+            threat={threat}
+            runesCollected={runesCollected}
+            totalRunes={TOTAL_RUNES}
+            mistakeLogs={mistakeLogs}
+            wrongSubmissions={wrongSubmissions}
+            onReplay={() => startRun(gameData, villainId)}
+            onNewDocument={handleExit}
+          />
         )}
       </div>
     );

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Delete, LockKeyhole } from 'lucide-react';
 import type { GameData, PuzzleModalBaseProps } from '../../types/game';
+import { soundEngine } from '../../services/soundEngine';
 import PuzzleModalWrapper, { RuneAwardPanel } from './PuzzleModalWrapper';
 import { usePuzzleFeedback } from './puzzleHelpers';
 
@@ -29,11 +30,13 @@ export default function SafeModal({
 
   const press = (digit: string) => {
     if (solved || entry.length >= questions.length) return;
+    soundEngine.keypad();
     clear();
     setEntry((current) => current + digit);
   };
 
   const unlock = () => {
+    soundEngine.clack();
     if (entry.length < questions.length) {
       notify(`The vault wants all ${questions.length} digits before it will turn.`);
       return;
@@ -157,6 +160,7 @@ export default function SafeModal({
               <button
                 type="button"
                 onClick={() => {
+                  soundEngine.clack();
                   clear();
                   setEntry('');
                 }}
