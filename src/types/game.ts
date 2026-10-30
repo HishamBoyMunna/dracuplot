@@ -66,6 +66,24 @@ export interface MistakeLog {
 
 export type GamePhase = 'SETUP' | 'LOADING' | 'PLAYING' | 'WON' | 'LOST';
 
+/** A missed concept reported by a puzzle modal, before the prop is attached. */
+export interface PuzzleMistake {
+  questionContext: string;
+  correctTakeaway: string;
+}
+
+/** Contract every puzzle modal shares with App's state machine. */
+export interface PuzzleModalBaseProps {
+  accentColor: string;
+  /** Awards the Elder Rune and closes the modal. */
+  onSolve: () => void;
+  /** Logs the missed concepts and triggers the villain's penalty exactly once. */
+  onMistake: (mistakes: PuzzleMistake[]) => void;
+  /** Charges extra threat outside of a wrong answer (the cauldron hint). */
+  onThreatCost: (amount: number, reason: string) => void;
+  onClose: () => void;
+}
+
 export const VILLAINS: Record<VillainId, VillainProfile> = {
   dracula: {
     id: 'dracula',

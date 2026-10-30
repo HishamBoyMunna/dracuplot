@@ -86,10 +86,96 @@
   }
 }
 
+@keyframes shake {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+  12% {
+    transform: translate3d(-11px, 0, 0) rotate(-0.7deg);
+  }
+  28% {
+    transform: translate3d(9px, 0, 0) rotate(0.6deg);
+  }
+  44% {
+    transform: translate3d(-7px, 0, 0) rotate(-0.4deg);
+  }
+  62% {
+    transform: translate3d(5px, 0, 0) rotate(0.3deg);
+  }
+  80% {
+    transform: translate3d(-2px, 0, 0);
+  }
+}
+
+@keyframes quake {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+  20% {
+    transform: translate3d(-6px, 4px, 0);
+  }
+  40% {
+    transform: translate3d(7px, -3px, 0);
+  }
+  60% {
+    transform: translate3d(-5px, -4px, 0);
+  }
+  80% {
+    transform: translate3d(4px, 3px, 0);
+  }
+}
+
+@keyframes bubble-rise {
+  0% {
+    transform: translateY(0) scale(0.4);
+    opacity: 0;
+  }
+  25% {
+    opacity: 0.85;
+  }
+  100% {
+    transform: translateY(-62px) scale(1.25);
+    opacity: 0;
+  }
+}
+
+@keyframes rune-pop {
+  0% {
+    transform: scale(0.6);
+    opacity: 0;
+  }
+  60% {
+    transform: scale(1.12);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
 @utility animate-flicker {
   animation: flicker 4.5s infinite ease-in-out;
 }
 
 @utility animate-drift {
   animation: drift 6s infinite ease-in-out;
+}
+
+@utility animate-shake {
+  animation: shake 0.52s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+}
+
+@utility animate-quake {
+  animation: quake 0.55s ease-in-out both;
+}
+
+@utility animate-bubble {
+  animation: bubble-rise 2.8s linear infinite;
+}
+
+@utility animate-rune-pop {
+  animation: rune-pop 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) both;
 }
