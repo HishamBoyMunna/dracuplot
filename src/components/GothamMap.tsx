@@ -135,6 +135,7 @@ export default function GothamMap({
             }}
           >
             <circle className="halo" cx={vector.at.x} cy={vector.at.y} r="13" />
+            <circle className="hit" cx={vector.at.x} cy={vector.at.y} r="28" />
             <circle className="dot" cx={vector.at.x} cy={vector.at.y} r="5.4" />
             <text x={vector.at.x} y={vector.at.y + 2.7}>
               {vector.code}

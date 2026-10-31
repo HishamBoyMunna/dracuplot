@@ -6,7 +6,7 @@ const TABS = [
   { id: 'protocol', num: '03', label: 'The protocol' },
 ];
 
-export default function TopRail({ active }: { active: string }) {
+export default function TopRail({ active, progress }: { active: string; progress: number }) {
   return (
     <header className="rail">
       <div className="shell rail__inner">
@@ -29,9 +29,14 @@ export default function TopRail({ active }: { active: string }) {
 
         <div className="rail__status">
           <span className="pip" aria-hidden="true" />
-          File open
+          <span className="rail__status-word">File open</span>
+          <span className="rail__pct" aria-hidden="true">
+            {progress}% read
+          </span>
         </div>
       </div>
+
+      <span className="rail__progress" style={{ width: `${progress}%` }} aria-hidden="true" />
     </header>
   );
 }

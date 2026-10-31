@@ -1,3 +1,4 @@
+import { useRef } from 'react';
 import { TARGET, VECTORS, getVector } from '../data/blackMask';
 import type { VectorId } from '../types/plan';
 import GothamMap from './GothamMap';
@@ -20,6 +21,28 @@ export default function TargetSection({
   onVector: (id: VectorId) => void;
 }) {
   const current = getVector(vector);
+  const readoutRef = useRef<HTMLDivElement>(null);
+
+  /**
+   * On one column the index sits under the readout, so picking a vector down there
+   * would change a panel the reader can no longer see. Bring it back into view,
+   * but only when it is actually off-screen.
+   */
+  function chooseFromIndex(id: VectorId) {
+    onVector(id);
+    if (window.innerWidth > 1080) return;
+
+    const node = readoutRef.current;
+    if (!node) return;
+
+    const box = node.getBoundingClientRect();
+    if (box.top >= 60 && box.bottom <= window.innerHeight) return;
+
+    node.scrollIntoView({
+      behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',
+      block: 'nearest',
+    });
+  }
 
   return (
     <section className="target plate" id="target" aria-labelledby="target-title">
@@ -47,55 +70,54 @@ export default function TargetSection({
             <span className="map-frame__scale">
               <i aria-hidden="true" />0 — 4 km
             </span>
+            <p className="map-frame__hint">Tap a marker to open its file</p>
           </div>
 
-          <div className="reveal">
-            <div className="vector-index" role="group" aria-label="Plotted vectors">
-              {VECTORS.map((entry) => (
-                <button
-                  key={entry.id}
-                  type="button"
-                  className="vtab"
-                  aria-pressed={entry.id === vector}
-                  onClick={() => onVector(entry.id)}
-                >
-                  <span className="vtab__num">{entry.code}</span>
-                  <span>
-                    <span className="vtab__name">{entry.name}</span>
-                    <span className="vtab__claim">{entry.claim}</span>
-                  </span>
-                  <span className="vtab__flag">{FLAGS[entry.id]}</span>
-                </button>
-              ))}
+          <div className="vector-readout reveal" ref={readoutRef} aria-live="polite">
+            <div className="vector-readout__head">
+              <h3 className="vector-readout__title">{current.name}</h3>
+              <span className="mono" style={{ fontSize: 8, letterSpacing: '0.18em', opacity: 0.6 }}>
+                VECTOR {current.code}
+              </span>
             </div>
+            <div className="vector-readout__body">
+              <div className="vrow">
+                <p className="vrow__k">Our read on him</p>
+                <p className="vrow__v">{current.diagnosis}</p>
+              </div>
+              <div className="vrow">
+                <p className="vrow__k">The approach</p>
+                <p className="vrow__v">{current.leverage}</p>
+              </div>
+              <div className="vrow vrow--risk">
+                <p className="vrow__k">Where it costs us</p>
+                <p className="vrow__v">{current.exposure}</p>
+              </div>
+            </div>
+            <div className="vector-readout__foot">
+              <span>
+                Asset required: <b>{current.asset}</b>
+              </span>
+            </div>
+          </div>
 
-            <div className="vector-readout" aria-live="polite">
-              <div className="vector-readout__head">
-                <h3 className="vector-readout__title">{current.name}</h3>
-                <span className="mono" style={{ fontSize: 8, letterSpacing: '0.18em', opacity: 0.6 }}>
-                  VECTOR {current.code}
-                </span>
-              </div>
-              <div className="vector-readout__body">
-                <div className="vrow">
-                  <p className="vrow__k">Our read on him</p>
-                  <p className="vrow__v">{current.diagnosis}</p>
-                </div>
-                <div className="vrow">
-                  <p className="vrow__k">The approach</p>
-                  <p className="vrow__v">{current.leverage}</p>
-                </div>
-                <div className="vrow vrow--risk">
-                  <p className="vrow__k">Where it costs us</p>
-                  <p className="vrow__v">{current.exposure}</p>
-                </div>
-              </div>
-              <div className="vector-readout__foot">
+          <div className="vector-index reveal" role="group" aria-label="Plotted vectors">
+            {VECTORS.map((entry) => (
+              <button
+                key={entry.id}
+                type="button"
+                className="vtab"
+                aria-pressed={entry.id === vector}
+                onClick={() => chooseFromIndex(entry.id)}
+              >
+                <span className="vtab__num">{entry.code}</span>
                 <span>
-                  Asset required: <b>{current.asset}</b>
+                  <span className="vtab__name">{entry.name}</span>
+                  <span className="vtab__claim">{entry.claim}</span>
                 </span>
-              </div>
-            </div>
+                <span className="vtab__flag">{FLAGS[entry.id]}</span>
+              </button>
+            ))}
           </div>
         </div>
 

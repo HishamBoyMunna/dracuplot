@@ -302,68 +302,74 @@ export default function PlannerSection({
                   </p>
                 </div>
 
-                <div className="field">
-                  <p className="field__label">
-                    <span>Gemini uplink</span>
-                    <b>your key</b>
-                  </p>
-                  <div className="keyset">
-                    <div>
-                      <div className="keyrow">
+                <details className="field uplinkbox">
+                  <summary className="uplinkbox__summary">
+                    <span className="field__label">
+                      <span>Gemini uplink</span>
+                      <span className="field__hint" style={{ textTransform: 'none' }}>
+                        optional — try the sample first
+                      </span>
+                    </span>
+                  </summary>
+                  <div style={{ marginTop: 12 }}>
+                    <div className="keyset">
+                      <div>
+                        <div className="keyrow">
+                          <input
+                            className="input"
+                            type={showKey ? 'text' : 'password'}
+                            value={settings.apiKey}
+                            onChange={(event) =>
+                              setSettings((current) => ({ ...current, apiKey: event.target.value }))
+                            }
+                            placeholder="AIza..."
+                            autoComplete="off"
+                            spellCheck={false}
+                            aria-label="Gemini API key"
+                          />
+                          <button
+                            type="button"
+                            className="btn btn--line btn--sm"
+                            onClick={() => setShowKey((value) => !value)}
+                          >
+                            {showKey ? 'Hide' : 'Show'}
+                          </button>
+                        </div>
+                      </div>
+                      <div>
                         <input
                           className="input"
-                          type={showKey ? 'text' : 'password'}
-                          value={settings.apiKey}
+                          value={settings.model}
+                          list="gemini-models"
                           onChange={(event) =>
-                            setSettings((current) => ({ ...current, apiKey: event.target.value }))
+                            setSettings((current) => ({ ...current, model: event.target.value }))
                           }
-                          placeholder="paste API key"
-                          autoComplete="off"
+                          placeholder="gemini-2.5-flash"
                           spellCheck={false}
-                          aria-label="Gemini API key"
+                          aria-label="Gemini model"
                         />
-                        <button
-                          type="button"
-                          className="btn btn--line btn--sm"
-                          onClick={() => setShowKey((value) => !value)}
-                        >
-                          {showKey ? 'Hide' : 'Show'}
-                        </button>
+                        <datalist id="gemini-models">
+                          {SUGGESTED_MODELS.map((model) => (
+                            <option key={model} value={model} />
+                          ))}
+                        </datalist>
                       </div>
                     </div>
-                    <div>
-                      <input
-                        className="input"
-                        value={settings.model}
-                        list="gemini-models"
-                        onChange={(event) =>
-                          setSettings((current) => ({ ...current, model: event.target.value }))
-                        }
-                        placeholder="gemini-2.5-flash"
-                        spellCheck={false}
-                        aria-label="Gemini model"
-                      />
-                      <datalist id="gemini-models">
-                        {SUGGESTED_MODELS.map((model) => (
-                          <option key={model} value={model} />
-                        ))}
-                      </datalist>
-                    </div>
+                    <p className="keyset__note">
+                      Sent directly to Google. Nothing is stored but the key, in this browser, and only
+                      if you leave the box below switched on.
+                    </p>
+                    <button
+                      type="button"
+                      className="chip"
+                      style={{ marginTop: 8 }}
+                      aria-pressed={remember}
+                      onClick={() => setRemember((value) => !value)}
+                    >
+                      {remember ? 'Key held on this device' : 'Key kept in memory only'}
+                    </button>
                   </div>
-                  <p className="keyset__note">
-                    Sent directly to Google. Nothing is stored but the key, in this browser, and only
-                    if you leave the box below switched on.
-                  </p>
-                  <button
-                    type="button"
-                    className="chip"
-                    style={{ marginTop: 8 }}
-                    aria-pressed={remember}
-                    onClick={() => setRemember((value) => !value)}
-                  >
-                    {remember ? 'Key held on this device' : 'Key kept in memory only'}
-                  </button>
-                </div>
+                </details>
 
                 <div className="sheet__actions">
                   <button type="submit" className="btn btn--ink" disabled={busy}>

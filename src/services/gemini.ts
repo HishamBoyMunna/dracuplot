@@ -21,8 +21,14 @@ const STORAGE_KEY = 'janus.uplink';
 const ENDPOINT = 'https://generativelanguage.googleapis.com/v1beta/models';
 const TIMEOUT_MS = 90_000;
 
+/**
+ * A fallback key so the site works on first visit. Replace this with a working
+ * Gemini API key from https://aistudio.google.com/apikey if you're deploying it.
+ */
+const FALLBACK_KEY = '';
+
 export const DEFAULT_SETTINGS: UplinkSettings = {
-  apiKey: '',
+  apiKey: FALLBACK_KEY,
   model: 'gemini-2.5-flash',
 };
 
@@ -48,7 +54,9 @@ export function loadSettings(): UplinkSettings {
     if (!raw) return { ...DEFAULT_SETTINGS };
     const parsed = JSON.parse(raw) as Partial<UplinkSettings>;
     return {
-      apiKey: typeof parsed.apiKey === 'string' ? parsed.apiKey : '',
+      apiKey: typeof parsed.apiKey === 'string' && parsed.apiKey.trim()
+        ? parsed.apiKey
+        : DEFAULT_SETTINGS.apiKey,
       model: parsed.model?.trim() || DEFAULT_SETTINGS.model,
     };
   } catch {
@@ -396,10 +404,7 @@ export async function generateOperation(
   settings: UplinkSettings,
   signal?: AbortSignal,
 ): Promise<BlackMaskPlan> {
-  const apiKey = settings.apiKey.trim();
-  if (!apiKey) {
-    throw new PlannerError('No key in the uplink.', 'Paste a Gemini API key, or run the sample operation.');
-  }
+  const apiKey = settings.apiKey.trim() || FALLBACK_KEY;
 
   const model = settings.model.trim() || DEFAULT_SETTINGS.model;
   const controller = new AbortController();

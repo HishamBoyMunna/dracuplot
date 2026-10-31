@@ -27,6 +27,38 @@ export function useReveal() {
   }, []);
 }
 
+/** How far through the file the reader has got, 0–100. */
+export function useReadProgress(): number {
+  const [progress, setProgress] = useState(0);
+
+  useEffect(() => {
+    let frame = 0;
+
+    const measure = () => {
+      frame = 0;
+      const max = document.documentElement.scrollHeight - window.innerHeight;
+      const ratio = max > 0 ? window.scrollY / max : 0;
+      setProgress(Math.min(100, Math.max(0, Math.round(ratio * 100))));
+    };
+
+    const onScroll = () => {
+      if (frame) return;
+      frame = window.requestAnimationFrame(measure);
+    };
+
+    measure();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll);
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+      window.removeEventListener('resize', onScroll);
+      if (frame) window.cancelAnimationFrame(frame);
+    };
+  }, []);
+
+  return progress;
+}
+
 /** Which section is currently under the rail. */
 export function useActiveSection(ids: string[]): string {
   const [active, setActive] = useState(ids[0] ?? '');
