@@ -1,14 +1,27 @@
-# Batman Trapped: The Anti-Brainrot AI Escape Room
+# Black Mask // The Batman Protocol
 
-Black Mask has Batman in a deathtrap under Gotham, and the only way out is the PDF you have been
-avoiding. Drop in your study material and it becomes a Gotham noir top-down escape room: six locks,
-six keys, and a heat meter that climbs the whole time. Guide the Dark Knight through every puzzle
-before the trap closes. The only way out is actually knowing the content.
+A Gotham noir fan site built around Roman Sionis. Three acts: the origin of Black Mask, an
+interactive 3D Batman target dossier, and a Gemini-powered war room that turns a criminal
+objective into a four-phase operation.
 
-Everything runs client-side: PDF parsing, LLM calls, canvas rendering and audio. There is no
-backend.
+> Fictional fan project. Roman Sionis, Batman and Gotham City are property of DC Comics. The
+> generated operations are fiction, not real-world guidance.
 
-## Getting started
+## What is inside
+
+- **The Origin** — a cinematic hero dossier covering the Sionis inheritance, the fire, the ebony
+  coffin mask, and the motive behind Black Mask's war on Batman.
+- **The Target** — a procedurally built low-poly Batman rendered with Three.js. Drag to rotate,
+  hover or tap a body part, and the seven fault-line dossier updates. Each fault line includes a
+  severity score, an observed tell, and the exploit Black Mask would use.
+- **The War Room** — choose an objective, a fault line, and a rules-of-engagement intensity. Gemini
+  returns a structured four-phase operation with success/exposure estimates, assets, contingencies,
+  and an interactive tactical map. A pre-built sample plan works without an API key.
+
+The generated plan is validated client-side before it renders. API keys live only in
+`localStorage` and are sent directly to Google.
+
+## Run it
 
 ```bash
 npm install
@@ -17,48 +30,34 @@ npm run build   # type-check + production bundle
 npm run lint
 ```
 
-Click **Run the Demo Rescue** to try the pre-built deathtrap with no API key. To generate a rescue
-from your own document, open **Syndicate Settings** and add a key for Gemini, any
-OpenAI-compatible endpoint (OpenAI, Groq, OpenRouter, Ollama) or Anthropic. Keys live only in your
-browser's `localStorage`.
-
-## Choose the hunter
-
-- **Black Mask** — slow heat, but every mistake kills another of Batman's lights.
-- **The Penguin** — patient, then a brutal +20% heat spike per wrong answer.
-- **Scarecrow** — fast-burning clock and a fear-toxin haze once heat passes 60%.
+To use the live plan generator, open **Gemini Uplink** in the war room and paste a key from
+[aistudio.google.com](https://aistudio.google.com/app/apikey). The default model is
+`gemini-2.5-flash`. The sample protocol does not require a key.
 
 ## Project layout
 
 ```text
 src/
-├── types/game.ts            # Shared interfaces, villain profiles, prop lore
-├── data/fallbackData.ts     # Built-in demo deathtrap (neural networks / cognitive atrophy)
-├── data/roomLayout.ts       # Room geometry, prop boxes, movement constants
-├── services/
-│   ├── pdfParser.ts         # Browser PDF/TXT/MD text extraction via pdfjs-dist
-│   ├── llmService.ts        # Multi-provider LLM adapter + strict schema validation
-│   └── soundEngine.ts       # Procedural Web Audio synth (no audio files)
 ├── components/
-│   ├── BatMark.tsx          # Procedural SVG bat emblem + HUD glyph
-│   ├── SetupScreen.tsx      # Dropzone, hunter picker, API settings, demo launcher
-│   ├── TopHud.tsx           # Heat meter, keys, light, mute, Scarecrow haze
-│   ├── EscapeRoomCanvas.tsx # 800x600 procedural room, click-to-move, bat-light
-│   ├── EndgameModal.tsx     # Escape / capture + The Case File study review
-│   └── puzzles/             # The six puzzle modals and their shared frame
-└── App.tsx                  # SETUP -> LOADING -> PLAYING -> WON/LOST state machine
+│   ├── Navbar.tsx          # Fixed noir navigation
+│   ├── Hero.tsx            # Black Mask origin + motive
+│   ├── HeroMask.tsx        # Procedural SVG mask portrait
+│   ├── TargetSection.tsx   # Fault-line dossier + 3D stage
+│   ├── Batman3D.tsx        # Three.js Batman model, raycasting, highlights
+│   ├── PlanGenerator.tsx   # Objective controls + Gemini uplink
+│   ├── PlanVisualizer.tsx  # Tactical map, phase dossier, gauges
+│   ├── Footer.tsx
+│   └── Glyphs.tsx          # Procedural skull/bat marks
+├── data/
+│   ├── weaknesses.ts       # Seven fault lines and exploit copy
+│   └── demoPlan.ts         # No-key sample operation
+├── services/geminiPlanner.ts # Gemini request, JSON validation, local config
+├── hooks/useScrollReveal.ts
+├── types/plan.ts
+├── App.tsx
+└── index.css               # Tailwind v4 theme + noir component layer
 ```
 
-See `AGENTS.md` for the original full specification and phased build plan.
+## Tech
 
-## Build phases
-
-- [x] **Phase 1** — Scaffold, PDF parser, multi-LLM pipeline, setup screen
-- [x] **Phase 2** — 800x600 top-down canvas, click-to-move, bat-light
-- [x] **Phase 3** — The six interactive puzzle modals
-- [x] **Phase 4** — Villain HUD, Web Audio synth, endgame case file
-- [x] **Batman Trapped** — Rescue framing, bat emblem, Batman sprite and endgame art
-
-## Tech stack
-
-Vite · React · TypeScript · Tailwind CSS v4 · lucide-react · pdfjs-dist · HTML5 Canvas · Web Audio API
+Vite · React 19 · TypeScript · Tailwind CSS v4 · Three.js · Gemini API · lucide-react
