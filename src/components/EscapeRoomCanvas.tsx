@@ -807,21 +807,22 @@ function drawPlayer(
   moving: boolean,
 ): void {
   const bob = moving ? Math.sin(walkPhase * 2) * 1.8 : Math.sin(walkPhase * 0.6) * 0.6;
-  const sway = moving ? Math.sin(walkPhase) * 0.12 : 0;
+  const sway = moving ? Math.sin(walkPhase) * 0.1 : 0;
 
   ctx.save();
   ctx.translate(x, y + bob);
 
-  ctx.fillStyle = 'rgba(0,0,0,0.5)';
+  // Contact shadow.
+  ctx.fillStyle = 'rgba(0,0,0,0.55)';
   ctx.beginPath();
-  ctx.ellipse(1, 9 - bob, 12, 5.5, 0, 0, Math.PI * 2);
+  ctx.ellipse(1, 9 - bob, 12.5, 5.5, 0, 0, Math.PI * 2);
   ctx.fill();
 
   ctx.rotate(facing + Math.PI / 2 + sway);
 
-  // Boots peeking out of the coat as the courier strides.
+  // Boots striking out from under the cape.
   if (moving) {
-    ctx.fillStyle = '#17181c';
+    ctx.fillStyle = '#0b0d12';
     const stride = Math.sin(walkPhase) * 5;
     ctx.beginPath();
     ctx.ellipse(-5, stride, 3, 4.5, 0, 0, Math.PI * 2);
@@ -831,43 +832,102 @@ function drawPlayer(
     ctx.fill();
   }
 
-  // Long black coat.
-  const cloak = ctx.createRadialGradient(-3, -4, 2, 0, 0, PLAYER_RADIUS);
-  cloak.addColorStop(0, '#33373f');
-  cloak.addColorStop(1, '#14161b');
-  ctx.fillStyle = cloak;
+  // Scalloped cape: broad at the shoulders, three points at the hem.
+  const cape = ctx.createLinearGradient(0, -8, 0, 15);
+  cape.addColorStop(0, '#2a3140');
+  cape.addColorStop(0.45, '#141821');
+  cape.addColorStop(1, '#05070c');
+  ctx.fillStyle = cape;
   ctx.beginPath();
-  ctx.ellipse(0, 0, PLAYER_RADIUS - 1, PLAYER_RADIUS, 0, 0, Math.PI * 2);
+  ctx.moveTo(0, -8);
+  ctx.bezierCurveTo(-8, -7.5, -13, -1, -13.5, 7);
+  ctx.quadraticCurveTo(-10.5, 5.5, -8.5, 12.5);
+  ctx.quadraticCurveTo(-4.5, 8.5, 0, 14);
+  ctx.quadraticCurveTo(4.5, 8.5, 8.5, 12.5);
+  ctx.quadraticCurveTo(10.5, 5.5, 13.5, 7);
+  ctx.bezierCurveTo(13, -1, 8, -7.5, 0, -8);
+  ctx.closePath();
   ctx.fill();
-  ctx.strokeStyle = '#565c68';
-  ctx.lineWidth = 1.4;
+  ctx.strokeStyle = '#38414f';
+  ctx.lineWidth = 1.2;
   ctx.stroke();
 
-  // Oxblood scarf catching the light.
-  ctx.strokeStyle = '#8a0f1e';
-  ctx.lineWidth = 2.2;
+  // Cold rim light caught on the cape.
+  ctx.strokeStyle = 'rgba(168,210,255,0.42)';
+  ctx.lineWidth = 1.3;
   ctx.beginPath();
-  ctx.arc(0, -2.5, PLAYER_RADIUS - 5, Math.PI * 0.12, Math.PI * 0.88);
+  ctx.moveTo(-13, 6.5);
+  ctx.quadraticCurveTo(-12, -4, 0, -8.5);
+  ctx.quadraticCurveTo(12, -4, 13, 6.5);
   ctx.stroke();
 
-  // Fedora brim and the hint of a face below it.
-  ctx.fillStyle = '#24272e';
+  // Armoured torso.
+  const torso = ctx.createRadialGradient(-2, -1, 1, 0, 2, 9);
+  torso.addColorStop(0, '#39414f');
+  torso.addColorStop(1, '#10141c');
+  ctx.fillStyle = torso;
   ctx.beginPath();
-  ctx.arc(0, -3, 7.5, 0, Math.PI * 2);
-  ctx.fill();
-  ctx.fillStyle = '#d9c3a3';
-  ctx.beginPath();
-  ctx.arc(0, -5.5, 3.4, 0, Math.PI * 2);
+  ctx.ellipse(0, 2.5, 8.5, 7.5, 0, 0, Math.PI * 2);
   ctx.fill();
 
-  // Hand lantern.
-  ctx.shadowBlur = 12;
-  ctx.shadowColor = '#ffcf7a';
-  ctx.fillStyle = '#ffd98a';
+  // Gold utility belt.
+  ctx.fillStyle = '#b39660';
+  ctx.fillRect(-6.5, 5.6, 13, 2.6);
+  ctx.fillStyle = '#e6c98a';
+  ctx.fillRect(-1.4, 5.8, 2.8, 2.2);
+
+  // Chest emblem.
+  ctx.fillStyle = '#d8c18c';
   ctx.beginPath();
-  ctx.arc(9, -4, 3.2, 0, Math.PI * 2);
+  ctx.moveTo(0, 0.2);
+  ctx.quadraticCurveTo(-2.4, -1.8, -4.4, -0.6);
+  ctx.quadraticCurveTo(-3, 0.3, -3.6, 1.5);
+  ctx.quadraticCurveTo(-1.8, 0.6, 0, 2.4);
+  ctx.quadraticCurveTo(1.8, 0.6, 3.6, 1.5);
+  ctx.quadraticCurveTo(3, 0.3, 4.4, -0.6);
+  ctx.quadraticCurveTo(2.4, -1.8, 0, 0.2);
+  ctx.closePath();
   ctx.fill();
-  ctx.shadowBlur = 0;
+
+  // Cowl.
+  const cowl = ctx.createRadialGradient(-2, -7, 1, 0, -5, 7);
+  cowl.addColorStop(0, '#333c4c');
+  cowl.addColorStop(1, '#0a0d14');
+  ctx.fillStyle = cowl;
+  ctx.beginPath();
+  ctx.arc(0, -5.2, 6.4, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.strokeStyle = '#4c586b';
+  ctx.lineWidth = 1.1;
+  ctx.stroke();
+
+  // Ears.
+  ctx.fillStyle = '#11161f';
+  ctx.beginPath();
+  ctx.moveTo(-4.6, -8.6);
+  ctx.lineTo(-3.1, -13.6);
+  ctx.lineTo(-0.9, -9.6);
+  ctx.closePath();
+  ctx.fill();
+  ctx.beginPath();
+  ctx.moveTo(4.6, -8.6);
+  ctx.lineTo(3.1, -13.6);
+  ctx.lineTo(0.9, -9.6);
+  ctx.closePath();
+  ctx.fill();
+
+  // The cowl's white eye slits.
+  ctx.fillStyle = '#e6f4ff';
+  ctx.save();
+  ctx.translate(-2.8, -9);
+  ctx.rotate(-0.25);
+  ctx.fillRect(-1.8, -0.8, 3.6, 1.6);
+  ctx.restore();
+  ctx.save();
+  ctx.translate(2.8, -9);
+  ctx.rotate(0.25);
+  ctx.fillRect(-1.8, -0.8, 3.6, 1.6);
+  ctx.restore();
 
   ctx.restore();
 }
@@ -1276,7 +1336,7 @@ export default function EscapeRoomCanvas({
         moving,
       );
 
-      /* ---- Warm lamp pool: lights the concrete the mark is standing on ---- */
+      /* ---- Cool bat-light pool: the room around the Dark Knight ---- */
       const flicker = 1 + Math.sin(runtime.time * 6.1) * 0.015 + Math.sin(runtime.time * 13.7) * 0.009;
       const radius = Math.max(40, torchRef.current * flicker);
 
@@ -1290,9 +1350,9 @@ export default function EscapeRoomCanvas({
         runtime.player.y,
         radius,
       );
-      pool.addColorStop(0, 'rgba(255,196,124,0.42)');
-      pool.addColorStop(0.35, 'rgba(236,158,84,0.24)');
-      pool.addColorStop(0.72, 'rgba(176,104,56,0.09)');
+      pool.addColorStop(0, 'rgba(178,216,255,0.4)');
+      pool.addColorStop(0.35, 'rgba(116,158,216,0.22)');
+      pool.addColorStop(0.72, 'rgba(58,90,142,0.09)');
       pool.addColorStop(1, 'rgba(0,0,0,0)');
       ctx.fillStyle = pool;
       ctx.fillRect(0, 0, ROOM_WIDTH, ROOM_HEIGHT);

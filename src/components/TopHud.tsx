@@ -1,7 +1,8 @@
-import { Fingerprint, Ghost, Lightbulb, Skull, Umbrella, Volume2, VolumeX } from 'lucide-react';
+import { Ghost, Lightbulb, Skull, Umbrella, Volume2, VolumeX } from 'lucide-react';
 import type { VillainId, VillainProfile } from '../types/game';
 import { DEFAULT_TORCH_RADIUS } from '../data/roomLayout';
 import FullscreenButton from './FullscreenButton';
+import { BatGlyph } from './BatMark';
 
 const VILLAIN_ICONS: Record<VillainId, typeof Skull> = {
   dracula: Skull,
@@ -46,7 +47,7 @@ function RuneTrack({ collected, total }: { collected: number; total: number }) {
   );
 }
 
-/** The hunter creeping along the rail toward the mark. */
+/** The hunter creeping along the rail toward Batman. */
 function ThreatRail({
   villain,
   threat,
@@ -92,8 +93,8 @@ function ThreatRail({
       </div>
 
       <div className="absolute top-1/2 right-0 -translate-y-1/2">
-        <Fingerprint
-          size={short ? 15 : 18}
+        <BatGlyph
+          size={short ? 18 : 22}
           className="text-bone"
           style={{ filter: 'drop-shadow(0 0 6px rgba(233,228,216,0.65))' }}
         />
@@ -121,7 +122,7 @@ export default function TopHud({
     <button
       type="button"
       onClick={onToggleMute}
-      aria-label={muted ? 'Unmute Black Mask' : 'Mute Black Mask'}
+      aria-label={muted ? 'Unmute audio' : 'Mute audio'}
       title={muted ? 'Unmute' : 'Mute'}
       className="btn btn-sm btn-icon"
     >

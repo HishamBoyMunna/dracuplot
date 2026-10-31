@@ -36,7 +36,7 @@ import {
   saveLLMConfig,
 } from '../services/llmService';
 import FullscreenButton from './FullscreenButton';
-import BlackMaskMark from './BlackMaskMark';
+import BatMark from './BatMark';
 
 const VILLAIN_ICONS: Record<VillainId, typeof Skull> = {
   dracula: Skull,
@@ -72,6 +72,15 @@ export default function SetupScreen({
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const dragDepth = useRef(0);
+  const villainSectionRef = useRef<HTMLElement>(null);
+  const actionsSectionRef = useRef<HTMLElement>(null);
+
+  const scrollToSection = useCallback((target: HTMLElement | null) => {
+    if (!target) return;
+    window.requestAnimationFrame(() => {
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  }, []);
 
   useEffect(() => {
     saveLLMConfig(config);
@@ -107,13 +116,14 @@ export default function SetupScreen({
       const parsed = await parseStudyFile(file);
       setDoc(parsed);
       setPasteMode(false);
+      scrollToSection(villainSectionRef.current);
     } catch (cause) {
       setDoc(null);
       setError(cause instanceof Error ? cause.message : 'That file could not be read.');
     } finally {
       setIsWorking(false);
     }
-  }, []);
+  }, [scrollToSection]);
 
   const handleDrop = useCallback(
     (event: React.DragEvent<HTMLDivElement>) => {
@@ -130,11 +140,12 @@ export default function SetupScreen({
     setError(null);
     try {
       setDoc(parsePastedText(pastedText));
+      scrollToSection(villainSectionRef.current);
     } catch (cause) {
       setDoc(null);
       setError(cause instanceof Error ? cause.message : 'That text could not be used.');
     }
-  }, [pastedText]);
+  }, [pastedText, scrollToSection]);
 
   const clearDocument = useCallback(() => {
     setDoc(null);
@@ -147,19 +158,19 @@ export default function SetupScreen({
     if (!doc) return;
     setError(null);
     setIsWorking(true);
-    onGenerationStart('Black Mask is reading the file\u2026');
+    onGenerationStart('Black Mask is building the deathtrap\u2026');
     try {
-      onGenerationProgress(`Cutting six locks from "${doc.title}"\u2026`);
+      onGenerationProgress(`Forging six locks from "${doc.title}"\u2026`);
       const data = await generateGameData({
         studyText: doc.text,
         documentTitle: doc.title,
         config,
       });
-      onGenerationProgress('Cutting the Syndicate Keys\u2026');
+      onGenerationProgress('Cutting the six keys\u2026');
       onLaunch(data, villainId, false);
     } catch (cause) {
       onGenerationEnd();
-      setError(cause instanceof Error ? cause.message : 'The job fell through.');
+      setError(cause instanceof Error ? cause.message : 'The rescue fell through.');
     } finally {
       setIsWorking(false);
     }
@@ -191,28 +202,28 @@ export default function SetupScreen({
                 background: 'radial-gradient(circle, rgba(211,32,53,0.38), transparent 68%)',
               }}
             />
-            <BlackMaskMark className="h-16 w-auto drop-shadow-[0_0_18px_rgba(211,32,53,0.45)] sm:h-20" />
+            <BatMark className="h-14 w-auto drop-shadow-[0_0_20px_rgba(211,32,53,0.5)] sm:h-16" />
           </div>
 
           <div className="rule-orn mx-auto mt-3 max-w-sm">
             <span className="label-etched whitespace-nowrap text-blood-glow">
-              Gotham&rsquo;s Anti-Brainrot Escape Room
+              A Gotham Rescue · Anti-Brainrot Escape Room
             </span>
           </div>
 
           <h1
-            className="font-stencil mt-3 text-[clamp(3.4rem,13vw,7.2rem)] leading-[0.86] text-bone"
+            className="font-stencil mt-3 text-[clamp(3.1rem,12.5vw,7rem)] leading-[0.86] text-bone"
             style={{
               textShadow: '0 2px 0 #5c0b15, 6px 6px 0 #000, 0 0 54px rgba(211,32,53,0.4)',
               letterSpacing: '0.025em',
             }}
           >
-            BLACK <span className="text-blood-glow">MASK</span>
+            BATMAN <span className="text-blood-glow">TRAPPED</span>
           </h1>
 
           <p className="mx-auto mt-3 max-w-2xl text-bone-dim italic">
-            You are locked in the Black Mask Club with the PDF you have been avoiding. Six locks,
-            six keys, one way out: actually knowing the material.
+            Black Mask has Batman in a deathtrap under the city, and the only way out is the PDF
+            you have been avoiding. Six locks, six keys, one rescue: actually knowing the material.
           </p>
 
           <div className="mt-5 flex flex-wrap items-center justify-center gap-2.5">
@@ -272,7 +283,7 @@ export default function SetupScreen({
                 disabled={pastedText.trim().length < 200}
                 className="btn btn-sm"
               >
-                Log this text as evidence
+                Log this text into the Batcomputer
               </button>
             </div>
           ) : (
@@ -297,7 +308,7 @@ export default function SetupScreen({
             >
               <Upload size={26} className={isDragging ? 'text-blood-glow' : 'text-bone-faint'} />
               <p className="mt-2.5 text-bone">
-                Drag a <span className="text-blood-glow">PDF</span> into the evidence room, or tap to
+                Drag a <span className="text-blood-glow">PDF</span> into the Batcomputer, or tap to
                 choose
               </p>
               <p className="mt-1 text-sm text-bone-faint">
@@ -345,10 +356,10 @@ export default function SetupScreen({
         </section>
 
         {/* ---------------- II. Villain ---------------- */}
-        <section>
+        <section ref={villainSectionRef}>
           <h2 className="font-display mb-3.5 flex items-center gap-2 text-xl text-bone">
             <Skull size={17} className="text-blood-glow" />
-            II. Pick What Hunts You
+            II. Choose What Hunts Him
           </h2>
 
           <div className="grid gap-3.5 sm:grid-cols-3">
@@ -360,7 +371,10 @@ export default function SetupScreen({
                 <button
                   key={villain.id}
                   type="button"
-                  onClick={() => setVillainId(villain.id)}
+                  onClick={() => {
+                    setVillainId(villain.id);
+                    scrollToSection(actionsSectionRef.current);
+                  }}
                   style={{
                     borderColor: selected ? villain.accentColor : undefined,
                     outlineColor: selected ? `${villain.accentColor}80` : undefined,
@@ -417,7 +431,7 @@ export default function SetupScreen({
         </section>
 
         {/* ---------------- Actions ---------------- */}
-        <section className="flex flex-col items-center gap-3.5 pb-4">
+        <section ref={actionsSectionRef} className="flex flex-col items-center gap-3.5 pb-4">
           <button
             type="button"
             onClick={() => void summon()}
@@ -425,14 +439,14 @@ export default function SetupScreen({
             className="btn btn-blood w-full max-w-xl py-4 text-base"
           >
             <Wand2 size={18} />
-            Start the Job (Generate from PDF)
+            Start the Rescue (Generate from PDF)
           </button>
 
           {!canSummon && (
             <p className="text-center text-sm text-bone-faint">
               {studyText.length === 0
-                ? 'Drop a document above to unlock the job.'
-                : 'Add an API key in Syndicate Settings to run a job on your own material.'}
+                ? 'Drop a document above to unlock the rescue.'
+                : 'Add an API key in Syndicate Settings to run a rescue on your own material.'}
             </p>
           )}
 
@@ -442,11 +456,12 @@ export default function SetupScreen({
 
           <button type="button" onClick={playDemo} className="btn btn-verd">
             <Sparkles size={17} />
-            Play the Demo Job (No API Key Needed)
+            Run the Demo Rescue (No API Key Needed)
           </button>
 
           <p className="max-w-md text-center text-xs text-bone-faint">
-            The demo runs a pre-built room on neural network architecture and AI cognitive atrophy.
+            The demo runs a pre-built deathtrap on neural network architecture and AI cognitive
+            atrophy.
           </p>
         </section>
       </div>

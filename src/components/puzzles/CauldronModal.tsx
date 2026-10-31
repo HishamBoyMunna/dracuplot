@@ -33,7 +33,7 @@ export default function CauldronModal({
 
   const cast = () => {
     if (!input.trim()) {
-      notify('The vat needs a word before it takes your hand.');
+      notify("The vat needs a word before it takes Batman's hand.");
       return;
     }
 
@@ -43,7 +43,7 @@ export default function CauldronModal({
       return;
     }
 
-    fail(`The vat spits "${input.trim()}" back at you, scalding.`, [
+    fail(`The vat spits "${input.trim()}" back at Batman, scalding.`, [
       {
         questionContext: data.clue.replace('[BLANK]', '______'),
         correctTakeaway: data.answer,

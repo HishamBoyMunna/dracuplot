@@ -218,7 +218,7 @@ export default function App() {
               className="flex items-center gap-2 text-sm text-bone-faint transition hover:text-brass"
             >
               <ArrowLeft size={14} />
-              Abandon the job
+              Abandon the rescue
             </button>
             <p className="truncate text-xs text-bone-faint italic">{gameData.documentTitle}</p>
           </div>
@@ -284,7 +284,7 @@ export default function App() {
         <div className="fog-backdrop fixed inset-0 z-[60] flex h-[100dvh] flex-col items-center justify-center gap-5 bg-ink/97 px-6 text-center">
           <Loader2 size={40} className="animate-spin text-blood-glow" />
           <h2 className="font-display animate-flicker text-2xl text-bone sm:text-3xl">
-            Black Mask is reading the file…
+            Black Mask is building the deathtrap…
           </h2>
           <p className="max-w-md text-bone-dim italic">{loadingMessage}</p>
           <div className="rule-orn w-72">

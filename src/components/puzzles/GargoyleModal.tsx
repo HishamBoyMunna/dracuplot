@@ -76,7 +76,7 @@ export default function GargoyleModal({
               The jaws fall open.
             </p>
             <p className="text-sm text-bone-dim italic">
-              The sixth key drops into your palm. Cold Gotham rain pours in from the stairwell
+              The sixth key drops into Batman's palm. Cold Gotham rain pours in from the stairwell
               beyond.
             </p>
           </div>
@@ -90,7 +90,7 @@ export default function GargoyleModal({
 
           <button type="button" onClick={onSolve} className="btn btn-verd w-full">
             <KeyRound size={16} />
-            Claim the Sixth Key &amp; Escape
+            Claim the Sixth Key &amp; Free Batman
           </button>
         </div>
       ) : (

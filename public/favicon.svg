@@ -1,20 +1,20 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
   <defs>
-    <radialGradient id="eye" cx="50%" cy="50%" r="50%">
-      <stop offset="0%" stop-color="#fff2f3"/>
-      <stop offset="35%" stop-color="#ff4a5c"/>
-      <stop offset="100%" stop-color="#8a0f1e" stop-opacity="0"/>
-    </radialGradient>
+    <linearGradient id="steel" x1="0.15" y1="0" x2="0.55" y2="1">
+      <stop offset="0%" stop-color="#6d7889"/>
+      <stop offset="45%" stop-color="#1d222c"/>
+      <stop offset="100%" stop-color="#040508"/>
+    </linearGradient>
   </defs>
   <rect width="64" height="64" fill="#070708"/>
-  <path d="M32 6c13 0 22 9 22 23 0 8-3 14-6 19-3 5-5 10-6 16-1 4-4 7-10 7s-9-3-10-7c-1-6-3-11-6-16-3-5-6-11-6-19C10 15 19 6 32 6Z" fill="#111218" stroke="#4a4d56" stroke-width="1.5"/>
-  <ellipse cx="23" cy="30" rx="7" ry="5.5" fill="#050506"/>
-  <ellipse cx="41" cy="30" rx="7" ry="5.5" fill="#050506"/>
-  <ellipse cx="23" cy="30" rx="6" ry="4.5" fill="url(#eye)"/>
-  <ellipse cx="41" cy="30" rx="6" ry="4.5" fill="url(#eye)"/>
-  <ellipse cx="23" cy="30" rx="3" ry="2.2" fill="#ff5e6f"/>
-  <ellipse cx="41" cy="30" rx="3" ry="2.2" fill="#ff5e6f"/>
-  <path d="M32 36l-4 8h8Z" fill="#050506"/>
-  <path d="M22 50c4-3 16-3 20 0l-2 7c-3 2-13 2-16 0Z" fill="#050506" stroke="#3a3d44" stroke-width="1"/>
-  <path d="M26 48v9M32 48v10M38 48v9" stroke="#6f747e" stroke-width="1.2" opacity="0.8"/>
+  <circle cx="32" cy="32" r="26" fill="#d32035" opacity="0.13"/>
+  <g transform="translate(2 19) scale(0.3)" fill="url(#steel)" stroke="#8b96a8" stroke-width="4" stroke-linejoin="round">
+    <path d="M100 34C122 16 158 15 188 28L186 38Q168 44 160 58Q148 44 138 60Q126 48 116 62Q108 54 104 60Z"/>
+    <path d="M100 34C122 16 158 15 188 28L186 38Q168 44 160 58Q148 44 138 60Q126 48 116 62Q108 54 104 60Z" transform="translate(200 0) scale(-1 1)"/>
+    <path d="M100 14c5 0 9 4 10 10L111 7L117 32c4 8 4 18-1 26L108 72L100 84L92 72L84 58c-5-8-5-18-1-26L89 7L90 24c1-6 5-10 10-10Z"/>
+  </g>
+  <g fill="#e8f6ff">
+    <path d="M29.5 28.3l1.65.33-.3.9-1.5-.36Z"/>
+    <path d="M34.5 28.3l-1.65.33.3.9 1.5-.36Z"/>
+  </g>
 </svg>

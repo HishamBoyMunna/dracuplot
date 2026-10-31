@@ -1,14 +1,14 @@
 import type { GameData } from '../types/game';
 
 /**
- * Built-in Demo Mode dataset. Lets Black Mask be played instantly with zero API keys.
+ * Built-in Demo Mode dataset. Lets the rescue be played instantly with zero API keys.
  * Theme: "The Architecture of Artificial Neural Networks & Preventing AI Cognitive Atrophy".
  */
 export const FALLBACK_GAME_DATA: GameData = {
   documentTitle:
     'The Architecture of Artificial Neural Networks & Preventing AI Cognitive Atrophy',
   storyIntro:
-    'One bad night later, you wake in Roman Sionis\u2019s private study above the Black Mask Club. The doors are sealed, the overheads are dying, and the gargoyle gate only answers to proof. Six locks hold six Syndicate Keys \u2014 every one of them cut from the chapter you were supposed to actually read. Show Black Mask you learned it, or the only way out is in a body bag.',
+    'Black Mask ambushed Batman mid-investigation and dropped him into a deathtrap under the city \u2014 six locks, six keys, and a countdown wired to his own heartbeat. The only way out is the knowledge the Dark Knight refused to skip. Cut every key from the chapter, crack the gargoyle gate, and bring him back up before the heat hits 100%.',
   puzzles: {
     bookshelf: {
       pairs: [

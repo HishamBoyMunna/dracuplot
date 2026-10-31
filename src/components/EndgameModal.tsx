@@ -163,15 +163,27 @@ function EndgameArt({ won, accent }: { won: boolean; accent: string }) {
           <path d="M344 170 L344 98 Q400 66 456 98 L456 170 Z" fill="#ffe7b8" opacity="0.16" />
           <path d="M456 98 L484 112 L484 170 L456 170 Z" fill="#1b1d24" opacity="0.85" />
 
-          {/* The mark walking out of the club */}
-          <ellipse cx="400" cy="156" rx="17" ry="5" fill="#000" opacity="0.55" />
+          {/* Batman walking out of the deathtrap */}
+          <ellipse cx="400" cy="158" rx="20" ry="5" fill="#000" opacity="0.6" />
+          {/* Cape */}
+          <path d="M382 124c8-5 28-5 36 0l9 34h-54Z" fill="#080b12" />
+          {/* Torso */}
+          <path d="M391 119c6-3 12-3 18 0l4 24h-26Z" fill="#141a26" />
+          {/* Utility belt */}
+          <rect x="391" y="132" width="18" height="3.4" fill="#b39660" />
+          <rect x="398.4" y="132" width="3.2" height="3.4" fill="#e6c98a" />
+          {/* Cowl */}
+          <circle cx="400" cy="111" r="8" fill="#0e131d" stroke="#2c3546" strokeWidth="1" />
+          {/* Ears */}
+          <path d="M393.6 104.4l2-7 4 6.2ZM406.4 104.4l-2-7-4 6.2Z" fill="#0b0f17" />
+          {/* Eye slits */}
+          <path d="M396.2 111h4M403.8 111h-4" stroke="#dff1ff" strokeWidth="1.5" strokeLinecap="round" />
+          {/* Chest emblem */}
           <path
-            d="M392 118c8-3 16-3 22 2l5 34h-32Z"
-            fill="#191b22"
+            d="M400 124.6l-2.6-1.6-2.2.6 1 1.3-1 1.2 2.4-.8 2.4 1.6 2.4-1.6 2.4.8-1-1.2 1-1.3-2.2-.6Z"
+            fill="#d8c18c"
+            opacity="0.92"
           />
-          <circle cx="404" cy="112" r="8" fill="#2a2c34" />
-          <rect x="397" y="119" width="14" height="34" fill="#0c0d12" opacity="0.55" />
-          <circle cx="411" cy="126" r="3.5" fill="#ffd98a" opacity="0.85" />
 
           {/* Six stolen keys drifting free */}
           <FloatingKey x={148} y={28} rotate={-18} />
@@ -440,7 +452,7 @@ export default function EndgameModal({
               className="text-[10px] tracking-[0.4em] uppercase"
               style={{ color: won ? '#55d99f' : villain.accentColor }}
             >
-              {won ? 'Clean getaway' : 'The house always wins'}
+              {won ? 'The Dark Knight is out' : 'The trap closes'}
             </p>
             <h2
               className="font-display mt-1.5 text-2xl sm:text-4xl"
@@ -449,12 +461,12 @@ export default function EndgameModal({
                 textShadow: '3px 3px 0 #040306',
               }}
             >
-              {won ? 'You walked out alive.' : `${villain.name} caught you.`}
+              {won ? 'Batman is out.' : `${villain.name} keeps him.`}
             </h2>
             <p className="mx-auto mt-2.5 max-w-xl text-sm text-bone-dim italic sm:text-base">
               {won
-                ? `Six keys, one sealed gate, and a head full of "${gameData.documentTitle}" that you actually understand now.`
-                : `The heat maxed out before the sixth key did. ${villain.name} drags you back into the dark — but the Case File below is yours to keep.`}
+                ? `Six keys, one sealed gate, and a head full of "${gameData.documentTitle}" that actually got him out.`
+                : `The heat maxed out before the sixth key did. ${villain.name} drags Batman back into the dark — but the Case File below is yours to keep.`}
             </p>
           </header>
 
@@ -482,7 +494,7 @@ export default function EndgameModal({
               </h3>
             </div>
             <p className="mt-1 text-center text-sm text-bone-faint italic">
-              Debrief · every concept this job tested you on
+              Debrief · every concept this rescue tested
             </p>
 
             {uniqueMistakes.length > 0 && (
@@ -587,7 +599,7 @@ export default function EndgameModal({
         <div className="flex shrink-0 flex-col gap-2 border-t-2 border-iron-2 p-3 sm:flex-row">
           <button type="button" onClick={onReplay} className="btn flex-1">
             <RotateCcw size={15} />
-            Run the Same Job Again
+            Run the Rescue Again
           </button>
           <button type="button" onClick={onNewDocument} className="btn btn-iron flex-1">
             <Upload size={15} />

@@ -90,10 +90,10 @@ export const VILLAINS: Record<VillainId, VillainProfile> = {
     name: 'Black Mask',
     title: 'Kingpin of Gotham',
     description:
-      'Roman Sionis owns every light in the city — and he is cutting yours. Every blunder kills another lamp until the room goes pitch black.',
+      'Roman Sionis has Batman chained in a deathtrap under the city — and he is cutting the lights one by one. Every blunder kills another lamp until the cell goes pitch black.',
     passiveThreatPerSecond: 0.25,
     wrongAnswerPenalty: 10,
-    specialEffect: 'Lights Out: each wrong answer shrinks your light radius by 18px (min 75px).',
+    specialEffect: "Lights Out: each wrong answer shrinks Batman's light radius by 18px (min 75px).",
     accentColor: '#d32035',
   },
   werewolf: {
@@ -101,7 +101,7 @@ export const VILLAINS: Record<VillainId, VillainProfile> = {
     name: 'The Penguin',
     title: 'The Gentleman of Crime',
     description:
-      'A patient crime lord with an umbrella full of tricks. He gives you time to think — then makes an example of you the moment you guess.',
+      'A patient crime lord with an umbrella full of tricks. He gives Batman time to think — then makes an example of him the moment he guesses.',
     passiveThreatPerSecond: 0.18,
     wrongAnswerPenalty: 20,
     specialEffect: 'Umbrella Blitz: a brutal +20% heat spike and a violent screen shake on mistakes.',
@@ -112,10 +112,10 @@ export const VILLAINS: Record<VillainId, VillainProfile> = {
     name: 'Scarecrow',
     title: 'The Fearmonger',
     description:
-      'Fear gas creeps through the vents. Mistakes barely sting, but the minutes burn away fast.',
+      'Fear gas creeps through the ducts. Mistakes barely sting, but the minutes burn away fast.',
     passiveThreatPerSecond: 0.38,
     wrongAnswerPenalty: 7,
-    specialEffect: 'Fear Toxin: above 60% heat a toxic violet haze flickers across the room.',
+    specialEffect: 'Fear Toxin: above 60% heat a toxic violet haze flickers across the cell.',
     accentColor: '#9b7bea',
   },
 };
@@ -149,6 +149,6 @@ export const PROP_LORE: Record<PropId, { name: string; lore: string }> = {
   },
   gargoyle: {
     name: 'The Gargoyle Gate',
-    lore: "Black Mask's last warden tests whether you truly understood.",
+    lore: "Black Mask's last warden tests whether Batman truly understood.",
   },
 };
