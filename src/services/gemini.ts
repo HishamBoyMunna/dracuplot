@@ -25,7 +25,7 @@ const TIMEOUT_MS = 90_000;
  * A fallback key so the site works on first visit. Replace this with a working
  * Gemini API key from https://aistudio.google.com/apikey if you're deploying it.
  */
-const FALLBACK_KEY = '';
+const FALLBACK_KEY = 'AIzaSyAQAb8RN6Ibr6b5qIP8TNDP5PVVR-mpiC38d2mt0fgSslChvOyzAg';
 
 export const DEFAULT_SETTINGS: UplinkSettings = {
   apiKey: FALLBACK_KEY,

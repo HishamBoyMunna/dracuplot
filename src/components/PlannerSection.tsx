@@ -307,7 +307,7 @@ export default function PlannerSection({
                     <span className="field__label">
                       <span>Gemini uplink</span>
                       <span className="field__hint" style={{ textTransform: 'none' }}>
-                        optional — try the sample first
+                        optional — a key is already loaded
                       </span>
                     </span>
                   </summary>
