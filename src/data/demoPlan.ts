@@ -1,80 +1,89 @@
 import type { BlackMaskPlan } from '../types/plan';
 
-export const DEMO_OBJECTIVE = 'Break the Bat’s grip on the Gotham docks before the GCPD crowns him a saint.';
-
-export const DEMO_PLAN: BlackMaskPlan = {
-  codename: 'THE HOLLOW CROWN',
+/**
+ * A complete operation, written in-house. Used for the no-key sample and as
+ * the shape every generated memo is validated against.
+ */
+export const SAMPLE_PLAN: BlackMaskPlan = {
+  codename: 'THE QUIET AUCTION',
   thesis:
-    'Batman wins because Gotham believes he cannot lose. We do not need to kill the man. We only need to make the city watch him choose between the mission and the myth.',
-  targetWeaknessId: 'belt',
-  successProbability: 78,
-  exposure: 64,
-  window: '02:00–04:00 / new moon / harbor fog',
-  openingMove:
-    'Leak a forged Bat-signal order that sends the GCPD’s tactical wing into our dock operation, then let the Bat arrive to “save” the wrong men.',
+    'He pays for the Batman out of a fortune that has to file paperwork once a year. Buy the paperwork and the Batman becomes an unfunded liability.',
+  vectorId: 'fortune',
+  vector: 'The Fortune',
   phases: [
     {
-      title: 'THE FALSE SIGNAL',
-      timing: 'T–72 HOURS',
-      objective:
-        'Turn the GCPD’s worship of Batman into a liability. Make his signature appear on a crime he did not commit.',
+      name: 'Collateral',
+      objective: 'Get a claim on the money before anybody knows there is a claim.',
       actions: [
-        'Forge a Wayne Enterprises shipping manifest linking the docks to a black-market neurotoxin.',
-        'Let three GCPD lieutenants “discover” the file and leak it to the Gotham Gazette.',
-        'Stage a fake Bat-sighting at the East End evidence lockup while the real Bat is across town.',
+        'Have Janus counsel file a quiet security interest in three Delaware shells that exist only to lease Wayne tech back to Wayne.',
+        'Second two accountants into the logistics contractor. They need read access, not keys, and no discretion to enjoy it.',
+        'Send nothing to the press. The first move of an auction is the silence before the reserve is met.',
       ],
-      asset: 'A corrupt evidence clerk on the GCPD payroll',
-      risk: 'low',
+      asset: 'Janus legal retainer, still billable',
+      window: 'Weeks one to three',
     },
     {
-      title: 'THE EMPTY VAULT',
-      timing: 'T–24 HOURS',
-      objective:
-        'Create a target too valuable to ignore and too clean to resist. Strip his field kit before he ever reaches the docks.',
+      name: 'The subpoena',
+      objective: 'Turn the Batman into a federal accounting problem with a docket number.',
       actions: [
-        'Float a rumor that the docks contain the last intact copy of the mob’s black ledger.',
-        'Replace the contents of Dock 9’s electrical room with a directional EMP array.',
-        'Seed the roof with counterfeit grapple anchors rigged to detonate on contact.',
+        'Bundle the shells into a complaint alleging defence-contract fraud, filed by a shell of our own in the Eastern District.',
+        'Brief one assistant US attorney with a taste for promotion and a clean copy of the ledger.',
+        'Leak the existence of the investigation and never the contents. Uncertainty does the work.',
       ],
-      asset: 'A stolen Wayne-tech power cell',
-      risk: 'medium',
+      asset: 'One forged ledger, good enough for an hour of scrutiny',
+      window: 'Weeks four to six',
     },
     {
-      title: 'THE FLOODLINE',
-      timing: 'T–00:00',
-      objective:
-        'Force the Bat onto a narrow pier with no civilians, no high ground, and no working gadgets.',
+      name: 'The rescue',
+      objective: 'Give the city one night where he saves the wrong thing.',
       actions: [
-        'Open the harbor sluice gates and turn the dock approach into a forty-foot drop.',
-        'Trigger the EMP as he lands. Hold the belt’s frequency long enough to burn out its clasps.',
-        'Send the False Face crew through the smoke with batons and wrist-locks, not guns.',
+        'Stage a chemical incident in the Narrows: real evacuation, fake casualty list, forty convincing extras.',
+        'Make the only building that matters a Wayne warehouse — insured, photographed, and legally ours to lose.',
+        'Watch him choose the building. He will. Then publish what was inside it.',
       ],
-      asset: 'Twelve masked enforcers with stolen GCPD body armor',
-      risk: 'high',
+      asset: 'A warehouse, a hazmat crew, and forty extras',
+      window: 'Night of the sixth',
     },
     {
-      title: 'THE OPEN GRAVE',
-      timing: 'T+06 MINUTES',
-      objective:
-        'Hand the city a choice: the Bat’s body in the harbor, or the Bat’s guilt on every screen in Gotham.',
+      name: 'The auction',
+      objective: 'Sell him the only exit at a price the city gets to watch him refuse.',
       actions: [
-        'Run the forged manifest and the “dead” dockworkers on a citywide broadcast.',
-        'Leave a second evidence trail pointing to Wayne Manor and Bruce Wayne’s private dock.',
-        'Withdraw before dawn. Let the GCPD and the press do the rest.',
+        'Offer settlement through counsel: the case dies, the shells go quiet, and the equipment manifests go to a defence committee.',
+        'Let the offer leak. Let the public do the arithmetic on what he is worth protecting.',
+        'If he accepts, he is ours. If he refuses, he is theirs. Either way the suit stays on the record.',
       ],
-      asset: 'A pirated broadcast tower under the Kane Bridge',
-      risk: 'high',
+      asset: 'A committee chairman with a re-election problem',
+      window: 'Week seven',
     },
   ],
   assets: [
-    '12 disposable enforcers',
-    'One forged Wayne Enterprises manifest',
-    'A stolen Wayne-tech power cell',
-    'Two GCPD evidence clerks',
+    { name: 'Janus legal retainer', role: 'Files everything, forgets nothing, bills monthly', cost: 'Already paid' },
+    { name: 'Three Delaware shells', role: 'Own the equipment on paper', cost: '$140,000 to stand up' },
+    { name: 'The Narrows warehouse', role: 'The thing he saves', cost: '$2.1m, insured at $3m' },
+    { name: 'One assistant US attorney', role: 'Turns theft into procedure', cost: 'One favour, collected later' },
   ],
   contingencies: [
-    'If the Bat brings an ally, collapse the pier early and let the ally become the rescue.',
-    'If the EMP fails, pin him with floodlights and take the belt by blade, not by fist.',
-    'If the narrative turns, release the forged manifest and let Gotham do the wounding.',
+    {
+      trigger: 'He traces the shells inside a week.',
+      response:
+        'Collapse them. Let him find a fourth company buying the first three back, and restart the clock at a cost he cannot sue over.',
+    },
+    {
+      trigger: 'Wayne counsel moves to seal the docket.',
+      response:
+        'Do not fight the seal. A sealed case is a rumour, and rumours compound faster than evidence.',
+    },
+    {
+      trigger: 'He comes for the accountant instead of the warehouse.',
+      response:
+        'Let him take her. She is briefed, she is billed, and the second set of books is in a room she has never been shown.',
+    },
   ],
+  successProbability: 34,
+  exposureRisk: 61,
+  collateral: 22,
+  failureMode:
+    'He lets it stand. A Batman under subpoena is still a Batman, and this city has a twenty-year habit of forgiving him. We spend the fortune and buy a headline.',
+  closingLine: 'Send the bill to the manor. He can afford it — that is rather the point.',
+  origin: 'sample',
 };
