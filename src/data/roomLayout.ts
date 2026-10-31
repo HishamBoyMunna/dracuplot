@@ -38,21 +38,21 @@ export const PROPS: PropDefinition[] = [
     id: 'bookshelf',
     rect: { x: 60, y: 30, width: 150, height: 45 },
     approach: { x: 135, y: 110 },
-    label: 'The Cursed Bookshelf',
+    label: 'The Ledger Archive',
     runeIndex: 0,
   },
   {
     id: 'clock',
     rect: { x: 590, y: 30, width: 80, height: 55 },
     approach: { x: 630, y: 118 },
-    label: 'The Grandfather Clock',
+    label: 'The Vault Clock',
     runeIndex: 1,
   },
   {
     id: 'scale',
     rect: { x: 50, y: 260, width: 95, height: 110 },
     approach: { x: 182, y: 315 },
-    label: "The Alchemist's Scale",
+    label: 'The Weighing Table',
     runeIndex: 2,
   },
   {
@@ -66,14 +66,14 @@ export const PROPS: PropDefinition[] = [
     id: 'cauldron',
     rect: { x: 355, y: 255, width: 90, height: 90 },
     approach: { x: 400, y: 380 },
-    label: 'The Ritual Cauldron',
+    label: 'The Chem Vat',
     runeIndex: 4,
   },
   {
     id: 'gargoyle',
     rect: { x: 330, y: 535, width: 140, height: 55 },
     approach: { x: 400, y: 498 },
-    label: 'The Gargoyle Exit Door',
+    label: 'The Gargoyle Gate',
     runeIndex: null,
   },
 ];
@@ -86,7 +86,7 @@ export const PROP_MAP: Record<PropId, PropDefinition> = PROPS.reduce(
   {} as Record<PropId, PropDefinition>,
 );
 
-/** The five relics that award an Elder Rune. The gargoyle awards the sixth. */
+/** The five locks that award a Syndicate Key. The gargoyle gate awards the sixth. */
 export const RUNE_PROP_IDS: PropId[] = PROPS.filter((prop) => prop.runeIndex !== null).map(
   (prop) => prop.id,
 );

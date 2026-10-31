@@ -1,14 +1,14 @@
 import type { GameData } from '../types/game';
 
 /**
- * Built-in Demo Mode dataset. Lets Dracuplot be played instantly with zero API keys.
+ * Built-in Demo Mode dataset. Lets Black Mask be played instantly with zero API keys.
  * Theme: "The Architecture of Artificial Neural Networks & Preventing AI Cognitive Atrophy".
  */
 export const FALLBACK_GAME_DATA: GameData = {
   documentTitle:
     'The Architecture of Artificial Neural Networks & Preventing AI Cognitive Atrophy',
   storyIntro:
-    'You fell asleep over your lecture notes and woke in the Count\u2019s private study. The door is sealed by a gargoyle that feeds on understanding, not answers. Six relics hold the Elder Runes \u2014 and every one of them was carved from the chapter you were supposed to actually read. Prove you learned it, scholar, or join the library forever.',
+    'One bad night later, you wake in Roman Sionis\u2019s private study above the Black Mask Club. The doors are sealed, the overheads are dying, and the gargoyle gate only answers to proof. Six locks hold six Syndicate Keys \u2014 every one of them cut from the chapter you were supposed to actually read. Show Black Mask you learned it, or the only way out is in a body bag.',
   puzzles: {
     bookshelf: {
       pairs: [
@@ -36,7 +36,7 @@ export const FALLBACK_GAME_DATA: GameData = {
     },
     clock: {
       prompt:
-        'The Count scrambled one full training iteration of a neural network. Restore the true order of the cycle.',
+        'Someone scrambled one full training iteration of a neural network. Restore the true order of the cycle before the vault locks.',
       orderedSteps: [
         'Forward pass: inputs flow layer by layer through weights and activations to produce a prediction.',
         'Loss computation: the prediction is compared against the ground-truth label to produce an error value.',
@@ -123,7 +123,7 @@ export const FALLBACK_GAME_DATA: GameData = {
     },
     gargoyle: {
       scenario:
-        'Your network hits 99.4% accuracy on the training set but only 71% on the validation set, and the gap widens with every epoch. The Gargoyle demands the single most appropriate next move \u2014 and warns that guessing costs blood.',
+        'Your network hits 99.4% accuracy on the training set but only 71% on the validation set, and the gap widens with every epoch. The gate\u2019s warden demands the single most appropriate next move \u2014 and warns that guessing costs blood.',
       options: [
         'Add more layers and parameters so the model can fit the validation set too',
         'Apply regularisation (dropout, weight decay, early stopping) and gather or augment more training data',

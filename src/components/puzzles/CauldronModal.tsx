@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Eye, Sparkles } from 'lucide-react';
+import { Eye, FlaskConical } from 'lucide-react';
 import type { GameData, PuzzleModalBaseProps } from '../../types/game';
 import PuzzleModalWrapper, { RuneAwardPanel } from './PuzzleModalWrapper';
 import {
@@ -33,7 +33,7 @@ export default function CauldronModal({
 
   const cast = () => {
     if (!input.trim()) {
-      notify('The brew needs a word to swallow.');
+      notify('The vat needs a word before it takes your hand.');
       return;
     }
 
@@ -43,7 +43,7 @@ export default function CauldronModal({
       return;
     }
 
-    fail(`The cauldron spits "${input.trim()}" back at you, scalding.`, [
+    fail(`The vat spits "${input.trim()}" back at you, scalding.`, [
       {
         questionContext: data.clue.replace('[BLANK]', '______'),
         correctTakeaway: data.answer,
@@ -54,8 +54,8 @@ export default function CauldronModal({
   const revealHint = () => {
     if (hintRevealed) return;
     setHintRevealed(true);
-    onThreatCost(HINT_THREAT_COST, 'Cauldron hint');
-    notify(`The vapour whispers — and the shadows lengthen (+${HINT_THREAT_COST}% threat).`);
+    onThreatCost(HINT_THREAT_COST, 'Chem vat hint');
+    notify(`The fumes whisper — and the shadows lengthen (+${HINT_THREAT_COST}% heat).`);
   };
 
   return (
@@ -80,8 +80,8 @@ export default function CauldronModal({
               {hintRevealed ? 'Hint revealed' : `Hint (+${HINT_THREAT_COST}%)`}
             </button>
             <button type="button" onClick={cast} className="btn flex-1">
-              <Sparkles size={16} />
-              Cast Incantation
+              <FlaskConical size={16} />
+              Run the Formula
             </button>
           </div>
         )
@@ -137,7 +137,7 @@ export default function CauldronModal({
 
             <div>
               <label htmlFor="cauldron-answer" className="label-etched mb-1.5 block text-center">
-                Speak the missing word
+                Name the missing term
               </label>
               <input
                 id="cauldron-answer"

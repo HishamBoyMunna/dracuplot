@@ -16,7 +16,7 @@ interface ToneOptions {
 }
 
 /**
- * Every sound in Dracuplot is synthesised at runtime with the Web Audio API.
+ * Every sound in Black Mask is synthesised at runtime with the Web Audio API.
  * No audio files ship with the game.
  *
  * Browsers refuse to start an AudioContext outside a trusted user gesture, and
@@ -250,7 +250,7 @@ class SoundEngine {
     this.tone({ freq: 74 + Math.random() * 16, type: 'sine', attack: 0.005, decay: 0.08, gain: 0.2 });
   }
 
-  /** Mystical suspended chord when an Elder Rune is claimed. */
+  /** Sharp brass-and-strings sting when a Syndicate Key is claimed. */
   rune(): void {
     const chord = [329.63, 493.88, 659.25, 987.77];
     chord.forEach((freq, index) => {
@@ -367,7 +367,7 @@ class SoundEngine {
   }
 
   /**
-   * Drives the heartbeat from the villain threat meter. It appears at 25%,
+   * Drives the heartbeat from the syndicate heat meter. It appears at 25%,
    * then noticeably accelerates past the 50% and 75% marks.
    */
   setThreat(threat: number): void {

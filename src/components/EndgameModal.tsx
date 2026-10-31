@@ -5,7 +5,7 @@ import {
   Clock3,
   DoorOpen,
   FlaskConical,
-  Gem,
+  KeyRound,
   Lock,
   RotateCcw,
   Scale,
@@ -41,6 +41,16 @@ const SECTION_ICONS: Record<PropId, typeof BookOpenText> = {
  * Procedural artwork — drawn as inline SVG, no image assets
  * ------------------------------------------------------------------ */
 
+/** A single floating Syndicate Key for the victory skyline. */
+function FloatingKey({ x, y, rotate = 0 }: { x: number; y: number; rotate?: number }) {
+  return (
+    <g transform={`translate(${x} ${y}) rotate(${rotate})`} opacity="0.9">
+      <circle r="3.2" fill="none" stroke="#e6c98a" strokeWidth="1.8" />
+      <path d="M3 0h9M9 0v3.4M12.5 0v2.6" stroke="#e6c98a" strokeWidth="1.8" strokeLinecap="round" />
+    </g>
+  );
+}
+
 function EndgameArt({ won, accent }: { won: boolean; accent: string }) {
   const frame = 'block w-full';
   const ratio = { aspectRatio: '800 / 170' };
@@ -50,68 +60,128 @@ function EndgameArt({ won, accent }: { won: boolean; accent: string }) {
       <div className="relative">
         <svg viewBox="0 0 800 170" className={frame} style={ratio} role="presentation">
           <defs>
-            <linearGradient id="dp-sky" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#090912" />
-              <stop offset="100%" stopColor="#16142a" />
+            <linearGradient id="bm-dawn" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor="#070a12" />
+              <stop offset="55%" stopColor="#141725" />
+              <stop offset="100%" stopColor="#26141b" />
             </linearGradient>
-            <radialGradient id="dp-spill" cx="50%" cy="62%">
-              <stop offset="0%" stopColor="#f8ecc8" stopOpacity="0.95" />
-              <stop offset="45%" stopColor="#3ce2c0" stopOpacity="0.4" />
-              <stop offset="100%" stopColor="#3ce2c0" stopOpacity="0" />
+            <radialGradient id="bm-bat" cx="50%" cy="50%">
+              <stop offset="0%" stopColor="#e4f1ff" stopOpacity="0.8" />
+              <stop offset="55%" stopColor="#9fc6ec" stopOpacity="0.22" />
+              <stop offset="100%" stopColor="#9fc6ec" stopOpacity="0" />
             </radialGradient>
+            <radialGradient id="bm-exit" cx="50%" cy="78%">
+              <stop offset="0%" stopColor="#ffe7b8" stopOpacity="0.85" />
+              <stop offset="48%" stopColor="#d32035" stopOpacity="0.28" />
+              <stop offset="100%" stopColor="#d32035" stopOpacity="0" />
+            </radialGradient>
+            <linearGradient id="bm-sign" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor="#2a0b11" />
+              <stop offset="100%" stopColor="#12060a" />
+            </linearGradient>
           </defs>
 
-          <rect width="800" height="170" fill="url(#dp-sky)" />
+          <rect width="800" height="170" fill="url(#bm-dawn)" />
 
-          {/* Crescent moon */}
-          <circle cx="678" cy="40" r="19" fill="#e8e2cf" opacity="0.85" />
-          <circle cx="670" cy="35" r="18" fill="#0b0b16" />
-
-          {/* Distant spires */}
-          {[60, 120, 700, 760].map((x) => (
-            <path
-              key={x}
-              d={`M${x - 16} 170 L${x - 16} 96 L${x} 68 L${x + 16} 96 L${x + 16} 170 Z`}
-              fill="#0c0c18"
-            />
-          ))}
-
-          <ellipse cx="400" cy="112" rx="250" ry="86" fill="url(#dp-spill)" />
-
-          {/* Stone archway, thrown open */}
+          {/* Bat signal over the Gotham skyline */}
+          <circle cx="646" cy="40" r="42" fill="url(#bm-bat)" />
+          <ellipse cx="646" cy="40" rx="18" ry="9" fill="#dbeaff" opacity="0.55" />
           <path
-            d="M296 170 L296 86 Q400 22 504 86 L504 170 Z"
-            fill="none"
-            stroke="#4b4a56"
-            strokeWidth="11"
+            d="M634 41l4-5 4 4 4-4 4 5-4 2 2 4-6-2-6 2 2-4Z"
+            fill="#0a0d16"
+            opacity="0.9"
           />
-          <path d="M312 170 L312 94 Q400 40 488 94 L488 170 Z" fill="#f6e8c2" opacity="0.2" />
 
-          {/* Scholar walking out */}
-          <ellipse cx="400" cy="156" rx="16" ry="5" fill="#000" opacity="0.5" />
-          <ellipse cx="400" cy="136" rx="13" ry="18" fill="#241d38" />
-          <circle cx="400" cy="120" r="8.5" fill="#50446f" />
-          <circle cx="418" cy="130" r="4" fill="#ffd98a" opacity="0.9" />
+          {/* Far skyline */}
+          <g fill="#0b0d16">
+            {[
+              [20, 78, 54, 92],
+              [78, 96, 42, 74],
+              [124, 60, 34, 110],
+              [162, 88, 58, 82],
+              [486, 82, 46, 88],
+              [536, 64, 38, 106],
+              [578, 92, 54, 78],
+              [684, 72, 48, 98],
+              [736, 96, 44, 74],
+            ].map(([x, y, width, height]) => (
+              <rect key={`${x}-${y}`} x={x} y={y} width={width} height={height} />
+            ))}
+            {/* Rooftop antennas and water tower */}
+            <rect x="138" y="46" width="3" height="16" />
+            <rect x="548" y="52" width="3" height="14" />
+            <rect x="706" y="58" width="3" height="16" />
+            <circle cx="188" cy="78" r="7" />
+            <rect x="183" y="84" width="10" height="6" />
+          </g>
 
-          {/* Six claimed runes drifting free */}
-          {[0, 1, 2, 3, 4, 5].map((index) => {
-            const x = 150 + index * 100;
-            const y = index % 2 === 0 ? 30 : 46;
-            return (
-              <rect
-                key={index}
-                x={x}
-                y={y}
-                width="11"
-                height="11"
-                transform={`rotate(45 ${x + 5.5} ${y + 5.5})`}
-                fill="#3ce2c0"
-                opacity="0.9"
-              />
-            );
-          })}
+          {/* Lit windows */}
+          <g fill="#b39660" opacity="0.45">
+            {[
+              [30, 88], [46, 88], [62, 100], [92, 106], [108, 106], [134, 72],
+              [174, 98], [190, 98], [500, 94], [548, 76], [590, 102], [606, 102],
+              [696, 84], [712, 84], [748, 106],
+            ].map(([x, y]) => (
+              <rect key={`${x}-${y}`} x={x} y={y} width="4" height="6" />
+            ))}
+          </g>
+
+          {/* Neon: Black Mask Club */}
+          <g transform="translate(58 30)">
+            <rect width="112" height="21" fill="url(#bm-sign)" stroke="#5e0c18" strokeWidth="1.5" />
+            <text
+              x="56"
+              y="14"
+              textAnchor="middle"
+              fontFamily="'Bebas Neue', 'Oswald', sans-serif"
+              fontSize="11"
+              letterSpacing="1.6"
+              fill="#ff4a5c"
+              opacity="0.9"
+            >
+              BLACK MASK CLUB
+            </text>
+          </g>
+
+          {/* Rain over Gotham */}
+          <g stroke="#cfe2f5" strokeWidth="1" opacity="0.14">
+            {Array.from({ length: 26 }, (_, index) => {
+              const x = 8 + index * 31;
+              return <path key={index} d={`M${x} 0l-5 22`} />;
+            })}
+          </g>
+
+          <ellipse cx="400" cy="130" rx="260" ry="84" fill="url(#bm-exit)" />
+
+          {/* Fire exit, thrown open */}
+          <path
+            d="M330 170 L330 92 Q400 54 470 92 L470 170 Z"
+            fill="none"
+            stroke="#3d414b"
+            strokeWidth="10"
+          />
+          <path d="M344 170 L344 98 Q400 66 456 98 L456 170 Z" fill="#ffe7b8" opacity="0.16" />
+          <path d="M456 98 L484 112 L484 170 L456 170 Z" fill="#1b1d24" opacity="0.85" />
+
+          {/* The mark walking out of the club */}
+          <ellipse cx="400" cy="156" rx="17" ry="5" fill="#000" opacity="0.55" />
+          <path
+            d="M392 118c8-3 16-3 22 2l5 34h-32Z"
+            fill="#191b22"
+          />
+          <circle cx="404" cy="112" r="8" fill="#2a2c34" />
+          <rect x="397" y="119" width="14" height="34" fill="#0c0d12" opacity="0.55" />
+          <circle cx="411" cy="126" r="3.5" fill="#ffd98a" opacity="0.85" />
+
+          {/* Six stolen keys drifting free */}
+          <FloatingKey x={148} y={28} rotate={-18} />
+          <FloatingKey x={222} y={44} rotate={12} />
+          <FloatingKey x={286} y={24} rotate={-6} />
+          <FloatingKey x={514} y={26} rotate={10} />
+          <FloatingKey x={580} y={44} rotate={-14} />
+          <FloatingKey x={652} y={108} rotate={7} />
         </svg>
-        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-[#15151f] to-transparent" />
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-[#0c0d11] to-transparent" />
       </div>
     );
   }
@@ -120,31 +190,108 @@ function EndgameArt({ won, accent }: { won: boolean; accent: string }) {
     <div className="relative">
       <svg viewBox="0 0 800 170" className={frame} style={ratio} role="presentation">
         <defs>
-          <radialGradient id="dp-dread" cx="50%" cy="58%">
-            <stop offset="0%" stopColor={accent} stopOpacity="0.5" />
-            <stop offset="55%" stopColor={accent} stopOpacity="0.13" />
+          <radialGradient id="bm-dread" cx="50%" cy="58%">
+            <stop offset="0%" stopColor={accent} stopOpacity="0.46" />
+            <stop offset="52%" stopColor={accent} stopOpacity="0.12" />
             <stop offset="100%" stopColor="#05050a" stopOpacity="0" />
           </radialGradient>
+          <filter id="bm-eye-glow" x="-90%" y="-90%" width="280%" height="280%">
+            <feGaussianBlur stdDeviation="5" />
+          </filter>
         </defs>
 
-        <rect width="800" height="170" fill="#07070e" />
-        <rect width="800" height="170" fill="url(#dp-dread)" />
+        <rect width="800" height="170" fill="#060609" />
+        <rect width="800" height="170" fill="url(#bm-dread)" />
 
-        {/* Looming silhouette */}
+        {/* Alley searchlights raking the frame */}
+        <path d="M0 0 L250 170 L0 170Z" fill={accent} opacity="0.07" />
+        <path d="M800 0 L550 170 L800 170Z" fill={accent} opacity="0.07" />
+
+        {/* Rain in the red light */}
+        <g stroke="#ff8b96" strokeWidth="1" opacity="0.12">
+          {Array.from({ length: 24 }, (_, index) => {
+            const x = 12 + index * 34;
+            return <path key={index} d={`M${x} 0l-6 26`} />;
+          })}
+        </g>
+
+        {/* Black Mask himself */}
         <path
-          d="M400 170 Q268 170 256 104 Q252 44 400 34 Q548 44 544 104 Q532 170 400 170 Z"
-          fill="#0a0a12"
+          d="M400 8C478 8 522 58 522 110c0 32-24 52-48 68-18 12-26 26-28 46H354c-2-20-10-34-28-46-24-16-48-36-48-68C278 58 322 8 400 8Z"
+          fill="#101116"
+          stroke="#4a0d16"
+          strokeWidth="2"
         />
-        <path d="M316 58 L292 10 L356 44 Z" fill="#0a0a12" />
-        <path d="M484 58 L508 10 L444 44 Z" fill="#0a0a12" />
+        <path
+          d="M296 100c10-44 50-74 96-80"
+          stroke="#6b707a"
+          strokeWidth="2.5"
+          strokeLinecap="round"
+          opacity="0.42"
+        />
+        <path
+          d="M516 96c-4 34-22 56-42 72"
+          stroke={accent}
+          strokeWidth="2"
+          strokeLinecap="round"
+          opacity="0.5"
+        />
 
-        {/* Burning eyes */}
-        <ellipse cx="356" cy="96" rx="30" ry="18" fill={accent} opacity="0.18" />
-        <ellipse cx="444" cy="96" rx="30" ry="18" fill={accent} opacity="0.18" />
-        <ellipse cx="356" cy="96" rx="12" ry="6" fill={accent} opacity="0.95" />
-        <ellipse cx="444" cy="96" rx="12" ry="6" fill={accent} opacity="0.95" />
+        {/* Hollow sockets */}
+        <ellipse cx="344" cy="88" rx="42" ry="25" transform="rotate(-7 344 88)" fill="#030304" />
+        <ellipse cx="456" cy="88" rx="42" ry="25" transform="rotate(7 456 88)" fill="#030304" />
+        <ellipse
+          cx="344"
+          cy="88"
+          rx="34"
+          ry="21"
+          transform="rotate(-7 344 88)"
+          fill={accent}
+          opacity="0.4"
+          filter="url(#bm-eye-glow)"
+        />
+        <ellipse
+          cx="456"
+          cy="88"
+          rx="34"
+          ry="21"
+          transform="rotate(7 456 88)"
+          fill={accent}
+          opacity="0.4"
+          filter="url(#bm-eye-glow)"
+        />
+        <ellipse cx="344" cy="88" rx="15" ry="8" transform="rotate(-7 344 88)" fill="#ff4a5c" />
+        <ellipse cx="456" cy="88" rx="15" ry="8" transform="rotate(7 456 88)" fill="#ff4a5c" />
+        <ellipse cx="344" cy="88" rx="5" ry="3" fill="#ffe9eb" opacity="0.9" />
+        <ellipse cx="456" cy="88" rx="5" ry="3" fill="#ffe9eb" opacity="0.9" />
 
-        {/* Claw slashes raking both edges */}
+        {/* Nasal cavity */}
+        <path d="M400 112l-14 26h28Z" fill="#030304" />
+
+        {/* Steel grin */}
+        <path
+          d="M354 152c18-8 74-8 92 0l-6 20c-16 7-64 7-80 0Z"
+          fill="#030304"
+          stroke="#3a3d44"
+          strokeWidth="1.5"
+        />
+        <path
+          d="M368 150v20M383 148v23M400 147v24M417 148v23M432 150v20"
+          stroke="#8b909a"
+          strokeWidth="1.5"
+          opacity="0.7"
+        />
+
+        {/* Cracks through the mask */}
+        <path
+          d="M400 8l-3 16 7 11M522 102l-14 6 3 10M278 102l14 7-3 10"
+          stroke="#5c606a"
+          strokeWidth="1.2"
+          strokeLinecap="round"
+          opacity="0.55"
+        />
+
+        {/* Tally slashes raking both edges */}
         {[0, 1, 2].map((index) => (
           <g key={index}>
             <path
@@ -152,26 +299,26 @@ function EndgameArt({ won, accent }: { won: boolean; accent: string }) {
               stroke={accent}
               strokeWidth="3"
               fill="none"
-              opacity={0.38 - index * 0.09}
+              opacity={0.4 - index * 0.09}
             />
             <path
               d={`M${738 - index * 34} 4 Q${692 - index * 34} 86 ${748 - index * 34} 166`}
               stroke={accent}
               strokeWidth="3"
               fill="none"
-              opacity={0.38 - index * 0.09}
+              opacity={0.4 - index * 0.09}
             />
           </g>
         ))}
       </svg>
-      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-[#15151f] to-transparent" />
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-[#0c0d11] to-transparent" />
     </div>
   );
 }
 
 /* ------------------------------------------------------------------ */
 
-function GrimoireSection({
+function CaseFileSection({
   propId,
   children,
   missedCount,
@@ -197,7 +344,7 @@ function GrimoireSection({
   );
 }
 
-function GrimoireRow({
+function CaseFileRow({
   heading,
   body,
   missed,
@@ -269,10 +416,10 @@ export default function EndgameModal({
   const seconds = Math.floor(elapsed % 60);
 
   const stats = [
-    { label: 'Time elapsed', value: `${minutes}:${String(seconds).padStart(2, '0')}` },
-    { label: 'Final threat', value: `${threat.toFixed(0)}%` },
+    { label: 'Time on the clock', value: `${minutes}:${String(seconds).padStart(2, '0')}` },
+    { label: 'Final heat', value: `${threat.toFixed(0)}%` },
     { label: 'Accuracy', value: accuracy === null ? '—' : `${accuracy}%` },
-    { label: 'Villain faced', value: villain.name },
+    { label: 'Hunter', value: villain.name },
   ];
 
   return (
@@ -291,14 +438,14 @@ export default function EndgameModal({
           <header className="mt-3 text-center">
             <p
               className="text-[10px] tracking-[0.4em] uppercase"
-              style={{ color: won ? '#4fbf9e' : villain.accentColor }}
+              style={{ color: won ? '#55d99f' : villain.accentColor }}
             >
-              {won ? 'Escape achieved' : 'The study keeps you'}
+              {won ? 'Clean getaway' : 'The house always wins'}
             </p>
             <h2
               className="font-display mt-1.5 text-2xl sm:text-4xl"
               style={{
-                color: won ? '#4fbf9e' : villain.accentColor,
+                color: won ? '#55d99f' : villain.accentColor,
                 textShadow: '3px 3px 0 #040306',
               }}
             >
@@ -306,8 +453,8 @@ export default function EndgameModal({
             </h2>
             <p className="mx-auto mt-2.5 max-w-xl text-sm text-bone-dim italic sm:text-base">
               {won
-                ? `Six Elder Runes, one sealed door, and a head full of "${gameData.documentTitle}" that you actually understand now.`
-                : `The threat meter filled before the sixth rune did. ${villain.title} drags you back into the dark — but the Grimoire below is yours to keep.`}
+                ? `Six keys, one sealed gate, and a head full of "${gameData.documentTitle}" that you actually understand now.`
+                : `The heat maxed out before the sixth key did. ${villain.name} drags you back into the dark — but the Case File below is yours to keep.`}
             </p>
           </header>
 
@@ -321,28 +468,28 @@ export default function EndgameModal({
           </dl>
 
           <div className="mt-2.5 flex items-center justify-center gap-2 text-center text-xs text-bone-faint">
-            <Gem size={12} className="shrink-0 text-verdigris-lit" />
-            {runesCollected}/{totalRunes} Elder Runes · {uniqueMistakes.length} distinct concept
+            <KeyRound size={12} className="shrink-0 text-brass-lit" />
+            {runesCollected}/{totalRunes} Syndicate Keys · {uniqueMistakes.length} distinct concept
             {uniqueMistakes.length === 1 ? '' : 's'} missed across {wrongSubmissions} wrong attempt
             {wrongSubmissions === 1 ? '' : 's'}
           </div>
 
-          {/* ---------------- The Grimoire ---------------- */}
+          {/* ---------------- The Case File ---------------- */}
           <div className="mt-6">
             <div className="rule-orn">
               <h3 className="font-display shrink-0 text-xl text-bone sm:text-2xl">
-                The Grimoire of Knowledge
+                The Case File
               </h3>
             </div>
             <p className="mt-1 text-center text-sm text-bone-faint italic">
-              Post-game study review · everything the room tested you on
+              Debrief · every concept this job tested you on
             </p>
 
             {uniqueMistakes.length > 0 && (
               <div className="etch etch-blood etch-flat mt-4 p-3">
                 <h4 className="flex items-center gap-2 text-sm tracking-[0.15em] text-blood-glow uppercase">
                   <AlertTriangle size={14} />
-                  Revise these first
+                  Review these first
                 </h4>
                 <ol className="mt-2.5 space-y-2">
                   {uniqueMistakes.map(({ log, count }, index) => (
@@ -371,66 +518,66 @@ export default function EndgameModal({
             )}
 
             <div className="mt-4 grid gap-2.5">
-              <GrimoireSection propId="bookshelf" missedCount={missedPerProp.bookshelf ?? 0}>
+              <CaseFileSection propId="bookshelf" missedCount={missedPerProp.bookshelf ?? 0}>
                 {puzzles.bookshelf.pairs.map((pair) => (
-                  <GrimoireRow
+                  <CaseFileRow
                     key={pair.term}
                     heading={pair.term}
                     body={pair.definition}
                     missed={wasMissed(pair.definition, pair.term)}
                   />
                 ))}
-              </GrimoireSection>
+              </CaseFileSection>
 
-              <GrimoireSection propId="clock" missedCount={missedPerProp.clock ?? 0}>
+              <CaseFileSection propId="clock" missedCount={missedPerProp.clock ?? 0}>
                 <p className="text-sm text-bone-faint italic">{puzzles.clock.prompt}</p>
                 {puzzles.clock.orderedSteps.map((step, index) => (
-                  <GrimoireRow
+                  <CaseFileRow
                     key={step}
                     heading={`Step ${index + 1}`}
                     body={step}
                     missed={wasMissed(step)}
                   />
                 ))}
-              </GrimoireSection>
+              </CaseFileSection>
 
-              <GrimoireSection propId="scale" missedCount={missedPerProp.scale ?? 0}>
+              <CaseFileSection propId="scale" missedCount={missedPerProp.scale ?? 0}>
                 {puzzles.scale.statements.map((statement) => (
-                  <GrimoireRow
+                  <CaseFileRow
                     key={statement.text}
                     heading={`${statement.isTrue ? 'TRUE' : 'FALSE'} — ${statement.text}`}
                     body={statement.explanation}
                     missed={wasMissed(statement.explanation, statement.text)}
                   />
                 ))}
-              </GrimoireSection>
+              </CaseFileSection>
 
-              <GrimoireSection propId="safe" missedCount={missedPerProp.safe ?? 0}>
+              <CaseFileSection propId="safe" missedCount={missedPerProp.safe ?? 0}>
                 {puzzles.safe.questions.map((question, index) => (
-                  <GrimoireRow
+                  <CaseFileRow
                     key={question.q}
                     heading={`Q${index + 1}. ${question.q}`}
                     body={`Correct answer: ${question.options[question.correctIndex]}`}
                     missed={wasMissed(question.q)}
                   />
                 ))}
-              </GrimoireSection>
+              </CaseFileSection>
 
-              <GrimoireSection propId="cauldron" missedCount={missedPerProp.cauldron ?? 0}>
-                <GrimoireRow
+              <CaseFileSection propId="cauldron" missedCount={missedPerProp.cauldron ?? 0}>
+                <CaseFileRow
                   heading={puzzles.cauldron.clue.replace('[BLANK]', puzzles.cauldron.answer.toUpperCase())}
                   body={puzzles.cauldron.hint}
                   missed={wasMissed(puzzles.cauldron.clue.replace('[BLANK]', '______'))}
                 />
-              </GrimoireSection>
+              </CaseFileSection>
 
-              <GrimoireSection propId="gargoyle" missedCount={missedPerProp.gargoyle ?? 0}>
-                <GrimoireRow
+              <CaseFileSection propId="gargoyle" missedCount={missedPerProp.gargoyle ?? 0}>
+                <CaseFileRow
                   heading={puzzles.gargoyle.scenario}
                   body={`${puzzles.gargoyle.options[puzzles.gargoyle.correctIndex]} — ${puzzles.gargoyle.explanation}`}
                   missed={wasMissed(puzzles.gargoyle.scenario)}
                 />
-              </GrimoireSection>
+              </CaseFileSection>
             </div>
           </div>
 
@@ -440,11 +587,11 @@ export default function EndgameModal({
         <div className="flex shrink-0 flex-col gap-2 border-t-2 border-iron-2 p-3 sm:flex-row">
           <button type="button" onClick={onReplay} className="btn flex-1">
             <RotateCcw size={15} />
-            Replay Same Study Material
+            Run the Same Job Again
           </button>
           <button type="button" onClick={onNewDocument} className="btn btn-iron flex-1">
             <Upload size={15} />
-            Upload New PDF
+            Upload a New File
           </button>
         </div>
       </div>

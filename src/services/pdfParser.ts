@@ -152,7 +152,7 @@ export function parsePastedText(raw: string, title = 'Pasted Study Notes'): Pars
   const text = tidy(raw);
   if (text.length < 200) {
     throw new PdfParseError(
-      'Paste at least a couple of paragraphs (200+ characters) so the Game Master has something to work with.',
+      'Paste at least a couple of paragraphs (200+ characters) so Black Mask has something to work with.',
     );
   }
   return { title, text, pageCount: 1, characterCount: text.length };

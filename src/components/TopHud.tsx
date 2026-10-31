@@ -1,11 +1,11 @@
-import { Flame, Ghost, GraduationCap, Moon, Skull, Volume2, VolumeX } from 'lucide-react';
+import { Fingerprint, Ghost, Lightbulb, Skull, Umbrella, Volume2, VolumeX } from 'lucide-react';
 import type { VillainId, VillainProfile } from '../types/game';
 import { DEFAULT_TORCH_RADIUS } from '../data/roomLayout';
 import FullscreenButton from './FullscreenButton';
 
 const VILLAIN_ICONS: Record<VillainId, typeof Skull> = {
   dracula: Skull,
-  werewolf: Moon,
+  werewolf: Umbrella,
   banshee: Ghost,
 };
 
@@ -35,10 +35,10 @@ function RuneTrack({ collected, total }: { collected: number; total: number }) {
             key={index}
             className={`h-[9px] w-[9px] rotate-45 border ${
               lit
-                ? 'animate-rune-pop border-verdigris-lit bg-verdigris-lit'
+                ? 'animate-rune-pop border-brass-lit bg-brass-lit'
                 : 'border-iron-2 bg-transparent'
             }`}
-            style={lit ? { boxShadow: '0 0 9px #4fbf9e' } : undefined}
+            style={lit ? { boxShadow: '0 0 9px #e6c98a' } : undefined}
           />
         );
       })}
@@ -46,7 +46,7 @@ function RuneTrack({ collected, total }: { collected: number; total: number }) {
   );
 }
 
-/** The hunter creeping along the rail toward the scholar. */
+/** The hunter creeping along the rail toward the mark. */
 function ThreatRail({
   villain,
   threat,
@@ -62,7 +62,7 @@ function ThreatRail({
 
   return (
     <div className={`relative ${short ? 'h-5' : 'h-7'} flex-1`}>
-      {/* Wrought-iron rail */}
+      {/* Steel rail */}
       <div
         className="absolute inset-x-0 top-1/2 -translate-y-1/2 border border-iron-2 bg-ink"
         style={{ height: short ? 8 : 11, boxShadow: 'inset 2px 2px 5px rgba(0,0,0,0.9)' }}
@@ -92,10 +92,10 @@ function ThreatRail({
       </div>
 
       <div className="absolute top-1/2 right-0 -translate-y-1/2">
-        <GraduationCap
+        <Fingerprint
           size={short ? 15 : 18}
-          className="text-[#a79be0]"
-          style={{ filter: 'drop-shadow(0 0 6px rgba(167,155,224,0.7))' }}
+          className="text-bone"
+          style={{ filter: 'drop-shadow(0 0 6px rgba(233,228,216,0.65))' }}
         />
       </div>
     </div>
@@ -121,7 +121,7 @@ export default function TopHud({
     <button
       type="button"
       onClick={onToggleMute}
-      aria-label={muted ? 'Unmute Dracuplot' : 'Mute Dracuplot'}
+      aria-label={muted ? 'Unmute Black Mask' : 'Mute Black Mask'}
       title={muted ? 'Unmute' : 'Mute'}
       className="btn btn-sm btn-icon"
     >
@@ -177,15 +177,15 @@ export default function TopHud({
 
           <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
             <div className="flex items-center gap-2">
-              <span className="label-etched">Runes</span>
+              <span className="label-etched">Keys</span>
               <RuneTrack collected={runesCollected} total={totalRunes} />
-              <span className="num text-[11px] text-verdigris-lit">
+              <span className="num text-[11px] text-brass-lit">
                 {runesCollected}/{totalRunes}
               </span>
             </div>
 
             <div className="flex items-center gap-2">
-              <Flame size={14} className="text-brass" />
+              <Lightbulb size={14} className="text-brass" />
               <div
                 className="h-[7px] w-14 border border-iron-2 bg-ink"
                 style={{ boxShadow: 'inset 1px 1px 3px rgba(0,0,0,0.9)' }}
@@ -212,24 +212,24 @@ export default function TopHud({
         </div>
 
         <div className="mt-0.5 flex items-center justify-between">
-          <span className="label-etched">Villain Threat</span>
+          <span className="label-etched">Syndicate Heat</span>
           <span
             className="num text-[11px] tracking-wider"
             style={{ color: villain.accentColor }}
           >
             {threat.toFixed(0)}%
-            {closing ? ' · AT YOUR THROAT' : stalking ? ' · CLOSING IN' : ''}
+            {closing ? ' · ON YOUR HEELS' : stalking ? ' · CLOSING IN' : ''}
           </span>
         </div>
       </div>
 
-      {/* Banshee's Spectral Haunt */}
+      {/* Scarecrow's Fear Toxin */}
       {villain.id === 'banshee' && threat > 60 && (
         <div
           className="animate-flicker pointer-events-none fixed inset-0 z-40"
           style={{
             background:
-              'radial-gradient(ellipse at center, transparent 30%, rgba(160,108,232,0.24) 70%, rgba(168,35,35,0.46) 100%)',
+              'radial-gradient(ellipse at center, transparent 30%, rgba(155,123,234,0.24) 70%, rgba(211,32,53,0.46) 100%)',
             mixBlendMode: 'screen',
           }}
         />

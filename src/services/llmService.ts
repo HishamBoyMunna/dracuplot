@@ -72,7 +72,7 @@ export function saveLLMConfig(config: LLMConfig): void {
   }
 }
 
-const SYSTEM_PROMPT = `You are the Game Master of Dracuplot, a Gothic Horror Escape Room designed to test deep comprehension of study material.
+const SYSTEM_PROMPT = `You are Black Mask, Gotham's crime lord, running a lethal escape room inside your syndicate headquarters to test deep comprehension of study material.
 Analyze the provided study text and generate a complete 6-puzzle escape room dataset.
 
 CRITICAL RULES:
@@ -102,7 +102,7 @@ const JSON_SCHEMA_SPEC = `Required JSON shape:
 function buildUserPrompt(studyText: string, documentTitle: string): string {
   return `${JSON_SCHEMA_SPEC}
 
-The player is studying a document titled "${documentTitle}". Write "storyIntro" as two or three atmospheric gothic sentences that tease the document's real subject matter.
+The player is studying a document titled "${documentTitle}". Write "storyIntro" as two or three atmospheric Gotham-noir sentences that tease the document's real subject matter.
 
 === STUDY TEXT BEGINS ===
 ${truncateStudyText(studyText)}
@@ -234,7 +234,7 @@ export function validateGameData(payload: unknown, fallbackTitle: string): GameD
       ? root.documentTitle.trim()
       : fallbackTitle,
     storyIntro: asString(
-      root.storyIntro ?? 'The study door slams shut behind you. Six relics. One way out.',
+      root.storyIntro ?? 'The door slams shut behind you. Six locks. Six keys. One way out.',
       'storyIntro',
     ),
     puzzles: {
@@ -386,10 +386,10 @@ export async function generateGameData({
   signal,
 }: GenerateOptions): Promise<GameData> {
   if (!config.apiKey.trim()) {
-    throw new LLMError('Add an API key in Conjuration Settings, or play the Haunted Demo instead.');
+    throw new LLMError('Add an API key in Syndicate Settings, or run the demo job instead.');
   }
   if (!config.model.trim()) {
-    throw new LLMError('Choose a model in Conjuration Settings.');
+    throw new LLMError('Choose a model in Syndicate Settings.');
   }
 
   const prompt = buildUserPrompt(studyText, documentTitle);

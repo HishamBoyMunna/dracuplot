@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { DoorOpen, Gem } from 'lucide-react';
+import { DoorOpen, KeyRound } from 'lucide-react';
 import type { GameData, PuzzleModalBaseProps } from '../../types/game';
 import PuzzleModalWrapper from './PuzzleModalWrapper';
 import { usePuzzleFeedback } from './puzzleHelpers';
@@ -56,7 +56,7 @@ export default function GargoyleModal({
       accentColor={accentColor}
       shakeSignal={shakeSignal}
       feedback={feedback}
-      progress={`${runesCollected} / ${runesRequired} runes`}
+      progress={`${runesCollected} / ${runesRequired} keys`}
       solved={solved}
       onClose={onClose}
       footer={
@@ -76,7 +76,7 @@ export default function GargoyleModal({
               The jaws fall open.
             </p>
             <p className="text-sm text-bone-dim italic">
-              The sixth Elder Rune burns itself into your palm. Cold air pours in from the corridor
+              The sixth key drops into your palm. Cold Gotham rain pours in from the stairwell
               beyond.
             </p>
           </div>
@@ -89,8 +89,8 @@ export default function GargoyleModal({
           </div>
 
           <button type="button" onClick={onSolve} className="btn btn-verd w-full">
-            <Gem size={16} />
-            Claim the Sixth Rune &amp; Escape
+            <KeyRound size={16} />
+            Claim the Sixth Key &amp; Escape
           </button>
         </div>
       ) : (
@@ -101,7 +101,7 @@ export default function GargoyleModal({
                 key={index}
                 className={`h-3 w-3 rotate-45 border ${
                   index < runesCollected
-                    ? 'border-verdigris-lit bg-verdigris-lit shadow-[0_0_9px_#4fbf9e]'
+                    ? 'border-brass-lit bg-brass-lit shadow-[0_0_9px_#e6c98a]'
                     : 'border-iron-2'
                 }`}
               />

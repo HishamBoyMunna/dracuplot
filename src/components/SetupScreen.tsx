@@ -9,11 +9,11 @@ import {
   FileText,
   Ghost,
   KeyRound,
-  Moon,
   Settings2,
   Skull,
   Sparkles,
   Trash2,
+  Umbrella,
   Upload,
   Wand2,
   X,
@@ -36,10 +36,11 @@ import {
   saveLLMConfig,
 } from '../services/llmService';
 import FullscreenButton from './FullscreenButton';
+import BlackMaskMark from './BlackMaskMark';
 
 const VILLAIN_ICONS: Record<VillainId, typeof Skull> = {
   dracula: Skull,
-  werewolf: Moon,
+  werewolf: Umbrella,
   banshee: Ghost,
 };
 
@@ -146,19 +147,19 @@ export default function SetupScreen({
     if (!doc) return;
     setError(null);
     setIsWorking(true);
-    onGenerationStart('Transcribing your manuscript for the Game Master\u2026');
+    onGenerationStart('Black Mask is reading the file\u2026');
     try {
-      onGenerationProgress(`Summoning six trials from "${doc.title}"\u2026`);
+      onGenerationProgress(`Cutting six locks from "${doc.title}"\u2026`);
       const data = await generateGameData({
         studyText: doc.text,
         documentTitle: doc.title,
         config,
       });
-      onGenerationProgress('Carving the Elder Runes\u2026');
+      onGenerationProgress('Cutting the Syndicate Keys\u2026');
       onLaunch(data, villainId, false);
     } catch (cause) {
       onGenerationEnd();
-      setError(cause instanceof Error ? cause.message : 'The summoning failed.');
+      setError(cause instanceof Error ? cause.message : 'The job fell through.');
     } finally {
       setIsWorking(false);
     }
@@ -183,24 +184,35 @@ export default function SetupScreen({
       <div className="relative mx-auto flex w-full max-w-5xl flex-col gap-7">
         {/* ---------------- Masthead ---------------- */}
         <header className="text-center">
-          <div className="rule-orn mx-auto max-w-sm">
-            <span className="label-etched whitespace-nowrap">An Anti-Brainrot Ritual</span>
+          <div className="relative mx-auto flex w-fit items-center justify-center">
+            <div
+              className="absolute inset-0 -z-10 blur-2xl"
+              style={{
+                background: 'radial-gradient(circle, rgba(211,32,53,0.38), transparent 68%)',
+              }}
+            />
+            <BlackMaskMark className="h-16 w-auto drop-shadow-[0_0_18px_rgba(211,32,53,0.45)] sm:h-20" />
+          </div>
+
+          <div className="rule-orn mx-auto mt-3 max-w-sm">
+            <span className="label-etched whitespace-nowrap text-blood-glow">
+              Gotham&rsquo;s Anti-Brainrot Escape Room
+            </span>
           </div>
 
           <h1
-            className="font-display mt-4 text-[clamp(2.6rem,10vw,5.5rem)] leading-[0.92] text-bone"
+            className="font-stencil mt-3 text-[clamp(3.4rem,13vw,7.2rem)] leading-[0.86] text-bone"
             style={{
-              textShadow:
-                '0 2px 0 #3a0d0d, 5px 5px 0 #040306, 0 0 44px rgba(168,35,35,0.42)',
-              letterSpacing: '0.04em',
+              textShadow: '0 2px 0 #5c0b15, 6px 6px 0 #000, 0 0 54px rgba(211,32,53,0.4)',
+              letterSpacing: '0.025em',
             }}
           >
-            DRACUPLOT
+            BLACK <span className="text-blood-glow">MASK</span>
           </h1>
 
           <p className="mx-auto mt-3 max-w-2xl text-bone-dim italic">
-            Feed it the PDF you have been avoiding. It becomes a gothic escape room where the only
-            way out is actually knowing the material.
+            You are locked in the Black Mask Club with the PDF you have been avoiding. Six locks,
+            six keys, one way out: actually knowing the material.
           </p>
 
           <div className="mt-5 flex flex-wrap items-center justify-center gap-2.5">
@@ -210,7 +222,7 @@ export default function SetupScreen({
               className="btn btn-sm btn-iron"
             >
               <Settings2 size={14} />
-              Conjuration Settings
+              Syndicate Settings
               <span
                 className={`ml-1 border px-1.5 py-0.5 text-[9px] tracking-widest uppercase ${
                   hasKey
@@ -228,14 +240,17 @@ export default function SetupScreen({
         {/* ---------------- I. Study material ---------------- */}
         <section className="etch etch-brass bracket p-4 sm:p-5">
           <div className="mb-3.5 flex flex-wrap items-center justify-between gap-3">
-            <h2 className="font-display flex items-center gap-2 text-xl text-bone">
-              <BookOpenText size={17} className="text-brass" />
-              I. Offer Your Study Material
-            </h2>
+            <div className="flex items-center gap-3">
+              <h2 className="font-display flex items-center gap-2 text-xl text-bone">
+                <BookOpenText size={17} className="text-brass" />
+                I. Drop the Study Material
+              </h2>
+              <span className="stamp hidden text-[11px] sm:inline-block">Evidence</span>
+            </div>
             <button
               type="button"
               onClick={() => setPasteMode((value) => !value)}
-              className="flex items-center gap-2 text-sm text-bone-faint transition hover:text-brass"
+              className="flex items-center gap-2 text-sm text-bone-faint transition hover:text-blood-glow"
             >
               <ClipboardType size={14} />
               {pasteMode ? 'Use a file instead' : 'Paste raw text instead'}
@@ -257,7 +272,7 @@ export default function SetupScreen({
                 disabled={pastedText.trim().length < 200}
                 className="btn btn-sm"
               >
-                Seal this text into the grimoire
+                Log this text as evidence
               </button>
             </div>
           ) : (
@@ -280,9 +295,10 @@ export default function SetupScreen({
                   : 'border-iron-2 bg-ink/60 hover:border-brass-dim'
               }`}
             >
-              <Upload size={26} className={isDragging ? 'text-brass-lit' : 'text-bone-faint'} />
+              <Upload size={26} className={isDragging ? 'text-blood-glow' : 'text-bone-faint'} />
               <p className="mt-2.5 text-bone">
-                Drag a <span className="text-brass">PDF</span> into the crypt, or tap to choose
+                Drag a <span className="text-blood-glow">PDF</span> into the evidence room, or tap to
+                choose
               </p>
               <p className="mt-1 text-sm text-bone-faint">
                 .pdf, .txt and .md are accepted — parsed entirely in your browser
@@ -332,7 +348,7 @@ export default function SetupScreen({
         <section>
           <h2 className="font-display mb-3.5 flex items-center gap-2 text-xl text-bone">
             <Skull size={17} className="text-blood-glow" />
-            II. Choose What Hunts You
+            II. Pick What Hunts You
           </h2>
 
           <div className="grid gap-3.5 sm:grid-cols-3">
@@ -380,7 +396,7 @@ export default function SetupScreen({
 
                   <dl className="mt-3 space-y-1 border-t border-iron pt-2.5 text-xs">
                     <div className="flex justify-between gap-2">
-                      <dt className="text-bone-faint">Passive tick</dt>
+                      <dt className="text-bone-faint">Heat tick</dt>
                       <dd className="num text-bone">
                         +{villain.passiveThreatPerSecond}%/s · ~{maxMinutes}m
                       </dd>
@@ -409,14 +425,14 @@ export default function SetupScreen({
             className="btn btn-blood w-full max-w-xl py-4 text-base"
           >
             <Wand2 size={18} />
-            Summon the Escape Room (Generate from PDF)
+            Start the Job (Generate from PDF)
           </button>
 
           {!canSummon && (
             <p className="text-center text-sm text-bone-faint">
               {studyText.length === 0
-                ? 'Offer a document above to unlock the summoning.'
-                : 'Add an API key in Conjuration Settings to summon from your own material.'}
+                ? 'Drop a document above to unlock the job.'
+                : 'Add an API key in Syndicate Settings to run a job on your own material.'}
             </p>
           )}
 
@@ -426,7 +442,7 @@ export default function SetupScreen({
 
           <button type="button" onClick={playDemo} className="btn btn-verd">
             <Sparkles size={17} />
-            Play Haunted Demo (No API Key Needed)
+            Play the Demo Job (No API Key Needed)
           </button>
 
           <p className="max-w-md text-center text-xs text-bone-faint">
@@ -449,7 +465,7 @@ export default function SetupScreen({
               <div>
                 <h3 className="font-display flex items-center gap-2 text-xl text-bone">
                   <KeyRound size={17} className="text-brass" />
-                  Conjuration Settings
+                  Syndicate Settings
                 </h3>
                 <p className="mt-0.5 text-sm text-bone-faint">
                   Keys live only in this browser and are sent straight to your provider.
@@ -486,12 +502,12 @@ export default function SetupScreen({
               </div>
 
               <div>
-                <label htmlFor="dracuplot-api-key" className="label-etched mb-2 block">
+                <label htmlFor="blackmask-api-key" className="label-etched mb-2 block">
                   API Key
                 </label>
                 <div className="relative">
                   <input
-                    id="dracuplot-api-key"
+                    id="blackmask-api-key"
                     type={showKey ? 'text' : 'password'}
                     value={config.apiKey}
                     onChange={(event) =>
@@ -514,11 +530,11 @@ export default function SetupScreen({
               </div>
 
               <div>
-                <label htmlFor="dracuplot-model" className="label-etched mb-2 block">
+                <label htmlFor="blackmask-model" className="label-etched mb-2 block">
                   Model
                 </label>
                 <input
-                  id="dracuplot-model"
+                  id="blackmask-model"
                   type="text"
                   value={config.model}
                   onChange={(event) =>
@@ -531,11 +547,11 @@ export default function SetupScreen({
 
               {config.provider === 'openai_compatible' && (
                 <div>
-                  <label htmlFor="dracuplot-base-url" className="label-etched mb-2 block">
+                  <label htmlFor="blackmask-base-url" className="label-etched mb-2 block">
                     Base URL
                   </label>
                   <input
-                    id="dracuplot-base-url"
+                    id="blackmask-base-url"
                     type="text"
                     value={config.baseUrl ?? ''}
                     onChange={(event) =>
@@ -566,7 +582,7 @@ export default function SetupScreen({
                 onClick={() => setSettingsOpen(false)}
                 className="btn w-full"
               >
-                Seal the Pact
+                Lock It In
               </button>
             </div>
           </div>

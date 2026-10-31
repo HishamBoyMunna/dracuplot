@@ -112,12 +112,12 @@ export default function SafeModal({
             ))}
           </div>
 
-          {/* Brass keypad bolted to the vault door */}
+          {/* Steel keypad bolted to the vault door */}
           <div
             className="etch etch-brass bracket h-fit p-2.5 compact:p-1.5 landscape:sticky landscape:top-0"
             style={{ background: 'linear-gradient(168deg, #2a2117 0%, #130f0a 100%)' }}
           >
-            {/* Rune indicator lamps */}
+            {/* Key indicator lamps */}
             <div className="mb-3 flex justify-center gap-1.5 compact:mb-1.5">
               {questions.map((question, index) => {
                 const filled = index < entry.length;
@@ -127,10 +127,10 @@ export default function SafeModal({
                     className="num chamfer-sm flex h-9 w-9 items-center justify-center border-2 text-base font-bold transition compact:h-7 compact:w-7 compact:text-sm"
                     style={{
                       borderColor: filled ? '#1d4b3f' : '#4a3b22',
-                      background: filled ? 'rgba(79,191,158,0.12)' : '#070509',
-                      color: filled ? '#4fbf9e' : '#3f382c',
+                      background: filled ? 'rgba(85,217,159,0.12)' : '#070509',
+                      color: filled ? '#55d99f' : '#3f382c',
                       boxShadow: filled
-                        ? '0 0 12px rgba(79,191,158,0.45), inset 0 0 8px rgba(79,191,158,0.18)'
+                        ? '0 0 12px rgba(85,217,159,0.42), inset 0 0 8px rgba(85,217,159,0.18)'
                         : 'inset 2px 2px 5px rgba(0,0,0,0.9)',
                     }}
                   >

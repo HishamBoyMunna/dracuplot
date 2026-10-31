@@ -4,34 +4,36 @@
 @custom-variant compact (@media (max-height: 560px) and (max-width: 1100px));
 
 /* ------------------------------------------------------------------ *
- * Palette: 19th-century gothic grimoire & wrought iron
+ * Palette: Gotham noir — black leather, gunmetal, skull ivory,
+ * syndicate gold and Black Mask crimson.
  * ------------------------------------------------------------------ */
 @theme {
-  --color-ink: #0b090c; /* Obsidian Ink */
-  --color-ink-2: #110e13;
-  --color-stone: #17131a;
-  --color-stone-2: #1f1a22;
-  --color-iron: #2a2430;
-  --color-iron-2: #3a3340;
+  --color-ink: #070708; /* Asphalt Black */
+  --color-ink-2: #0c0c0f;
+  --color-stone: #121316; /* Wet Concrete */
+  --color-stone-2: #191a1f;
+  --color-iron: #24262c; /* Gunmetal */
+  --color-iron-2: #373b44;
 
-  --color-blood: #6e1414; /* Dried Blood */
-  --color-blood-lit: #a82323;
-  --color-blood-glow: #d6524f;
+  --color-blood: #8a0f1e; /* Oxblood */
+  --color-blood-lit: #d32035; /* Black Mask Crimson */
+  --color-blood-glow: #ff4a5c;
 
-  --color-brass: #b89655; /* Tarnished Brass */
-  --color-brass-lit: #e0bd79;
-  --color-brass-dim: #6b5733;
+  --color-brass: #b39660; /* Syndicate Gold */
+  --color-brass-lit: #e6c98a;
+  --color-brass-dim: #6d5c39;
 
-  --color-bone: #dcd3c2; /* Aged Bone */
-  --color-bone-dim: #9a9183;
-  --color-bone-faint: #6d675d;
+  --color-bone: #e9e4d8; /* Skull Ivory */
+  --color-bone-dim: #a29d92;
+  --color-bone-faint: #6e6b64;
 
-  --color-verdigris: #2e6f5e; /* Alchemical Verdigris */
-  --color-verdigris-lit: #4fbf9e;
+  --color-verdigris: #1c5c46; /* Dirty Money */
+  --color-verdigris-lit: #55d99f;
 
-  --font-display: 'IM Fell English SC', 'Cinzel Decorative', 'Palatino Linotype', serif;
-  --font-body: 'Crimson Pro', 'IM Fell English', Georgia, serif;
-  --font-mono: 'Space Mono', ui-monospace, 'Courier New', monospace;
+  --font-display: 'Oswald', 'Arial Narrow', sans-serif;
+  --font-body: 'Barlow', system-ui, sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, 'Courier New', monospace;
+  --font-stencil: 'Bebas Neue', 'Oswald', sans-serif;
 }
 
 /* ------------------------------------------------------------------ *
@@ -74,8 +76,8 @@
   h4,
   h5 {
     font-family: var(--font-display);
-    font-weight: 400;
-    letter-spacing: 0.03em;
+    font-weight: 500;
+    letter-spacing: 0.02em;
   }
 
   button,
@@ -96,19 +98,19 @@
     color: var(--color-bone);
   }
 
-  /* Aged paper grain sitting over the whole viewport */
+  /* Concrete grit sitting over the whole viewport */
   body::before {
     content: '';
     position: fixed;
     inset: 0;
     z-index: 9999;
     pointer-events: none;
-    opacity: 0.07;
+    opacity: 0.05;
     mix-blend-mode: overlay;
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.86' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23n)'/%3E%3C/svg%3E");
   }
 
-  /* Candlelight falloff plus the faintest CRT scanline */
+  /* Rain-streaked noir falloff over the whole viewport */
   body::after {
     content: '';
     position: fixed;
@@ -116,7 +118,14 @@
     z-index: 9998;
     pointer-events: none;
     background:
-      radial-gradient(ellipse 85% 75% at 50% 42%, transparent 30%, rgba(0, 0, 0, 0.62) 100%),
+      radial-gradient(ellipse 85% 75% at 50% 42%, transparent 28%, rgba(0, 0, 0, 0.68) 100%),
+      repeating-linear-gradient(
+        112deg,
+        rgba(255, 255, 255, 0.022) 0px,
+        rgba(255, 255, 255, 0.022) 1px,
+        transparent 1px,
+        transparent 6px
+      ),
       repeating-linear-gradient(
         0deg,
         rgba(0, 0, 0, 0.12) 0px,
@@ -128,18 +137,25 @@
 }
 
 /* ------------------------------------------------------------------ *
- * Components: etched stone, brass plates, wax seals
+ * Components: case files, bolted steel, crime-scene stamps
  * ------------------------------------------------------------------ */
 @layer components {
-  /* Double-etched stone panel with a hard woodcut shadow */
+  /* Double-walled steel case panel with a hard, printed shadow */
   .etch {
     border: 2px solid var(--color-iron-2);
-    outline: 1px solid rgb(184 150 85 / 0.26);
+    outline: 1px solid rgb(211 32 53 / 0.24);
     outline-offset: -5px;
     background:
-      linear-gradient(180deg, rgba(255, 255, 255, 0.025) 0%, transparent 38%),
-      linear-gradient(180deg, #17131a 0%, #100d14 100%);
-    box-shadow: 4px 4px 0 #040306;
+      linear-gradient(180deg, rgba(255, 255, 255, 0.035) 0%, transparent 38%),
+      repeating-linear-gradient(
+        135deg,
+        rgba(255, 255, 255, 0.012) 0px,
+        rgba(255, 255, 255, 0.012) 2px,
+        transparent 2px,
+        transparent 7px
+      ),
+      linear-gradient(180deg, #15161b 0%, #0a0b0e 100%);
+    box-shadow: 4px 4px 0 #000;
   }
 
   .etch-flat {
@@ -147,22 +163,22 @@
   }
 
   .etch-heavy {
-    box-shadow: 6px 6px 0 #040306;
+    box-shadow: 6px 6px 0 #000;
   }
 
   .etch-brass {
     border-color: var(--color-brass-dim);
-    outline-color: rgb(184 150 85 / 0.45);
+    outline-color: rgb(179 150 96 / 0.42);
   }
 
   .etch-blood {
-    border-color: #4d1111;
-    outline-color: rgb(168 35 35 / 0.45);
+    border-color: #56101a;
+    outline-color: rgb(211 32 53 / 0.48);
   }
 
   .etch-verd {
     border-color: #1d4b3f;
-    outline-color: rgb(79 191 158 / 0.42);
+    outline-color: rgb(85 217 159 / 0.4);
   }
 
   /* Ornamental corner brackets */
@@ -176,7 +192,7 @@
     position: absolute;
     width: 10px;
     height: 10px;
-    border: 1px solid rgb(184 150 85 / 0.55);
+    border: 1px solid rgb(179 150 96 / 0.5);
     pointer-events: none;
   }
 
@@ -223,10 +239,10 @@
 
   /* drop-shadow survives clip-path, unlike box-shadow */
   .woodcut {
-    filter: drop-shadow(4px 4px 0 #040306);
+    filter: drop-shadow(4px 4px 0 #000);
   }
 
-  /* ---------------- Buttons: physical brass plates ---------------- */
+  /* ---------------- Buttons: steel plates ---------------- */
   .btn {
     position: relative;
     display: inline-flex;
@@ -234,19 +250,20 @@
     justify-content: center;
     gap: 0.6rem;
     padding: 0.7rem 1.2rem;
-    border: 2px solid var(--color-brass-dim);
-    background: linear-gradient(180deg, #2b2218 0%, #181209 100%);
-    color: var(--color-brass-lit);
+    border: 2px solid var(--color-iron-2);
+    background: linear-gradient(180deg, #23252b 0%, #0e0f12 100%);
+    color: var(--color-bone);
     font-family: var(--font-display);
     font-size: 0.95rem;
+    font-weight: 500;
     letter-spacing: 0.07em;
     line-height: 1.15;
     text-align: center;
     cursor: pointer;
     box-shadow:
-      4px 4px 0 #040306,
-      inset 0 1px 0 rgb(224 189 121 / 0.2),
-      inset 0 -1px 0 rgb(0 0 0 / 0.6);
+      4px 4px 0 #000,
+      inset 0 1px 0 rgb(255 255 255 / 0.1),
+      inset 0 -1px 0 rgb(0 0 0 / 0.7);
     transition:
       background 0.14s ease,
       border-color 0.14s ease,
@@ -254,65 +271,65 @@
   }
 
   .btn:hover:not(:disabled) {
-    background: linear-gradient(180deg, #3c2f20 0%, #221a10 100%);
-    border-color: var(--color-brass);
-    color: #f6e2b4;
+    background: linear-gradient(180deg, #2d2024 0%, #160d10 100%);
+    border-color: var(--color-blood-lit);
+    color: #fff1f2;
   }
 
   .btn:active:not(:disabled) {
     transform: translate(2px, 2px);
     box-shadow:
-      inset 0 1px 0 rgb(224 189 121 / 0.12),
-      inset 0 0 14px rgb(0 0 0 / 0.7);
+      inset 0 1px 0 rgb(255 255 255 / 0.08),
+      inset 0 0 14px rgb(0 0 0 / 0.75);
   }
 
   .btn:disabled {
     cursor: not-allowed;
-    border-color: #2e2a26;
-    background: linear-gradient(180deg, #1a181c 0%, #121014 100%);
+    border-color: #2b2d32;
+    background: linear-gradient(180deg, #16171b 0%, #0d0e11 100%);
     color: var(--color-bone-faint);
-    box-shadow: 2px 2px 0 #040306;
+    box-shadow: 2px 2px 0 #000;
   }
 
-  /* Wax-sealed crimson action */
+  /* Crimson action — Black Mask's seal of approval */
   .btn-blood {
-    border-color: #561212;
-    background: linear-gradient(180deg, #7d1a1a 0%, #420c0c 100%);
-    color: #f6ddd9;
+    border-color: #5e0c18;
+    background: linear-gradient(180deg, #a9152a 0%, #520812 100%);
+    color: #ffe8ea;
     box-shadow:
-      4px 4px 0 #040306,
-      inset 0 1px 0 rgb(255 160 150 / 0.22),
-      inset 0 -1px 0 rgb(0 0 0 / 0.6);
+      4px 4px 0 #000,
+      inset 0 1px 0 rgb(255 190 195 / 0.28),
+      inset 0 -1px 0 rgb(0 0 0 / 0.65);
   }
 
   .btn-blood:hover:not(:disabled) {
-    background: linear-gradient(180deg, #9c2222 0%, #551010 100%);
-    border-color: var(--color-blood-lit);
-    color: #fff0ec;
+    background: linear-gradient(180deg, #c81d35 0%, #6b0b18 100%);
+    border-color: var(--color-blood-glow);
+    color: #fff5f6;
   }
 
-  /* Verdigris: rune claims and confirmations */
+  /* Dirty money: key claims and confirmations */
   .btn-verd {
     border-color: #1d4b3f;
-    background: linear-gradient(180deg, #1c4a3e 0%, #0e2a23 100%);
+    background: linear-gradient(180deg, #1c4a3e 0%, #0c241e 100%);
     color: #8fe4c8;
   }
 
   .btn-verd:hover:not(:disabled) {
-    background: linear-gradient(180deg, #276454 0%, #13392f 100%);
+    background: linear-gradient(180deg, #276454 0%, #103129 100%);
     border-color: var(--color-verdigris-lit);
     color: #b6f2de;
   }
 
-  /* Quiet iron secondary */
+  /* Quiet steel secondary */
   .btn-iron {
     border-color: var(--color-iron-2);
-    background: linear-gradient(180deg, #221d28 0%, #15111a 100%);
+    background: linear-gradient(180deg, #1d1f25 0%, #101115 100%);
     color: var(--color-bone-dim);
   }
 
   .btn-iron:hover:not(:disabled) {
-    border-color: #554c5e;
+    border-color: #565b66;
     color: var(--color-bone);
   }
 
@@ -320,8 +337,8 @@
     padding: 0.4rem 0.7rem;
     font-size: 0.8rem;
     box-shadow:
-      3px 3px 0 #040306,
-      inset 0 1px 0 rgb(224 189 121 / 0.16);
+      3px 3px 0 #000,
+      inset 0 1px 0 rgb(255 255 255 / 0.08);
   }
 
   .btn-icon {
@@ -329,22 +346,22 @@
     gap: 0;
   }
 
-  /* ---------------- Inputs: ink on vellum ---------------- */
+  /* ---------------- Inputs: ink on a case file ---------------- */
   .field {
     width: 100%;
     border: 2px solid var(--color-iron-2);
-    outline: 1px solid rgb(184 150 85 / 0.2);
+    outline: 1px solid rgb(211 32 53 / 0.18);
     outline-offset: -5px;
-    background: #0a080d;
+    background: #08090b;
     color: var(--color-bone);
     padding: 0.7rem 0.9rem;
-    box-shadow: inset 2px 2px 7px rgb(0 0 0 / 0.85);
+    box-shadow: inset 2px 2px 7px rgb(0 0 0 / 0.9);
     transition: border-color 0.14s ease;
   }
 
   .field:focus {
-    border-color: var(--color-brass-dim);
-    outline-color: rgb(184 150 85 / 0.5);
+    border-color: var(--color-blood-lit);
+    outline-color: rgb(211 32 53 / 0.5);
   }
 
   .field::placeholder {
@@ -357,7 +374,7 @@
     display: flex;
     align-items: center;
     gap: 0.75rem;
-    color: var(--color-brass-dim);
+    color: var(--color-blood-lit);
   }
 
   .rule-orn::before,
@@ -365,13 +382,13 @@
     content: '';
     flex: 1;
     height: 1px;
-    background: linear-gradient(90deg, transparent, var(--color-brass-dim), transparent);
+    background: linear-gradient(90deg, transparent, var(--color-blood-lit), transparent);
   }
 
   .label-etched {
-    font-family: var(--font-display);
-    font-size: 0.68rem;
-    letter-spacing: 0.3em;
+    font-family: var(--font-mono);
+    font-size: 0.66rem;
+    letter-spacing: 0.28em;
     text-transform: uppercase;
     color: var(--color-bone-faint);
   }
@@ -379,6 +396,22 @@
   .num {
     font-family: var(--font-mono);
     font-variant-numeric: tabular-nums;
+  }
+
+  /* Rubber-stamped evidence marker */
+  .stamp {
+    display: inline-block;
+    border: 2px solid var(--color-blood-lit);
+    padding: 0.15rem 0.5rem;
+    font-family: var(--font-stencil);
+    font-size: 0.95rem;
+    line-height: 1;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--color-blood-glow);
+    opacity: 0.82;
+    transform: rotate(-4deg);
+    box-shadow: inset 0 0 12px rgb(211 32 53 / 0.18);
   }
 }
 
@@ -500,6 +533,16 @@
   }
 }
 
+@keyframes siren {
+  0%,
+  100% {
+    opacity: 0.45;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
 @utility animate-flicker {
   animation: flicker 4.5s infinite ease-in-out;
 }
@@ -528,9 +571,16 @@
   animation: tome-turn 3.4s infinite ease-in-out;
 }
 
+@utility animate-siren {
+  animation: siren 2.6s infinite ease-in-out;
+}
+
+/* Gotham night: red neon bleed from above, wet asphalt below */
 @utility fog-backdrop {
   background-image:
-    radial-gradient(ellipse 80% 55% at 50% -10%, rgba(110, 20, 20, 0.26), transparent 70%),
-    radial-gradient(ellipse 60% 50% at 8% 108%, rgba(184, 150, 85, 0.1), transparent 70%),
-    radial-gradient(ellipse 60% 50% at 95% 92%, rgba(46, 111, 94, 0.09), transparent 70%);
+    radial-gradient(ellipse 80% 55% at 50% -10%, rgba(211, 32, 53, 0.22), transparent 70%),
+    radial-gradient(ellipse 60% 50% at 8% 108%, rgba(0, 0, 0, 0.85), transparent 70%),
+    radial-gradient(ellipse 55% 45% at 95% 92%, rgba(111, 182, 217, 0.07), transparent 70%),
+    radial-gradient(ellipse 70% 60% at 50% 105%, rgba(179, 150, 96, 0.08), transparent 70%),
+    linear-gradient(180deg, #070708 0%, #0b0b0e 48%, #08080a 100%);
 }

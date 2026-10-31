@@ -75,7 +75,7 @@ export interface PuzzleMistake {
 /** Contract every puzzle modal shares with App's state machine. */
 export interface PuzzleModalBaseProps {
   accentColor: string;
-  /** Awards the Elder Rune and closes the modal. */
+  /** Awards the Syndicate Key and closes the modal. */
   onSolve: () => void;
   /** Logs the missed concepts and triggers the villain's penalty exactly once. */
   onMistake: (mistakes: PuzzleMistake[]) => void;
@@ -87,36 +87,36 @@ export interface PuzzleModalBaseProps {
 export const VILLAINS: Record<VillainId, VillainProfile> = {
   dracula: {
     id: 'dracula',
-    name: 'Count Dracula',
-    title: 'The Mind Drainer',
+    name: 'Black Mask',
+    title: 'Kingpin of Gotham',
     description:
-      'He sips slowly at your focus. Every blunder swallows another ring of torchlight until the study is pitch black.',
+      'Roman Sionis owns every light in the city — and he is cutting yours. Every blunder kills another lamp until the room goes pitch black.',
     passiveThreatPerSecond: 0.25,
     wrongAnswerPenalty: 10,
-    specialEffect: 'Blood Eclipse: each wrong answer shrinks your torchlight by 18px (min 75px).',
-    accentColor: '#c2213a',
+    specialEffect: 'Lights Out: each wrong answer shrinks your light radius by 18px (min 75px).',
+    accentColor: '#d32035',
   },
   werewolf: {
     id: 'werewolf',
-    name: 'The Werewolf',
-    title: 'The Relentless Hunter',
+    name: 'The Penguin',
+    title: 'The Gentleman of Crime',
     description:
-      'A patient stalker that gives you time to think — and tears a huge chunk out of you the moment you guess.',
+      'A patient crime lord with an umbrella full of tricks. He gives you time to think — then makes an example of you the moment you guess.',
     passiveThreatPerSecond: 0.18,
     wrongAnswerPenalty: 20,
-    specialEffect: 'Bloodlust Lunge: a brutal +20% threat spike and violent screen shake on mistakes.',
-    accentColor: '#c47a2a',
+    specialEffect: 'Umbrella Blitz: a brutal +20% heat spike and a violent screen shake on mistakes.',
+    accentColor: '#6fb6d9',
   },
   banshee: {
     id: 'banshee',
-    name: 'The Banshee',
-    title: 'The Time Wraith',
+    name: 'Scarecrow',
+    title: 'The Fearmonger',
     description:
-      'Her wail devours the clock itself. Mistakes barely sting, but the minutes bleed away fast.',
+      'Fear gas creeps through the vents. Mistakes barely sting, but the minutes burn away fast.',
     passiveThreatPerSecond: 0.38,
     wrongAnswerPenalty: 7,
-    specialEffect: 'Spectral Haunt: above 60% threat a violet vignette flickers across the room.',
-    accentColor: '#a06ce8',
+    specialEffect: 'Fear Toxin: above 60% heat a toxic violet haze flickers across the room.',
+    accentColor: '#9b7bea',
   },
 };
 
@@ -128,15 +128,15 @@ export const VILLAIN_LIST: VillainProfile[] = [
 
 export const PROP_LORE: Record<PropId, { name: string; lore: string }> = {
   bookshelf: {
-    name: 'The Cursed Bookshelf',
-    lore: 'Scattered tomes demand their true meanings be restored.',
+    name: 'The Ledger Archive',
+    lore: 'The syndicate records are scrambled. Put every term back with its file.',
   },
   clock: {
-    name: 'The Grandfather Clock',
-    lore: 'Time has come undone. Restore the proper order of events.',
+    name: 'The Vault Clock',
+    lore: 'The timeline is out of order. Set the sequence before the vault locks.',
   },
   scale: {
-    name: "The Alchemist's Scale",
+    name: 'The Weighing Table',
     lore: 'Weigh each claim: truth on one pan, fallacy on the other.',
   },
   safe: {
@@ -144,11 +144,11 @@ export const PROP_LORE: Record<PropId, { name: string; lore: string }> = {
     lore: 'Four questions, four digits. The vault respects nothing else.',
   },
   cauldron: {
-    name: 'The Ritual Cauldron',
-    lore: 'Speak the missing word and the brew will answer.',
+    name: 'The Chem Vat',
+    lore: 'Name the missing term or the vat takes its price.',
   },
   gargoyle: {
-    name: 'The Gargoyle Exit Door',
-    lore: 'The final warden tests whether you truly understood.',
+    name: 'The Gargoyle Gate',
+    lore: "Black Mask's last warden tests whether you truly understood.",
   },
 };

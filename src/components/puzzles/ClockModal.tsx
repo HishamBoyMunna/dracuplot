@@ -66,7 +66,7 @@ export default function ClockModal({
       .filter((entry) => entry.value !== entry.index);
 
     fail(
-      `The chime rings flat. ${correctCount} of ${steps.length} are in their true position — the clock will not be fooled.`,
+      `The gears jam. ${correctCount} of ${steps.length} steps are in the right slot — the clock will not be fooled.`,
       [
         {
           questionContext: data.prompt,
@@ -96,7 +96,7 @@ export default function ClockModal({
         solved ? undefined : (
           <button type="button" onClick={submit} className="btn w-full">
             <Bell size={16} />
-            Strike the Chime (Submit)
+            Lock the Sequence (Submit)
           </button>
         )
       }

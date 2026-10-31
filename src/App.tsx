@@ -34,7 +34,7 @@ const TICK_MS = 100;
 
 export default function App() {
   const [phase, setPhase] = useState<GamePhase>('SETUP');
-  const [loadingMessage, setLoadingMessage] = useState('Opening the crypt…');
+  const [loadingMessage, setLoadingMessage] = useState('Opening the case file…');
   const [gameData, setGameData] = useState<GameData | null>(null);
   const [villainId, setVillainId] = useState<VillainId>('dracula');
 
@@ -218,7 +218,7 @@ export default function App() {
               className="flex items-center gap-2 text-sm text-bone-faint transition hover:text-brass"
             >
               <ArrowLeft size={14} />
-              Abandon the study
+              Abandon the job
             </button>
             <p className="truncate text-xs text-bone-faint italic">{gameData.documentTitle}</p>
           </div>
@@ -284,11 +284,11 @@ export default function App() {
         <div className="fog-backdrop fixed inset-0 z-[60] flex h-[100dvh] flex-col items-center justify-center gap-5 bg-ink/97 px-6 text-center">
           <Loader2 size={40} className="animate-spin text-blood-glow" />
           <h2 className="font-display animate-flicker text-2xl text-bone sm:text-3xl">
-            The Game Master is reading…
+            Black Mask is reading the file…
           </h2>
           <p className="max-w-md text-bone-dim italic">{loadingMessage}</p>
           <div className="rule-orn w-72">
-            <span className="label-etched whitespace-nowrap">Six Trials · Six Runes</span>
+            <span className="label-etched whitespace-nowrap">Six Locks · Six Keys</span>
           </div>
         </div>
       )}

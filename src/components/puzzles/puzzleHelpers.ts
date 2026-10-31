@@ -8,7 +8,7 @@ export interface PuzzleFeedback {
   message: string;
 }
 
-/** Threat charged when the player peeks at the cauldron's hint. */
+/** Heat charged when the player peeks at the Chem Vat hint. */
 export const HINT_THREAT_COST = 4;
 
 /**
@@ -68,7 +68,7 @@ export function matchesAnswer(input: string, answer: string): boolean {
   return false;
 }
 
-/** Splits a cauldron clue around its [BLANK] placeholder. */
+/** Splits a Chem Vat clue around its [BLANK] placeholder. */
 export function splitClue(clue: string): [string, string] {
   const index = clue.indexOf('[BLANK]');
   if (index === -1) return [clue, ''];

@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { AlertTriangle, Gem, Info, X } from 'lucide-react';
+import { AlertTriangle, Info, KeyRound, X } from 'lucide-react';
 import type { PropId } from '../../types/game';
 import { PROP_LORE } from '../../types/game';
 import type { FeedbackTone, PuzzleFeedback } from './puzzleHelpers';
@@ -20,9 +20,9 @@ interface PuzzleModalWrapperProps {
 }
 
 const TONE_STYLES: Record<FeedbackTone, string> = {
-  error: 'etch-blood text-[#f0c8c4]',
-  info: 'etch-brass text-[#ecd6a8]',
-  success: 'etch-verd text-[#a9e8d2]',
+  error: 'etch-blood text-[#ffc9cd]',
+  info: 'etch-brass text-[#f0d9a8]',
+  success: 'etch-verd text-[#b6f2de]',
 };
 
 export default function PuzzleModalWrapper({
@@ -69,11 +69,11 @@ export default function PuzzleModalWrapper({
           shaking ? 'animate-shake' : ''
         }`}
         style={{
-          borderColor: shaking ? '#a82323' : solved ? '#1d4b3f' : undefined,
+          borderColor: shaking ? '#d32035' : solved ? '#1d4b3f' : undefined,
           outlineColor: shaking
-            ? 'rgba(168,35,35,0.6)'
+            ? 'rgba(211,32,53,0.62)'
             : solved
-              ? 'rgba(79,191,158,0.45)'
+              ? 'rgba(85,217,159,0.42)'
               : undefined,
         }}
       >
@@ -102,7 +102,7 @@ export default function PuzzleModalWrapper({
             <button
               type="button"
               onClick={onClose}
-              aria-label="Step away from this relic"
+              aria-label="Step back into the room"
               className="btn btn-sm btn-icon btn-iron"
             >
               <X size={16} />
@@ -118,7 +118,7 @@ export default function PuzzleModalWrapper({
               {feedback.tone === 'error' ? (
                 <AlertTriangle size={15} className="mt-0.5 shrink-0" />
               ) : feedback.tone === 'success' ? (
-                <Gem size={15} className="mt-0.5 shrink-0" />
+                <KeyRound size={15} className="mt-0.5 shrink-0" />
               ) : (
                 <Info size={15} className="mt-0.5 shrink-0" />
               )}
@@ -141,10 +141,10 @@ export default function PuzzleModalWrapper({
   );
 }
 
-/** Shared success panel so every relic rewards the player the same way. */
+/** Shared success panel so every lock rewards the player the same way. */
 export function RuneAwardPanel({
   takeaways,
-  buttonLabel = 'Claim the Elder Rune',
+  buttonLabel = 'Claim the Syndicate Key',
   onClaim,
 }: {
   takeaways: Array<{ heading: string; body: string }>;
@@ -154,8 +154,8 @@ export function RuneAwardPanel({
   return (
     <div className="space-y-4">
       <div className="flex flex-col items-center gap-1.5 text-center">
-        <Gem size={30} className="animate-rune-pop text-verdigris-lit" />
-        <p className="font-display text-lg text-verdigris-lit sm:text-xl">The relic yields.</p>
+        <KeyRound size={30} className="animate-flicker text-brass-lit" />
+        <p className="font-display text-lg text-brass-lit sm:text-xl">The lock gives.</p>
       </div>
 
       <div className="space-y-2">
@@ -171,7 +171,7 @@ export function RuneAwardPanel({
       </div>
 
       <button type="button" onClick={onClaim} className="btn btn-verd w-full">
-        <Gem size={16} />
+        <KeyRound size={16} />
         {buttonLabel}
       </button>
     </div>

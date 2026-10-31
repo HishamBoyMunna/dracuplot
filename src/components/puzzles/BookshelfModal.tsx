@@ -10,7 +10,7 @@ interface BookshelfModalProps extends PuzzleModalBaseProps {
   data: { pairs: Pairs };
 }
 
-const SPINE_COLORS = ['#8d2230', '#2f6b5a', '#7a5c1f', '#3b3f7a', '#6b2f6b', '#1f5e7a'];
+const SPINE_COLORS = ['#8a0f1e', '#4a3a22', '#2c2f36', '#5c1a24', '#7a6338', '#1d3b33'];
 
 export default function BookshelfModal({
   data,
@@ -43,7 +43,7 @@ export default function BookshelfModal({
   const selectDefinition = (definitionIndex: number) => {
     if (bound.has(definitionIndex) || complete) return;
     if (selectedTerm === null) {
-      notify('Choose a tome from the left shelf first.');
+      notify('Choose a term from the left column first.');
       return;
     }
 
@@ -56,14 +56,14 @@ export default function BookshelfModal({
         setComplete(true);
         clear();
       } else {
-        notify(`"${pairs[definitionIndex].term}" slides back into place.`, 'success');
+        notify(`"${pairs[definitionIndex].term}" clicks into place.`, 'success');
       }
       return;
     }
 
     setWrongPair({ term: selectedTerm, definition: definitionIndex });
     fail(
-      `"${pairs[selectedTerm].term}" does not belong to that passage. The shelf shudders.`,
+      `"${pairs[selectedTerm].term}" does not match that file. The drawer snaps shut.`,
       [
         {
           questionContext: `Match the term "${pairs[selectedTerm].term}" to its definition.`,
@@ -81,7 +81,7 @@ export default function BookshelfModal({
       accentColor={accentColor}
       shakeSignal={shakeSignal}
       feedback={feedback}
-      progress={`${bound.size} / ${pairs.length} bound`}
+      progress={`${bound.size} / ${pairs.length} matched`}
       solved={complete}
       onClose={onClose}
     >
@@ -93,15 +93,15 @@ export default function BookshelfModal({
       ) : (
         <div className="space-y-3.5">
           <p className="hidden text-sm text-bone-dim compact:hidden sm:block">
-            Pick a scattered term, then the passage that defines it. Bind all four and the shelf
-            surrenders its rune.
+            Pick a scattered term, then the file that defines it. Match all four and the archive
+            gives up its key.
           </p>
 
           <div className="grid gap-3 md:grid-cols-2 landscape:grid-cols-2">
             <div className="space-y-2">
               <h3 className="label-etched flex items-center gap-2">
                 <BookMarked size={12} />
-                Scattered tomes
+                Scattered terms
               </h3>
               {terms.map((term, position) => {
                 const isBound = bound.has(term.index);
@@ -125,11 +125,11 @@ export default function BookshelfModal({
                   >
                     <span
                       className="h-6 w-[7px] shrink-0 border border-black/60"
-                      style={{
-                        background: isBound
-                          ? '#4fbf9e'
-                          : SPINE_COLORS[position % SPINE_COLORS.length],
-                      }}
+                        style={{
+                          background: isBound
+                            ? '#55d99f'
+                            : SPINE_COLORS[position % SPINE_COLORS.length],
+                        }}
                     />
                     <span className="font-semibold">{term.text}</span>
                     {isBound && <Link2 size={13} className="ml-auto shrink-0" />}
@@ -139,7 +139,7 @@ export default function BookshelfModal({
             </div>
 
             <div className="space-y-2">
-              <h3 className="label-etched">Unbound passages</h3>
+              <h3 className="label-etched">Unmatched intel</h3>
               {definitions.map((definition) => {
                 const isBound = bound.has(definition.index);
                 const isWrong = wrongPair?.definition === definition.index;

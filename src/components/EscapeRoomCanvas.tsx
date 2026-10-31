@@ -21,9 +21,9 @@ import {
   rectCenter,
 } from '../data/roomLayout';
 
-const SOLVED_AURA = '#4fbf9e'; // Alchemical Verdigris
-const UNSOLVED_BEACON = '#b89655'; // Tarnished Brass
-const LOCKED_BEACON = '#a82323'; // Dried Blood
+const SOLVED_AURA = '#55d99f'; // Dirty Money
+const UNSOLVED_BEACON = '#b39660'; // Syndicate Gold
+const LOCKED_BEACON = '#d32035'; // Black Mask Crimson
 
 const CANDLES = [
   { x: 262, y: 44 },
@@ -91,7 +91,7 @@ function drawFloor(ctx: CanvasRenderingContext2D): void {
     for (let col = 0; col * TILE_SIZE < ROOM_WIDTH; col += 1) {
       const x = col * TILE_SIZE;
       const y = row * TILE_SIZE;
-      ctx.fillStyle = (row + col) % 2 === 0 ? '#181824' : '#14141f';
+      ctx.fillStyle = (row + col) % 2 === 0 ? '#16171c' : '#111216';
       ctx.fillRect(x, y, TILE_SIZE, TILE_SIZE);
 
       // Weathering speckles carved into each slab.
@@ -166,26 +166,26 @@ function drawRug(
 function drawWalls(ctx: CanvasRenderingContext2D): void {
   const w = WALL_THICKNESS;
 
-  ctx.fillStyle = '#0c0c15';
+  ctx.fillStyle = '#08090c';
   ctx.fillRect(0, 0, ROOM_WIDTH, w);
   ctx.fillRect(0, ROOM_HEIGHT - w, ROOM_WIDTH, w);
   ctx.fillRect(0, 0, w, ROOM_HEIGHT);
   ctx.fillRect(ROOM_WIDTH - w, 0, w, ROOM_HEIGHT);
 
-  // Stone block courses along every wall run.
+  // Poured-concrete block courses along every wall run.
   const block = 46;
   ctx.lineWidth = 1;
   for (let i = 0; i < ROOM_WIDTH; i += block) {
     const shade = 0.05 + hash2(i, 1) * 0.07;
-    ctx.fillStyle = `rgba(190,185,210,${shade})`;
+    ctx.fillStyle = `rgba(176,182,196,${shade})`;
     ctx.fillRect(i + 1, 1, block - 3, w - 2);
-    ctx.fillStyle = `rgba(190,185,210,${0.05 + hash2(i, 2) * 0.07})`;
+    ctx.fillStyle = `rgba(176,182,196,${0.05 + hash2(i, 2) * 0.07})`;
     ctx.fillRect(i + 1, ROOM_HEIGHT - w + 1, block - 3, w - 2);
   }
   for (let i = 0; i < ROOM_HEIGHT; i += block) {
-    ctx.fillStyle = `rgba(190,185,210,${0.05 + hash2(3, i) * 0.07})`;
+    ctx.fillStyle = `rgba(176,182,196,${0.05 + hash2(3, i) * 0.07})`;
     ctx.fillRect(1, i + 1, w - 2, block - 3);
-    ctx.fillStyle = `rgba(190,185,210,${0.05 + hash2(4, i) * 0.07})`;
+    ctx.fillStyle = `rgba(176,182,196,${0.05 + hash2(4, i) * 0.07})`;
     ctx.fillRect(ROOM_WIDTH - w + 1, i + 1, w - 2, block - 3);
   }
 
@@ -193,23 +193,23 @@ function drawWalls(ctx: CanvasRenderingContext2D): void {
   ctx.strokeStyle = 'rgba(0,0,0,0.85)';
   ctx.lineWidth = 3;
   ctx.strokeRect(w - 1, w - 1, ROOM_WIDTH - w * 2 + 2, ROOM_HEIGHT - w * 2 + 2);
-  ctx.strokeStyle = 'rgba(150,140,180,0.12)';
+  ctx.strokeStyle = 'rgba(168,176,192,0.12)';
   ctx.lineWidth = 1;
   ctx.strokeRect(w + 1.5, w + 1.5, ROOM_WIDTH - w * 2 - 3, ROOM_HEIGHT - w * 2 - 3);
 }
 
 function drawCandleBase(ctx: CanvasRenderingContext2D, x: number, y: number): void {
-  ctx.fillStyle = '#2a2436';
+  ctx.fillStyle = '#24262c';
   ctx.beginPath();
   ctx.ellipse(x, y + 6, 9, 4.5, 0, 0, Math.PI * 2);
   ctx.fill();
 
-  ctx.fillStyle = '#6d6350';
+  ctx.fillStyle = '#8a7a55';
   ctx.beginPath();
   ctx.ellipse(x, y, 6, 5, 0, 0, Math.PI * 2);
   ctx.fill();
 
-  ctx.fillStyle = '#e8dcc0';
+  ctx.fillStyle = '#e9e4d8';
   ctx.beginPath();
   ctx.arc(x, y - 1, 3.6, 0, Math.PI * 2);
   ctx.fill();
@@ -223,9 +223,9 @@ function buildStaticLayer(): HTMLCanvasElement {
   if (!ctx) return layer;
 
   drawFloor(ctx);
-  drawRug(ctx, 400, 300, 290, 250, '#3a0e1b', '#8d6b2f');
-  drawRug(ctx, 150, 180, 170, 110, '#1d2436', '#45617a');
-  drawRug(ctx, 648, 455, 160, 120, '#2b1a35', '#6b4d86');
+  drawRug(ctx, 400, 300, 290, 250, '#2a0a12', '#8a7350');
+  drawRug(ctx, 150, 180, 170, 110, '#141b26', '#3f5a70');
+  drawRug(ctx, 648, 455, 160, 120, '#1c1a22', '#4a4655');
   drawWalls(ctx);
   for (const candle of CANDLES) drawCandleBase(ctx, candle.x, candle.y);
 
@@ -237,25 +237,26 @@ function buildStaticLayer(): HTMLCanvasElement {
  * ------------------------------------------------------------------ */
 
 function drawBookshelf(ctx: CanvasRenderingContext2D, rect: Rect): void {
-  ctx.fillStyle = '#2d1a12';
+  // Steel filing archive bolted to the wall: (displayed as The Ledger Archive)
+  ctx.fillStyle = '#23262d';
   roundRect(ctx, rect, 4);
   ctx.fill();
 
-  ctx.fillStyle = '#4a2b1c';
+  ctx.fillStyle = '#33373f';
   ctx.fillRect(rect.x + 4, rect.y + 4, rect.width - 8, rect.height - 8);
 
-  ctx.fillStyle = 'rgba(0,0,0,0.5)';
+  ctx.fillStyle = 'rgba(0,0,0,0.55)';
   ctx.fillRect(rect.x + 6, rect.y + 6, rect.width - 12, rect.height - 12);
 
   const spineColors = [
-    '#8d2230',
-    '#2f6b5a',
-    '#7a5c1f',
-    '#3b3f7a',
-    '#6b2f6b',
-    '#1f5e7a',
-    '#8a4a1c',
-    '#4a6b27',
+    '#8a0f1e',
+    '#3d2f1d',
+    '#2c2f36',
+    '#5c1a24',
+    '#7a6338',
+    '#1d3b33',
+    '#4a505c',
+    '#6b0b18',
   ];
   let x = rect.x + 9;
   let index = 0;
@@ -272,7 +273,7 @@ function drawBookshelf(ctx: CanvasRenderingContext2D, rect: Rect): void {
     ctx.fillRect(0, -height, spineWidth, height);
     ctx.fillStyle = 'rgba(0,0,0,0.3)';
     ctx.fillRect(spineWidth - 1.5, -height, 1.5, height);
-    ctx.fillStyle = 'rgba(232,216,168,0.55)';
+    ctx.fillStyle = 'rgba(233,228,216,0.55)';
     ctx.fillRect(1, -height + 4, spineWidth - 2, 1.2);
     ctx.fillRect(1, -height + height * 0.45, spineWidth - 2, 1);
     ctx.restore();
@@ -281,7 +282,7 @@ function drawBookshelf(ctx: CanvasRenderingContext2D, rect: Rect): void {
     index += 1;
   }
 
-  ctx.strokeStyle = '#6b4226';
+  ctx.strokeStyle = '#5b626e';
   ctx.lineWidth = 2;
   roundRect(ctx, rect, 4);
   ctx.stroke();
@@ -290,14 +291,14 @@ function drawBookshelf(ctx: CanvasRenderingContext2D, rect: Rect): void {
 function drawClock(ctx: CanvasRenderingContext2D, rect: Rect, time: number): void {
   const { x, y, width, height } = rect;
 
-  ctx.fillStyle = '#3a2416';
+  ctx.fillStyle = '#2b2f36';
   roundRect(ctx, rect, 5);
   ctx.fill();
-  ctx.strokeStyle = '#c99a3f';
+  ctx.strokeStyle = '#b39660';
   ctx.lineWidth = 2;
   ctx.stroke();
 
-  ctx.fillStyle = '#20150d';
+  ctx.fillStyle = '#15171c';
   ctx.fillRect(x + 5, y + 5, width - 10, height - 10);
 
   const faceX = x + width / 2;
@@ -305,17 +306,17 @@ function drawClock(ctx: CanvasRenderingContext2D, rect: Rect, time: number): voi
   const faceR = 14;
 
   const faceGradient = ctx.createRadialGradient(faceX, faceY, 1, faceX, faceY, faceR);
-  faceGradient.addColorStop(0, '#f0e0b4');
-  faceGradient.addColorStop(1, '#b89a5e');
+  faceGradient.addColorStop(0, '#efe9da');
+  faceGradient.addColorStop(1, '#b0a58c');
   ctx.fillStyle = faceGradient;
   ctx.beginPath();
   ctx.arc(faceX, faceY, faceR, 0, Math.PI * 2);
   ctx.fill();
-  ctx.strokeStyle = '#e0b85c';
+  ctx.strokeStyle = '#e6c98a';
   ctx.lineWidth = 1.5;
   ctx.stroke();
 
-  ctx.fillStyle = '#2a1c0f';
+  ctx.fillStyle = '#1a1c21';
   ctx.font = '6px Georgia, serif';
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
@@ -325,7 +326,7 @@ function drawClock(ctx: CanvasRenderingContext2D, rect: Rect, time: number): voi
     ctx.fillText(numeral, faceX + Math.cos(angle) * (faceR - 4), faceY + Math.sin(angle) * (faceR - 4));
   });
 
-  ctx.strokeStyle = '#1a1008';
+  ctx.strokeStyle = '#101116';
   ctx.lineCap = 'round';
   ctx.lineWidth = 1.6;
   ctx.beginPath();
@@ -345,7 +346,7 @@ function drawClock(ctx: CanvasRenderingContext2D, rect: Rect, time: number): voi
   ctx.save();
   ctx.translate(faceX, pivotY);
   ctx.rotate(swing);
-  ctx.strokeStyle = '#8d7a46';
+  ctx.strokeStyle = '#b39660';
   ctx.lineWidth = 1.2;
   ctx.beginPath();
   ctx.moveTo(0, 0);
@@ -365,12 +366,12 @@ function drawClock(ctx: CanvasRenderingContext2D, rect: Rect, time: number): voi
 function drawScale(ctx: CanvasRenderingContext2D, rect: Rect, time: number): void {
   const { x, y, width, height } = rect;
 
-  ctx.fillStyle = '#39251a';
+  ctx.fillStyle = '#23262d';
   roundRect(ctx, rect, 5);
   ctx.fill();
-  ctx.fillStyle = '#543824';
+  ctx.fillStyle = '#2c3038';
   ctx.fillRect(x + 4, y + 4, width - 8, height - 8);
-  ctx.strokeStyle = '#7a5334';
+  ctx.strokeStyle = '#4c525c';
   ctx.lineWidth = 1.5;
   roundRect(ctx, rect, 5);
   ctx.stroke();
@@ -395,7 +396,7 @@ function drawScale(ctx: CanvasRenderingContext2D, rect: Rect, time: number): voi
   // Balance beam with twin pans.
   const beamY = y + 62;
   const tilt = Math.sin(time * 1.1) * 0.1;
-  ctx.strokeStyle = '#d4af47';
+  ctx.strokeStyle = '#b39660';
   ctx.lineWidth = 2;
   ctx.beginPath();
   ctx.moveTo(x + width / 2, y + 44);
@@ -417,20 +418,20 @@ function drawScale(ctx: CanvasRenderingContext2D, rect: Rect, time: number): voi
     ctx.stroke();
 
     const panGradient = ctx.createLinearGradient(side - 12, 10, side + 12, 20);
-    panGradient.addColorStop(0, '#f0d37a');
-    panGradient.addColorStop(1, '#9c7a24');
+    panGradient.addColorStop(0, '#e6c98a');
+    panGradient.addColorStop(1, '#7a6338');
     ctx.fillStyle = panGradient;
     ctx.beginPath();
     ctx.ellipse(side, 13, 12, 5, 0, 0, Math.PI * 2);
     ctx.fill();
-    ctx.strokeStyle = '#d4af47';
+    ctx.strokeStyle = '#b39660';
     ctx.lineWidth = 1.2;
     ctx.stroke();
     ctx.lineWidth = 2;
   }
   ctx.restore();
 
-  ctx.fillStyle = '#d4af47';
+  ctx.fillStyle = '#b39660';
   ctx.beginPath();
   ctx.arc(x + width / 2, y + 44, 3.5, 0, Math.PI * 2);
   ctx.fill();
@@ -519,20 +520,20 @@ function drawCauldron(ctx: CanvasRenderingContext2D, rect: Rect, time: number): 
   const { x, y } = rectCenter(rect);
   const radius = rect.width / 2;
 
-  // Stone hearth ring.
-  ctx.fillStyle = '#242029';
+  // Concrete plinth ring.
+  ctx.fillStyle = '#1a1c21';
   ctx.beginPath();
   ctx.arc(x, y + 4, radius + 7, 0, Math.PI * 2);
   ctx.fill();
 
-  ctx.fillStyle = '#121016';
+  ctx.fillStyle = '#0e0f12';
   ctx.beginPath();
   ctx.arc(x, y, radius, 0, Math.PI * 2);
   ctx.fill();
 
   const iron = ctx.createRadialGradient(x - 10, y - 12, 4, x, y, radius);
-  iron.addColorStop(0, '#3c3a46');
-  iron.addColorStop(1, '#17161d');
+  iron.addColorStop(0, '#33373f');
+  iron.addColorStop(1, '#121317');
   ctx.fillStyle = iron;
   ctx.beginPath();
   ctx.arc(x, y, radius - 3, 0, Math.PI * 2);
@@ -647,7 +648,7 @@ function drawGargoyleDoor(
     ctx.fill();
   }
 
-  // Five rune sockets across the lintel.
+  // Five key sockets across the lintel.
   for (let i = 0; i < 5; i += 1) {
     const sx = x + 18 + i * ((width - 36) / 4);
     const sy = y + 7;
@@ -705,8 +706,8 @@ function drawGargoyleDoor(
     ctx.closePath();
     ctx.fill();
 
-    // Eyes: amber while sealed, emerald once the runes are gathered.
-    const eyeColor = unlocked ? SOLVED_AURA : '#e2453c';
+    // Eyes: crimson while sealed, dirty money once the keys are in.
+    const eyeColor = unlocked ? SOLVED_AURA : '#d32035';
     ctx.shadowBlur = 8 + Math.sin(time * 4 + side) * 2.5;
     ctx.shadowColor = eyeColor;
     ctx.fillStyle = eyeColor;
@@ -775,7 +776,7 @@ function drawPropAura(
   ctx.globalCompositeOperation = 'lighter';
 
   const glow = ctx.createRadialGradient(x, y, radius * 0.25, x, y, radius);
-  glow.addColorStop(0, solved ? `rgba(60,226,192,${0.2 * pulse})` : `rgba(242,163,60,${0.14 * pulse})`);
+  glow.addColorStop(0, solved ? `rgba(85,217,159,${0.2 * pulse})` : `rgba(230,201,138,${0.14 * pulse})`);
   glow.addColorStop(1, 'rgba(0,0,0,0)');
   ctx.fillStyle = glow;
   ctx.beginPath();
@@ -818,9 +819,9 @@ function drawPlayer(
 
   ctx.rotate(facing + Math.PI / 2 + sway);
 
-  // Boots peeking out of the cloak as the scholar strides.
+  // Boots peeking out of the coat as the courier strides.
   if (moving) {
-    ctx.fillStyle = '#2a1f16';
+    ctx.fillStyle = '#17181c';
     const stride = Math.sin(walkPhase) * 5;
     ctx.beginPath();
     ctx.ellipse(-5, stride, 3, 4.5, 0, 0, Math.PI * 2);
@@ -830,24 +831,31 @@ function drawPlayer(
     ctx.fill();
   }
 
-  // Cloak.
+  // Long black coat.
   const cloak = ctx.createRadialGradient(-3, -4, 2, 0, 0, PLAYER_RADIUS);
-  cloak.addColorStop(0, '#4b3f6b');
-  cloak.addColorStop(1, '#241d38');
+  cloak.addColorStop(0, '#33373f');
+  cloak.addColorStop(1, '#14161b');
   ctx.fillStyle = cloak;
   ctx.beginPath();
   ctx.ellipse(0, 0, PLAYER_RADIUS - 1, PLAYER_RADIUS, 0, 0, Math.PI * 2);
   ctx.fill();
-  ctx.strokeStyle = '#6f5fa0';
+  ctx.strokeStyle = '#565c68';
   ctx.lineWidth = 1.4;
   ctx.stroke();
 
-  // Hood and the hint of a face below it.
-  ctx.fillStyle = '#5a4b80';
+  // Oxblood scarf catching the light.
+  ctx.strokeStyle = '#8a0f1e';
+  ctx.lineWidth = 2.2;
+  ctx.beginPath();
+  ctx.arc(0, -2.5, PLAYER_RADIUS - 5, Math.PI * 0.12, Math.PI * 0.88);
+  ctx.stroke();
+
+  // Fedora brim and the hint of a face below it.
+  ctx.fillStyle = '#24272e';
   ctx.beginPath();
   ctx.arc(0, -3, 7.5, 0, Math.PI * 2);
   ctx.fill();
-  ctx.fillStyle = '#e8d4b0';
+  ctx.fillStyle = '#d9c3a3';
   ctx.beginPath();
   ctx.arc(0, -5.5, 3.4, 0, Math.PI * 2);
   ctx.fill();
@@ -910,8 +918,8 @@ function drawRipples(ctx: CanvasRenderingContext2D, ripples: Ripple[]): void {
 }
 
 /**
- * Carved brass nameplate above each prop. Always drawn — touch devices have no
- * hover, so every relic must announce itself.
+ * Bolted steel nameplate above each prop. Always drawn — touch devices have no
+ * hover, so every lock must announce itself.
  */
 function drawNameplate(
   ctx: CanvasRenderingContext2D,
@@ -927,7 +935,7 @@ function drawNameplate(
   ctx.save();
   ctx.globalAlpha = 0.5 + emphasis * 0.5;
 
-  ctx.font = "11px 'IM Fell English SC', Georgia, serif";
+  ctx.font = "11px 'Oswald', 'Arial Narrow', sans-serif";
   const titleWidth = ctx.measureText(title).width;
   const boxWidth = Math.max(titleWidth + 26, 74);
   const boxHeight = solved ? 17 : 16;
@@ -948,7 +956,7 @@ function drawNameplate(
   ctx.lineTo(boxX, boxY + boxHeight / 2);
   ctx.closePath();
 
-  ctx.fillStyle = 'rgba(8,6,10,0.93)';
+  ctx.fillStyle = 'rgba(7,7,8,0.93)';
   ctx.fill();
   ctx.strokeStyle = accent;
   ctx.globalAlpha = (0.5 + emphasis * 0.5) * 0.75;
@@ -967,11 +975,11 @@ function drawNameplate(
 
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
-  ctx.font = "11px 'IM Fell English SC', Georgia, serif";
-  ctx.fillStyle = solved ? SOLVED_AURA : '#dcd3c2';
+  ctx.font = "11px 'Oswald', 'Arial Narrow', sans-serif";
+  ctx.fillStyle = solved ? SOLVED_AURA : '#e9e4d8';
   ctx.fillText(title, boxX + boxWidth / 2, boxY + boxHeight / 2 + 0.5);
 
-  // A claimed relic gets a small rune diamond instead of status text.
+  // A claimed lock gets a small key diamond instead of status text.
   if (solved) {
     ctx.fillStyle = SOLVED_AURA;
     ctx.save();
@@ -992,7 +1000,7 @@ export default function EscapeRoomCanvas({
   solvedProps,
   torchRadius = DEFAULT_TORCH_RADIUS,
   interactionLocked = false,
-  accentColor = '#c2213a',
+  accentColor = '#d32035',
   debugOverlay = false,
   onInteractProp,
   onBlockedInteraction,
@@ -1083,14 +1091,14 @@ export default function EscapeRoomCanvas({
             runtime.ripples.push({ x, y, age: 0, blocked: true });
             raiseWarning(
               'gargoyle',
-              `The Gargoyle's jaws remain sealed. Collect all 5 Elder Runes from the study first! (${runes}/5 claimed)`,
+              `The Gargoyle Gate is still locked. Bring all 5 Syndicate Keys first! (${runes}/5 keys)`,
             );
             return;
           }
         } else if (solved.has(prop.id)) {
           runtime.pendingProp = null;
           runtime.ripples.push({ x, y, age: 0, blocked: true });
-          raiseWarning(prop.id, `${prop.label} has already surrendered its Elder Rune.`);
+          raiseWarning(prop.id, `${prop.label} already gave up its key.`);
           return;
         }
 
@@ -1214,7 +1222,7 @@ export default function EscapeRoomCanvas({
         runtime.pendingProp = null;
       }
 
-      // Footfalls on cold flagstone, roughly in time with the stride.
+      // Footfalls on wet concrete, roughly in time with the stride.
       if (moving) {
         runtime.stepTimer += dt;
         if (runtime.stepTimer >= 0.34) {
@@ -1268,7 +1276,7 @@ export default function EscapeRoomCanvas({
         moving,
       );
 
-      /* ---- Warm torch pool: lights the stone the scholar is standing on ---- */
+      /* ---- Warm lamp pool: lights the concrete the mark is standing on ---- */
       const flicker = 1 + Math.sin(runtime.time * 6.1) * 0.015 + Math.sin(runtime.time * 13.7) * 0.009;
       const radius = Math.max(40, torchRef.current * flicker);
 
@@ -1290,7 +1298,7 @@ export default function EscapeRoomCanvas({
       ctx.fillRect(0, 0, ROOM_WIDTH, ROOM_HEIGHT);
       ctx.restore();
 
-      /* ---- Torchlight darkness mask ---- */
+      /* ---- Lamp-light darkness mask ---- */
       const darkness = ctx.createRadialGradient(
         runtime.player.x,
         runtime.player.y,
@@ -1327,7 +1335,7 @@ export default function EscapeRoomCanvas({
         const isSolved = solved.has(prop.id);
         const locked = prop.id === 'gargoyle' && !gargoyleUnlocked;
         const pulse = 0.5 + Math.sin(runtime.time * 2 + center.x * 0.03) * 0.3;
-        const tint = isSolved ? '79,191,158' : locked ? '168,35,35' : '184,150,85';
+        const tint = isSolved ? '85,217,159' : locked ? '211,32,53' : '179,150,96';
         const reach = Math.max(prop.rect.width, prop.rect.height) * 0.75 + 26;
         const beacon = ctx.createRadialGradient(center.x, center.y, 1, center.x, center.y, reach);
         beacon.addColorStop(0, `rgba(${tint},${(isSolved ? 0.42 : 0.3) * pulse})`);
@@ -1375,7 +1383,7 @@ export default function EscapeRoomCanvas({
         ctx.fillText(`${fps.toFixed(0)} fps`, 36, boxY + 5);
         ctx.fillStyle = '#9d96b0';
         ctx.fillText(
-          `x ${runtime.player.x.toFixed(0)}  y ${runtime.player.y.toFixed(0)}  torch ${torchRef.current.toFixed(0)}`,
+          `x ${runtime.player.x.toFixed(0)}  y ${runtime.player.y.toFixed(0)}  light ${torchRef.current.toFixed(0)}`,
           36,
           boxY + 17,
         );

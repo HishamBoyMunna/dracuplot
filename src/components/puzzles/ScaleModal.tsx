@@ -78,7 +78,7 @@ export default function ScaleModal({
         solved ? undefined : (
           <button type="button" onClick={submit} className="btn w-full">
             <ScaleIcon size={16} />
-            Weigh Souls (Submit)
+            Pass Judgment (Submit)
           </button>
         )
       }
