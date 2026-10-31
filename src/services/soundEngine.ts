@@ -13,6 +13,8 @@ interface ToneOptions {
   /** Glide to this frequency over the life of the note. */
   sweepTo?: number;
   filter?: { type: BiquadFilterType; freq: number; sweepTo?: number; q?: number };
+  /** Output bus; defaults to the compressed master. */
+  out?: AudioNode | null;
 }
 
 /**
@@ -27,6 +29,7 @@ interface ToneOptions {
 class SoundEngine {
   private ctx: AudioContext | null = null;
   private master: GainNode | null = null;
+  private heartbeatBus: GainNode | null = null;
   private noise: AudioBuffer | null = null;
   private muted: boolean;
   private heartbeatTimer: number | null = null;
@@ -89,6 +92,12 @@ class SoundEngine {
       this.master.connect(compressor);
       compressor.connect(this.ctx.destination);
 
+      // The heartbeat is a continuous bed, so it bypasses the master
+      // compressor; otherwise the compressor would level it straight back down.
+      this.heartbeatBus = this.ctx.createGain();
+      this.heartbeatBus.gain.value = this.muted ? 0 : 1;
+      this.heartbeatBus.connect(this.ctx.destination);
+
       // One second of white noise, reused for footsteps and rumbles.
       const length = Math.floor(this.ctx.sampleRate);
       this.noise = this.ctx.createBuffer(1, length, this.ctx.sampleRate);
@@ -120,6 +129,10 @@ class SoundEngine {
     if (this.master && this.ctx) {
       this.master.gain.cancelScheduledValues(this.ctx.currentTime);
       this.master.gain.setTargetAtTime(muted ? 0 : MASTER_LEVEL, this.ctx.currentTime, 0.04);
+    }
+    if (this.heartbeatBus && this.ctx) {
+      this.heartbeatBus.gain.cancelScheduledValues(this.ctx.currentTime);
+      this.heartbeatBus.gain.setTargetAtTime(muted ? 0 : 1, this.ctx.currentTime, 0.04);
     }
   }
 
@@ -156,6 +169,7 @@ class SoundEngine {
       detune = 0,
       sweepTo,
       filter,
+      out = null,
     } = options;
 
     const t0 = ctx.currentTime + delay;
@@ -189,7 +203,7 @@ class SoundEngine {
     }
 
     osc.connect(envelope);
-    tail.connect(this.master);
+    tail.connect(out ?? this.master);
     osc.start(t0);
     osc.stop(t0 + attack + decay + 0.05);
   }
@@ -353,16 +367,28 @@ class SoundEngine {
   /* ----------------------------- Heartbeat ----------------------------- */
 
   private thump(): void {
-    const intensity = 0.55 + this.heartbeatLevel * 0.2;
-    this.tone({ freq: 62, type: 'sine', attack: 0.012, decay: 0.22, gain: 0.85 * intensity, sweepTo: 34 });
+    // The heartbeat is the game's only continuous bed, so it sits well above
+    // the one-shot effects and grows heavier as the heat meter climbs.
+    const intensity = 0.72 + this.heartbeatLevel * 0.22;
+    const out = this.heartbeatBus;
+    this.tone({
+      freq: 62,
+      type: 'sine',
+      attack: 0.012,
+      decay: 0.22,
+      gain: 0.5 * intensity,
+      sweepTo: 34,
+      out,
+    });
     this.tone({
       freq: 54,
       type: 'sine',
       delay: 0.19,
       attack: 0.012,
       decay: 0.28,
-      gain: 0.62 * intensity,
+      gain: 0.36 * intensity,
       sweepTo: 28,
+      out,
     });
   }
 
